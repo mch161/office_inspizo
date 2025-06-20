@@ -4,8 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "88970a0117c062eed55fa8728fc43833",
+    "content-hash": "39f025fc46d19ff19fac2b3abd596023",
     "packages": [
+        {
+            "name": "almasaeed2010/adminlte",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ColorlibHQ/AdminLTE.git",
+                "reference": "bd4d9c72931f1dd28601b6bfb387554a381ad540"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ColorlibHQ/AdminLTE/zipball/bd4d9c72931f1dd28601b6bfb387554a381ad540",
+                "reference": "bd4d9c72931f1dd28601b6bfb387554a381ad540",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Colorlib"
+                }
+            ],
+            "description": "AdminLTE - admin control panel and dashboard that's based on Bootstrap 4",
+            "homepage": "https://adminlte.io/",
+            "keywords": [
+                "JS",
+                "admin",
+                "back-end",
+                "css",
+                "less",
+                "responsive",
+                "template",
+                "theme",
+                "web"
+            ],
+            "support": {
+                "issues": "https://github.com/ColorlibHQ/AdminLTE/issues",
+                "source": "https://github.com/ColorlibHQ/AdminLTE/tree/v3.2.0"
+            },
+            "time": "2022-02-07T20:33:09+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.13.1",
@@ -1055,17 +1098,76 @@
             "time": "2025-02-03T10:55:03+00:00"
         },
         {
-            "name": "laravel/framework",
-            "version": "v12.18.0",
+            "name": "jeroennoten/laravel-adminlte",
+            "version": "v3.15.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/framework.git",
-                "reference": "7d264a0dad2bfc5c154240b38e8ce9b2c4cdd14d"
+                "url": "https://github.com/jeroennoten/Laravel-AdminLTE.git",
+                "reference": "0269331f55fa8385413895225d6d89b85babe3de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/7d264a0dad2bfc5c154240b38e8ce9b2c4cdd14d",
-                "reference": "7d264a0dad2bfc5c154240b38e8ce9b2c4cdd14d",
+                "url": "https://api.github.com/repos/jeroennoten/Laravel-AdminLTE/zipball/0269331f55fa8385413895225d6d89b85babe3de",
+                "reference": "0269331f55fa8385413895225d6d89b85babe3de",
+                "shasum": ""
+            },
+            "require": {
+                "almasaeed2010/adminlte": "3.2.*",
+                "laravel/framework": ">=8.0",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "orchestra/testbench": ">=6.0",
+                "phpunit/phpunit": ">=9.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JeroenNoten\\LaravelAdminLte\\AdminLteServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JeroenNoten\\LaravelAdminLte\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jeroen Noten",
+                    "email": "jeroennoten@me.com"
+                }
+            ],
+            "description": "Easy AdminLTE integration with Laravel",
+            "keywords": [
+                "AdminLTE",
+                "admin",
+                "administrator",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/jeroennoten/Laravel-AdminLTE/issues",
+                "source": "https://github.com/jeroennoten/Laravel-AdminLTE/tree/v3.15.0"
+            },
+            "time": "2025-02-24T22:20:15+00:00"
+        },
+        {
+            "name": "laravel/framework",
+            "version": "v12.19.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "4e6ec689ef704bb4bd282f29d9dd658dfb4fb262"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/4e6ec689ef704bb4bd282f29d9dd658dfb4fb262",
+                "reference": "4e6ec689ef704bb4bd282f29d9dd658dfb4fb262",
                 "shasum": ""
             },
             "require": {
@@ -1267,7 +1369,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-06-10T14:48:34+00:00"
+            "time": "2025-06-18T12:56:23+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -1454,6 +1556,69 @@
                 "source": "https://github.com/laravel/tinker/tree/v2.10.1"
             },
             "time": "2025-01-27T14:24:01+00:00"
+        },
+        {
+            "name": "laravel/ui",
+            "version": "v4.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/ui.git",
+                "reference": "7d6ffa38d79f19c9b3e70a751a9af845e8f41d88"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/ui/zipball/7d6ffa38d79f19c9b3e70a751a9af845e8f41d88",
+                "reference": "7d6ffa38d79f19c9b3e70a751a9af845e8f41d88",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^9.21|^10.0|^11.0|^12.0",
+                "illuminate/filesystem": "^9.21|^10.0|^11.0|^12.0",
+                "illuminate/support": "^9.21|^10.0|^11.0|^12.0",
+                "illuminate/validation": "^9.21|^10.0|^11.0|^12.0",
+                "php": "^8.0",
+                "symfony/console": "^6.0|^7.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^7.35|^8.15|^9.0|^10.0",
+                "phpunit/phpunit": "^9.3|^10.4|^11.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Ui\\UiServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Ui\\": "src/",
+                    "Illuminate\\Foundation\\Auth\\": "auth-backend/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Laravel UI utilities and presets.",
+            "keywords": [
+                "laravel",
+                "ui"
+            ],
+            "support": {
+                "source": "https://github.com/laravel/ui/tree/v4.6.1"
+            },
+            "time": "2025-01-28T15:15:29+00:00"
         },
         {
             "name": "league/commonmark",
@@ -6535,16 +6700,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "11.0.9",
+            "version": "11.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "14d63fbcca18457e49c6f8bebaa91a87e8e188d7"
+                "reference": "1a800a7446add2d79cc6b3c01c45381810367d76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/14d63fbcca18457e49c6f8bebaa91a87e8e188d7",
-                "reference": "14d63fbcca18457e49c6f8bebaa91a87e8e188d7",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/1a800a7446add2d79cc6b3c01c45381810367d76",
+                "reference": "1a800a7446add2d79cc6b3c01c45381810367d76",
                 "shasum": ""
             },
             "require": {
@@ -6601,15 +6766,27 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/11.0.9"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/show"
             },
             "funding": [
                 {
                     "url": "https://github.com/sebastianbergmann",
                     "type": "github"
+                },
+                {
+                    "url": "https://liberapay.com/sebastianbergmann",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "https://thanks.dev/u/gh/sebastianbergmann",
+                    "type": "thanks_dev"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpunit/php-code-coverage",
+                    "type": "tidelift"
                 }
             ],
-            "time": "2025-02-25T13:26:39+00:00"
+            "time": "2025-06-18T08:56:18+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
