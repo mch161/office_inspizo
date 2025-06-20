@@ -15,6 +15,7 @@ Route::get('/dashboard', function () {
 require __DIR__.'/auth.php';
 
 
-Route::group(['middleware' => 'is_admin'], function () {
-    // Admin routes
+Route::middleware(['auth:karyawan'])->group(function () {
+    Route::get('/karyawan/dashboard', [KaryawanLoginController::class, 'dashboard'])->name('karyawan.dashboard');
+
 });
