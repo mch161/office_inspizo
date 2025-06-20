@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('telp_pelanggan', 20)->nullable();
             $table->string('nik', 20)->nullable();
             $table->string('username', 100)->nullable();
+            $table->string('email', 100)->nullable();
             $table->string('password', 255);
-            $table->string('email_pelanggan', 100)->nullable();
             $table->string('role', 50)->nullable();
             $table->string('remember_token', 100)->nullable();
             $table->timestamps();

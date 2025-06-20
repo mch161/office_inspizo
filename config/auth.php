@@ -44,6 +44,11 @@ return [
         'karyawan' => [
             'driver' => 'session',
             'provider' => 'karyawan',
+        ],
+
+        'pelanggan' => [
+            'driver' => 'session',
+            'provider' => 'pelanggan',
         ]
     ],
 
@@ -67,7 +72,12 @@ return [
     'providers' => [
         'karyawan' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', App\Models\Karyawan::class),
+        ],
+
+        'pelanggan' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\Pelanggan::class),
         ],
 
         // 'users' => [

@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Karyawan;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +18,11 @@ class KaryawanLoginController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::guard('karyawan')->attempt($credentials)) {
-            return redirect()->intended('/karyawan/dashboard');
+        $user = Karyawan::where('email', $credentials['email'])->first();
+
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            Auth::guard('karyawan')->login($user);
+            return redirect()->intended(route('karyawan.dashboard', absolute: false));
         }
 
         return back()->withErrors([
