@@ -1,23 +1,24 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class KaryawanLoginController extends Controller
+class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.karyawan.login');
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::guard('karyawan')->attempt($credentials)) {
-            return redirect()->intended('/karyawan/dashboard');
+        if (Auth::attempt($credentials)) {
+            return redirect()->intended('/dashboard');
         }
 
         return back()->withErrors([
@@ -27,7 +28,8 @@ class KaryawanLoginController extends Controller
 
     public function logout()
     {
-        Auth::guard('karyawan')->logout();
+        Auth::logout();
         return redirect('/');
     }
 }
+    
