@@ -318,6 +318,11 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
+            'text' => 'Jurnal',
+            'url' => '/karyawan/jurnal',
+            'icon' => 'fas fa-fw fa-book',
+        ],
+        [
             'text' => 'change_password',
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
