@@ -2,8 +2,8 @@
     @csrf
 
     <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required autocomplete="name" autofocus>
+        <label for="nama_pelanggan">Nama</label>
+        <input type="text" id="name" name="nama_pelanggan" class="form-control @error('name') is-invalid @enderror" value="{{ old('nama_pelanggan') }}" required autocomplete="nama_pelanggan" autofocus>
         @error('name')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>

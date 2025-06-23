@@ -318,11 +318,6 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
-            'text' => 'Dashboard',
-            'url' => '/dashboard',
-            'icon' => 'fas fa-fw fa-home',
-        ],
-        [
             'text' => 'Jurnal',
             'url' => 'karyawan/jurnal',
             'icon' => 'fas fa-fw fa-book',
