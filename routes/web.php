@@ -21,7 +21,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     })->name('karyawan.dashboard');
 });
 
-Route::middleware(['auth:pelanggan', 'auth:karyawan'])->group(function () {
+Route::middleware(['can:access'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');

@@ -22,7 +22,7 @@ class KaryawanLoginController extends Controller
 
         if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::guard('karyawan')->login($user);
-            return redirect()->intended('karyawan/dashboard');
+            return redirect()->intended(route('karyawan.dashboard'));
         }
 
         return back()->withErrors([
@@ -32,7 +32,6 @@ class KaryawanLoginController extends Controller
 
     public function logout()
     {
-        Auth::guard('karyawan')->logout();
-        return redirect('/');
+        //
     }
 }

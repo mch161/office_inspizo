@@ -42,13 +42,13 @@ class LoginController extends Controller
     public function register(Request $request) : RedirectResponse
     {
             $request->validate([
-            'name' => 'required|string|max:255',
+            'nama_pelanggan' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.Pelanggan::class,
             'password' => ['required', 'confirmed', 'min:8'],
         ]);
 
         $user = Pelanggan::create([
-            'name' => $request->nama,
+            'nama_pelanggan' => $request->nama_pelanggan,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -60,9 +60,15 @@ class LoginController extends Controller
         return to_route('dashboard');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('pelanggan')->logout();
+        Auth::guard('karyawan')->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
         return redirect('/');
     }
 }
