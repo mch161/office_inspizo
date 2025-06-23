@@ -257,7 +257,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => '/karyawan/dashboard',
+    'dashboard_url' => '/',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -316,17 +316,17 @@ return [
             'text' => 'search',
         ],
         [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
+            'text' => 'Dashboard',
+            'url' => '/dashboard',
+            'icon' => 'fas fa-fw fa-home',
         ],
         [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
+            'text' => 'Jurnal',
+            'url' => 'karyawan/jurnal',
+            'icon' => 'fas fa-fw fa-book',
+            'can' => 'edit-jurnal',
         ],
+
         ['header' => 'account_settings'],
         [
             'text' => 'profile',

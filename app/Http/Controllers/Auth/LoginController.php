@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Pelanggan;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use App\Models\Karyawan;
+use App\Models\Pelanggan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -18,33 +16,64 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
+    /**
+     * Handle a login request to the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $request->validate([
+            'login' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-        $user = Pelanggan::where('email', $credentials['email'])->first();
+        $login = $request->input('login');
+        $password = $request->input('password');
+        $remember = $request->boolean('remember'); // Get the "remember me" value
 
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            Auth::guard('pelanggan')->login($user);
-            return redirect()->intended(route('dashboard', absolute: false));
+        // Attempt to log in as a Pelanggan
+        $pelanggan = Pelanggan::where('email', $login)
+                              ->orWhere('username', $login)
+                              ->orWhere('telp_pelanggan', $login)
+                              ->first();
+
+        if ($pelanggan && Hash::check($password, $pelanggan->password)) {
+            Auth::guard('pelanggan')->login($pelanggan, $remember); // Pass the remember value
+            $request->session()->regenerate();
+            return redirect()->intended('dashboard');
         }
 
+        // If not a Pelanggan, attempt to log in as a Karyawan
+        $karyawan = Karyawan::where('email', $login)
+                            ->orWhere('username', $login)
+                            ->orWhere('telp', $login)
+                            ->first();
+
+        if ($karyawan && Hash::check($password, $karyawan->password)) {
+            Auth::guard('karyawan')->login($karyawan, $remember); // Pass the remember value
+            $request->session()->regenerate();
+            return redirect()->intended('dashboard');
+        }
+
+        // If authentication fails for both, redirect back with an error
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+            'login' => 'The provided credentials do not match our records.',
+        ])->onlyInput('login');
     }
 
-        public function showRegisterForm()
+    public function showRegisterForm()
     {
         return view('auth.register');
     }
 
-    public function register(Request $request) : RedirectResponse
+    public function register(Request $request)
     {
-            $request->validate([
+        $request->validate([
             'nama_pelanggan' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.Pelanggan::class,
-            'password' => ['required', 'confirmed', 'min:8'],
+            'email' => 'required|string|email|max:255|unique:pelanggan',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = Pelanggan::create([
@@ -53,23 +82,25 @@ class LoginController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
-
         Auth::guard('pelanggan')->login($user);
 
-        return to_route('dashboard');
+        return redirect('/dashboard');
     }
 
+    /**
+     * Log the user out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function logout(Request $request)
     {
         Auth::guard('pelanggan')->logout();
         Auth::guard('karyawan')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');
     }
 }
-    

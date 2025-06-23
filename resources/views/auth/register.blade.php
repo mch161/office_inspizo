@@ -1,5 +1,3 @@
-// resources/views/auth/register.blade.php
-
 <form method="POST" action="{{ route('register.submit') }}">
     @csrf
 

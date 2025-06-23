@@ -12,13 +12,14 @@ Route::get('/', function () {
 //     return view('dashboard');
 // })->middleware(['auth'])->name('dashboard');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 
 Route::middleware(['auth:karyawan'])->group(function () {
-    Route::get('/karyawan/dashboard', function () {
-        return view('karyawan.dashboard');
-    })->name('karyawan.dashboard');
+    Route::get('/karyawan/jurnal', function () {
+        return view('karyawan.jurnal');
+    })->middleware('can:edit-jurnal')->name('karyawan.jurnal');
+
 });
 
 Route::middleware(['can:access'])->group(function () {
@@ -27,3 +28,6 @@ Route::middleware(['can:access'])->group(function () {
     })->name('dashboard');
 
 });
+
+
+

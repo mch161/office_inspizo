@@ -24,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('access', function ($user = null){
             return Auth::guard('pelanggan')->check() || Auth::guard('karyawan')->check();
         } );
+
+        Gate::define('edit-jurnal', function ($user = null){
+            return Auth::guard('karyawan')->check();
+        });
     }
 }
 

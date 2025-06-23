@@ -16,20 +16,10 @@
         <div class="text-center">
             <h1 class="text-4xl font-bold mb-4">Inzpizo Office</h1>
             <p class="text-lg text-gray-600">this is app fore </p>
-            @if (Auth::guard('pelanggan')->check())
+            @if (Auth::guard('pelanggan')->check() || Auth::guard('karyawan')->check())
                 <a href="{{ url('/dashboard') }}"
                     class="mt-4 inline-block px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600">Dashboard</a>
-            @elseif (Auth::guard('karyawan')->check())
-                <a href="{{ url('karyawan/dashboard') }}"
-                    class="mt-4 inline-block px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600">Dashboard</a>
             @else
-
-
-                @if (Route::has('karyawan.login'))
-                    <a href="{{ route('karyawan.login') }}"
-                        class="mt-4 inline-block px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Karyawan
-                        Login</a>
-                @endif
 
                 @if (Route::has('login'))
                 <a href="{{ route('login') }}"
