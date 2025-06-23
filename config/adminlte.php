@@ -311,9 +311,11 @@ return [
         ],
 
         // Sidebar items:
+        ['header' => ''],
         [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'text' => 'Dashboard',
+            'url' => '/karyawan/dashboard',
+            'icon' => 'fas fa-fw fa-home',
         ],
         [
             'text' => 'Dashboard',
