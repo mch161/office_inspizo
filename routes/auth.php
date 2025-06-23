@@ -9,3 +9,6 @@ Route::get('/karyawan/logout', [App\Http\Controllers\Auth\KaryawanLoginControlle
 Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.submit');
 Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
+Route::get('/register', [App\Http\Controllers\Auth\LoginController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [App\Http\Controllers\Auth\LoginController::class, 'register'])->name('register.submit');
