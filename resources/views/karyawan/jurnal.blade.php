@@ -13,9 +13,7 @@
 
 @section('content')
 
-        <button class="btn btn-default text-primary mx-1 " title="Edit">
-            Tambahkan Jurnal
-        </button>
+        <button class="btn btn-primary float-right mb-2 mr-2 ">Tambahkan Jurnal</button>
 
         {{-- Setup data for datatables --}}
 
