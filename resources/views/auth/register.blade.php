@@ -1,5 +1,21 @@
 @extends('adminlte::auth.register')
 
+@section('css')
+<style>
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+@endsection
+
 @section('js')
 <script>
     function togglePasswordVisibility(fieldId) {
@@ -98,32 +114,36 @@
         @enderror
     </div>
 
-<div class="form-group">
-    <div class="input-group">
-        <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" value="{{ old('password') }}" placeholder="Password" autocomplete="new-password">
-        <div class="input-group-append">
-            <div class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('password')">
-                <span id="togglePasswordIconPassword" class="fas fa-eye"></span>
+    <div class="form-group">
+        <div class="input-group">
+            <input type="password" id="password" name="password"
+                class="form-control @error('password') is-invalid @enderror" value="{{ old('password') }}"
+                placeholder="Password" autocomplete="new-password">
+            <div class="input-group-append">
+                <div class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('password')">
+                    <span id="togglePasswordIconPassword" class="fas fa-eye"></span>
+                </div>
             </div>
         </div>
+        @error('password')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
     </div>
-    @error('password')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-    @enderror
-</div>
 
-<div class="form-group">
-    <div class="input-group">
-        <input type="password" id="password-confirm" name="password_confirmation" class="form-control" value="{{ old('password_confirmation') }}" placeholder="Confirm Password" autocomplete="new-password">
-        <div class="input-group-append">
-            <div class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('password-confirm')">
-                <span id="togglePasswordIconConfirm" class="fas fa-eye"></span>
+    <div class="form-group">
+        <div class="input-group">
+            <input type="password" id="password-confirm" name="password_confirmation" class="form-control"
+                value="{{ old('password_confirmation') }}" placeholder="Confirm Password" autocomplete="new-password">
+            <div class="input-group-append">
+                <div class="input-group-text" style="cursor: pointer;"
+                    onclick="togglePasswordVisibility('password-confirm')">
+                    <span id="togglePasswordIconConfirm" class="fas fa-eye"></span>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <button type="submit" class="btn btn-primary btn-block">Register</button>
 </form>
