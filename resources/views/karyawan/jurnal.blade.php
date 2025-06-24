@@ -13,9 +13,13 @@
 
 @section('content')
 
-        <button class="btn btn-primary float-right mb-2 mr-2 ">Tambahkan Jurnal</button>
+    <x-adminlte-modal id="modalPurple" title="Theme Purple" theme="purple" icon="fas fa-bolt" size='lg' disable-animations>
+        This is a purple theme modal without animations.
+    </x-adminlte-modal>
 
-        {{-- Setup data for datatables --}}
+    <x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal" data-target="#modalPurple"/>
+
+    {{-- Setup data for datatables --}}
 
     @php
         $heads = [
