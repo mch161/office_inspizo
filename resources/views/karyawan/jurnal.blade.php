@@ -9,7 +9,14 @@
     </div>
 @stop
 
-
+@section('js')
+    <script>
+        import DataTable from 'datatables.net-dt';
+        let table = new DataTable('#myTable', {
+            // config options...
+        });
+    </script>
+@stop
 
 @section('content')
 
@@ -17,7 +24,8 @@
         This is a purple theme modal without animations.
     </x-adminlte-modal>
 
-    <x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal" data-target="#modalPurple"/>
+    <x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
+        data-target="#modalPurple" />
 
     {{-- Setup data for datatables --}}
 
