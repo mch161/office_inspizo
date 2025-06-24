@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'Office Inspizo',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -314,7 +314,7 @@ return [
         ['header' => ''],
         [
             'text' => 'Dashboard',
-            'url' => '/karyawan/dashboard',
+            'url' => '/dashboard',
             'icon' => 'fas fa-fw fa-home',
         ],
         [
