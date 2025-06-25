@@ -1,31 +1,34 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Jurnal')
 
 @section('content_header')
     <div class="flex justify-content-between">
         <h1>Jurnal</h1>
-
     </div>
 @stop
 
+@section('css')
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
+@endsection
+
 @section('js')
-    <script>
-        import DataTable from 'datatables.net-dt';
-        let table = new DataTable('#myTable', {
-            // config options...
-        });
-    </script>
-@stop
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+@endsection
 
 @section('content')
 
-    <x-adminlte-modal id="modalPurple" title="Theme Purple" theme="purple" icon="fas fa-bolt" size='lg' disable-animations>
-        This is a purple theme modal without animations.
-    </x-adminlte-modal>
+<x-adminlte-modal id="modalPurple" title="Tambahkan Jurnal" theme="purple" icon="fas fa-clipboard" size='lg'>
+    This is a purple theme modal without animations.
+</x-adminlte-modal>
 
-    <x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
-        data-target="#modalPurple" />
+<x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
+    data-target="#modalPurple" />
 
 <table id="myTable" class="display">
     <thead>
@@ -46,9 +49,4 @@
     </tbody>
 </table>
 
-    {{-- Compressed with style options / fill data using the plugin config --}}
-    {{-- <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config"
-    striped hoverable bordered compressed/> --}}
 @stop
-
-@section('css')
