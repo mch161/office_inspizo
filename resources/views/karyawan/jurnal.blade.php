@@ -17,26 +17,36 @@
 @section('content')
 
 <x-adminlte-modal id="modalPurple" title="Tambahkan Jurnal" theme="purple" icon="fas fa-clipboard" size='lg'>
-    <form action="{{ route('jurnal.store') }}" method="POST">
+    <form action="{{ route('jurnal.store') }}" method="POST" id="jurnalForm">
         @csrf
-        {{-- SM size, restricted to current month and week days --}}
-        @php
-            $config = [
-                'format' => 'YYYY-MM-DD HH.mm',
-                'dayViewHeaderFormat' => 'MMM YYYY',
-                'minDate' => "js:moment().startOf('month')",
-                'maxDate' => "js:moment().endOf('month')",
-                'daysOfWeekDisabled' => [0, 6],
-            ];
-        @endphp
-        <x-adminlte-input-date name="idSizeSm" label="Working Datetime" igroup-size="sm" :config="$config"
-            placeholder="Choose a working day...">
-            <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark">
-                    <i class="fas fa-calendar-day"></i>
-                </div>
-            </x-slot>
-        </x-adminlte-input-date>
+                <div class="row">
+            {{-- Date picker --}}
+            @php
+            $config = ['format' => 'YYYY-MM-DD'];
+            @endphp
+            <x-adminlte-input-date name="tanggal" :config="$config" placeholder="Pilih tanggal..."
+                label="Tanggal" igroup-size="md">
+                <x-slot name="appendSlot">
+                    <div class="input-group-text bg-dark">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                </x-slot>
+            </x-adminlte-input-date>
+
+            {{-- Time picker --}}
+            @php
+            $config = ['format' => 'HH:mm'];
+            @endphp
+            <x-adminlte-input-date name="jam" :config="$config" placeholder="Pilih jam..."
+                label="Jam" igroup-size="md">
+                <x-slot name="appendSlot">
+                    <div class="input-group-text bg-dark">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </x-slot>
+            </x-adminlte-input-date>
+        </div>
+
         <x-adminlte-textarea name="isi_jurnal" label="Isi Jurnal" rows=5 igroup-size="sm"
             placeholder="Tuliskan isi jurnal di sini...">
             <x-slot name="prependSlot">
@@ -47,7 +57,7 @@
         </x-adminlte-textarea>
 
         <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Simpan" type="submit" />
+            <x-adminlte-button theme="success" label="Simpan" type="submit" form="jurnalForm"/>
             <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
         </x-slot>
     </form>
@@ -73,7 +83,7 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $jurnal->tanggal }}</td>
                 <td>{{ $jurnal->jam }}</td>
-                <td>{{ $jurnal->karyawan->nama ?? 'N/A' }}</td>
+                <td>{{ $jurnal->dibuat_oleh }}</td>
                 <td>{{ $jurnal->isi_jurnal }}</td>
                 <td>
                     <a href="#" class="edit btn btn-primary btn-sm">Edit</a>
