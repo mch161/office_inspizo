@@ -19,6 +19,8 @@ return new class extends Migration
             $table->text('isi_jurnal');
             $table->string('dibuat_oleh', 50);
             $table->timestamps();
+
+            $table->foreign('kd_user')->references('kd_karyawan')->on('karyawan');
         });
     }
 
