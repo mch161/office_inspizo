@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('jurnal', function (Blueprint $table) {
             $table->id('kd_jurnal');
-            $table->integer('kd_user');
+            $table->integer('kd_karyawan');
             $table->string('tanggal', 20);
             $table->string('jam', 20);
             $table->text('isi_jurnal');
             $table->string('dibuat_oleh', 50);
             $table->timestamps();
 
-            $table->foreign('kd_user')->references('kd_karyawan')->on('karyawan');
+            $table->foreign('kd_karyawan')->references('kd_karyawan')->on('karyawan');
         });
     }
 

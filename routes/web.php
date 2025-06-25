@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\KaryawanLoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\JurnalController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,10 +17,7 @@ require __DIR__ . '/auth.php';
 
 
 Route::middleware(['auth:karyawan'])->group(function () {
-    Route::get('/karyawan/jurnal', function () {
-        return view('karyawan.jurnal');
-    })->middleware('can:edit-jurnal')->name('karyawan.jurnal');
-
+    Route::resource('jurnal', App\Http\Controllers\JurnalController::class);
 });
 
 Route::middleware(['can:access'])->group(function () {
