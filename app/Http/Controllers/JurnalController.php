@@ -39,6 +39,26 @@ class JurnalController extends Controller
         return redirect()->route('jurnal.index')
             ->with('success', 'Jurnal entry created successfully.');
     }
+
+    public function update(Request $request, Jurnal $jurnal)
+    {
+        // 1. Validate the incoming data
+        $request->validate([
+            'tanggal_edit' => 'required|date',
+            'jam_edit' => 'required',
+            'isi_jurnal_edit' => 'required|string',
+        ]);
+
+        // 2. Update the existing Jurnal entry
+        $jurnal->tanggal = $request->tanggal_edit;
+        $jurnal->jam = $request->jam_edit;
+        $jurnal->isi_jurnal = $request->isi_jurnal_edit;
+        $jurnal->save();
+
+        // 3. Redirect back with a success message
+        return redirect()->route('jurnal.index')
+                         ->with('success', 'Jurnal entry updated successfully.');
+    }
     public function destroy(Jurnal $jurnal)
     {
         // Delete the database record
