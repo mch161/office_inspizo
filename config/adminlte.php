@@ -323,6 +323,13 @@ return [
             'icon' => 'fas fa-fw fa-book',
             'can' => 'edit-jurnal',
         ],
+        [
+            'text' => 'Barang',
+            'route' => 'barang.index',
+            'icon' => 'fas fa-fw fa-warehouse',
+            'can' => 'edit-jurnal',
+        ],
+        
 
         ['header' => 'account_settings'],
         [
