@@ -3,7 +3,12 @@
 @section('title', 'Keuangan')
 
 @section('content_header')
-<h1>Keuangan</h1>
+<h1>Keuangan</h1> 
+<div class="d-flex justify-content-end">
+    <x-adminlte-button label="Tambahkan Jurnal" class="mb-2 bg-blue" data-toggle="modal"
+        data-target="#modalTambah" />
+</div>
+
 @stop
 
 @section('css')
@@ -11,6 +16,28 @@
 @endsection
 
 @section('content')
+<x-adminlte-modal id="modalTambah" title="Tambahkan Jurnal" theme="success" icon="fas fa-clipboard" size='lg'>
+    <form action="{{ route('keuangan.store') }}" method="POST" id="jurnalForm">
+        @csrf
+        <div class="row">
+            <x-adminlte-input label="" name="asd"/>
+        </div>
+
+        <x-adminlte-input name="isi_jurnal" label="Isi Jurnal" rows=5 igroup-size="sm"
+            placeholder="Tuliskan isi jurnal di sini..." required>
+            <x-slot name="prependSlot">
+                <div class="input-group-text bg-dark">
+                    <i class="fas fa-lg fa-file-alt text-warning"></i>
+                </div>
+            </x-slot>
+        </x-adminlte-input>
+
+        <x-slot name="footerSlot">
+            <x-adminlte-button theme="success" label="Simpan" type="submit" form="jurnalForm" />
+            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+        </x-slot>
+    </form>
+</x-adminlte-modal>
 <table id="KeuanganTable">
     <thead>
         <tr>
