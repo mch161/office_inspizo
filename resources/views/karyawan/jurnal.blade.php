@@ -5,9 +5,7 @@
 @section('plugins.Sweetalert2', true)
 
 @section('content_header')
-<div class="flex justify-content-between">
     <h1>Jurnal</h1>
-</div>
 @stop
 
 @section('css')
@@ -114,7 +112,7 @@
 <x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
     data-target="#modalTambah" />
 
-<table id="myTable" class="display">
+<table id="JurnalTable" class="display">
     <thead>
         <tr>
             <th>No.</th>
@@ -158,7 +156,7 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#myTable').DataTable();
+        $('#JurnalTable').DataTable();
     });
 
     $('.tombol-edit').on('click', function () {
@@ -177,7 +175,7 @@
         form.attr('action', updateUrl);
     });
 
-    $('#myTable').on('click', '.tombol-hapus', function (e) {
+    $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
         e.preventDefault();
         let form = $(this).closest('form');
         Swal.fire({

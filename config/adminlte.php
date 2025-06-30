@@ -321,67 +321,39 @@ return [
             'text' => 'Jurnal',
             'route' => 'jurnal.index',
             'icon' => 'fas fa-fw fa-book',
-            'can' => 'edit-jurnal',
+            'can' => 'access-karyawan',
         ],
         [
             'text' => 'Barang',
             'route' => 'barang.index',
             'icon' => 'fas fa-fw fa-warehouse',
-            'can' => 'edit-jurnal',
+            'can' => 'access-karyawan',
         ],
-        
-
+        [
+            'text' => 'Keuangan',
+            'route' => 'keuangan.index',
+            'icon' => 'fas fa-fw fa-coins',
+            'can' => 'access-karyawan',
+        ],
         ['header' => 'account_settings'],
         [
-            'text' => 'profile',
-            'url' => 'admin/settings',
+            'text' => 'Username',
             'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'logout',
-            'route' => 'logout',
-            'icon' => 'fas fa-fw fa-sign-out-alt'
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
             'submenu' => [
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'profile',
+                    'url' => 'admin/settings',
+                    'icon' => 'fas fa-fw fa-user',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
+                    'text' => 'change_password',
+                    'url' => 'admin/settings',
+                    'icon' => 'fas fa-fw fa-lock',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'text' => 'logout',
+                    'route' => 'logout',
+                    'icon' => 'fas fa-fw fa-sign-out-alt'
                 ],
             ],
         ],

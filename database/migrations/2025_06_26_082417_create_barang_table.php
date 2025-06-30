@@ -25,7 +25,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('kd_karyawan')->references('kd_karyawan')->on('karyawan');
-            
         });
     }
 

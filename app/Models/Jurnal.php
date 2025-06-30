@@ -29,7 +29,6 @@ class Jurnal extends Model
      */
     public function karyawan()
     {
-        // Links this model's 'kd_user' to the 'karyawan' model's 'kd_karyawan'
-        return $this->belongsTo(Karyawan::class, 'kd_user', 'kd_karyawan');
+        return $this->belongsTo(Karyawan::class, 'kd_karyawan', 'kd_karyawan');
     }
 }
