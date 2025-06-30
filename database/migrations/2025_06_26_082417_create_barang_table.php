@@ -17,10 +17,7 @@ return new class extends Migration
             $table->string('nomer_kode_unit', 200);
             $table->string('nama_barang', 200);
             $table->string('foto');
-            $table->string('jumlah', 200);
             $table->string('harga', 200);
-            $table->string('stok_masuk', 200);
-            $table->string('stok_keluar', 200);
             $table->string('dibuat_oleh', 50);
             $table->timestamps();
 
