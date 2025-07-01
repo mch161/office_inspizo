@@ -335,28 +335,6 @@ return [
             'icon' => 'fas fa-fw fa-coins',
             'can' => 'access-karyawan',
         ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'Username',
-            'icon' => 'fas fa-fw fa-user',
-            'submenu' => [
-                [
-                    'text' => 'profile',
-                    'url' => 'admin/settings',
-                    'icon' => 'fas fa-fw fa-user',
-                ],
-                [
-                    'text' => 'change_password',
-                    'url' => 'admin/settings',
-                    'icon' => 'fas fa-fw fa-lock',
-                ],
-                [
-                    'text' => 'logout',
-                    'route' => 'logout',
-                    'icon' => 'fas fa-fw fa-sign-out-alt'
-                ],
-            ],
-        ],
         ['header' => 'labels'],
         [
             'text' => 'important',
@@ -415,18 +393,18 @@ return [
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
                 ],
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js',
+                    'location' => '//cdn.datatables.net/2.3.2/js/dataTables.js',
                 ],
                 [
                     'type' => 'css',
                     'asset' => true,
-                    'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
+                    'location' => '//cdn.datatables.net/2.3.2/css/dataTables.dataTables.css',
                 ],
             ],
         ],

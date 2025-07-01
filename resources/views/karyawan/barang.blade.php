@@ -11,12 +11,10 @@
     @foreach ( $barang as $b )
         <div class="col-md-4">
             <div class="info-box">
-                <span class="info-box-icon bg-info"><i class="far fa-box"></i></span>
-
+                <img src="{{ asset('storage/images/barang/'.$b->foto) }}" alt="{{ $b -> nama_barang}}" width="50%">
                 <div class="info-box-content">
                     <span class="info-box-text">{{ $b->nama_barang }}</span>
-                    <span>Jumlah: {{ $b->jumlah }}</span>
-                    <span class="info-box-number">Harga: {{ $b->harga }}</span>
+                    <span class="info-box-number">Harga: {{ "Rp" .number_format($b->harga,2,',','.') }}</span>
                 </div>
             </div>
         </div>

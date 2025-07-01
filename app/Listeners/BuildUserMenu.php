@@ -22,23 +22,30 @@ class BuildUserMenu
      */
     public function handle(BuildingMenu $event)
     {
-        if (Auth::check()) {
-            $event->menu->addAfter('keuangan', [
+        $user = null;
+        $userName = null;
+
+        if (Auth::guard('karyawan')->check()) {
+            $user = Auth::guard('karyawan')->user();
+            $userName = $user->username;
+        }
+        elseif (Auth::guard('pelanggan')->check()) {
+            $user = Auth::guard('pelanggan')->user();
+            $userName = $user->username;
+        }
+
+        if ($user) {
+            $event->menu->add([
                 'header' => 'ACCOUNT_SETTINGS'
             ]);
 
-            $event->menu->addAfter('account_settings', [
-                'text' => Auth::user()->name,
+            $event->menu->add([
+                'text' => $userName,
                 'icon' => 'fas fa-fw fa-user',
                 'submenu' => [
                     [
-                        'text' => 'profile',
-                        'url' => 'admin/settings',
-                        'icon' => 'fas fa-fw fa-user',
-                    ],
-                    [
                         'text' => 'change_password',
-                        'url' => 'admin/settings',
+                        'url' => 'auth/passwords/edit',
                         'icon' => 'fas fa-fw fa-lock',
                     ],
                     [

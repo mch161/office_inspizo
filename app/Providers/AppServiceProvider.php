@@ -31,10 +31,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('access-karyawan', function ($user = null) {
             return Auth::guard('karyawan')->check();
         });
-        Event::listen(
-            BuildingMenu::class,
-            [BuildUserMenu::class, 'handle']
-        );
     }
 }
 
