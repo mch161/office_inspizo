@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class BarangController extends Controller
 {
@@ -31,7 +33,25 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama_barang' => 'required|string',
+            'harga' => 'required|numeric',
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $imageName = time() . '.' . $request->foto->extension();
+        $request->foto->move(public_path('storage/images/barang'), $imageName);
+        
+        $barang = new Barang();
+        $barang->kd_karyawan = Auth::id();
+        $barang->nama_barang = $request->nama_barang;
+        $barang->harga = $request->harga;
+        $barang->foto = $imageName;
+        $barang->dibuat_oleh = Auth::user()->nama;
+        $barang->save();
+
+        return redirect()->route('barang.index')
+            ->with('success', 'Barang created successfully.');
     }
 
     /**
@@ -53,16 +73,36 @@ class BarangController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Barang $barang)
     {
-        //
+        $request->validate([
+            'nama_barang' => 'required|string',
+            'harga' => 'required|numeric',
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $imageName = time() . '.' . $request->foto->extension();
+        $request->foto->move(public_path('storage/images/barang'), $imageName);
+
+        $barang ->kd_karyawan = Auth::id();
+        $barang->nama_barang = $request->nama_barang;
+        $barang->harga = $request->harga;
+        $barang->foto = $imageName;
+        $barang->dibuat_oleh = Auth::user()->nama;
+        $barang->save();
+
+        return redirect()->route('barang.index')
+            ->with('success', 'Barang updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+public function destroy(Barang $barang)
+{
+    $barang->delete();
+    File::delete(public_path('storage/images/barang/' . $barang->foto));
+    return redirect()->route('barang.index')
+        ->with('success', 'Barang deleted successfully.');
+}
 }

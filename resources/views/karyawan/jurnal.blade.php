@@ -183,8 +183,8 @@
             text: "Data yang dihapus tidak dapat dikembalikan!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Ya, hapus!',
             cancelButtonText: 'Batal'
         }).then((result) => {
@@ -194,5 +194,4 @@
         })
     });
 </script>
-<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
 @endsection
