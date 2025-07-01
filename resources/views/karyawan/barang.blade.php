@@ -19,20 +19,16 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        // Listener for the edit button click
         $('.edit-btn').on('click', function () {
-            // Retrieve data from the data-* attributes of the clicked link
             var nama = $(this).data('nama');
             var harga = $(this).data('harga');
             var fotoUrl = $(this).data('foto');
             var updateUrl = $(this).data('url');
 
-            // Populate the fields in the edit modal
             $('#edit_nama_barang').val(nama);
             $('#edit_harga').val(harga);
             $('#current_foto_preview').attr('src', fotoUrl);
 
-            // Set the form's 'action' attribute to the correct URL for updating
             $('#editBarangForm').attr('action', updateUrl);
         });
     });
@@ -69,16 +65,15 @@
             <label for="harga">Harga</label>
             <input type="number" class="form-control" id="harga" name="harga" required>
         </div>
-        <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file"/>
+        <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name/>
 
         <x-slot name="footerSlot">
             <x-adminlte-button theme="success" label="Simpan" type="submit" form="barangForm" />
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger"/>
         </x-slot>
     </form>
 </x-adminlte-modal>
 <x-adminlte-modal id="modalEdit" title="Edit Barang" theme="warning" icon="fas fa-edit" size='lg'>
-    {{-- Note: The form 'action' will be set dynamically by JavaScript --}}
     <form method="POST" id="editBarangForm" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -96,8 +91,7 @@
                 <img id="current_foto_preview" src="" alt="Foto Saat Ini"
                     style="max-width: 200px; max-height: 200px; margin-bottom: 10px;">
             </div>
-            <x-adminlte-input-file name="foto" id="edit_foto" label="Upload Foto Baru (Kosongkan jika tidak ingin ganti)" placeholder="Pilih file"
-                disable-feedback />
+            <x-adminlte-input-file name="foto" id="edit_foto" label="Upload Foto Baru (Kosongkan jika tidak ingin ganti)" placeholder="Pilih file"/>
 
         </div>
         <x-slot name="footerSlot">
