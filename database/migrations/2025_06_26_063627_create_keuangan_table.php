@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('kotak', 200);
             $table->string('kategori', 100);
             $table->text('keterangan');
+            $table->string('tanggal', 20);
             $table->string('dibuat_oleh', 50);
             $table->timestamps();
 
