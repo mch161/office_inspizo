@@ -41,7 +41,7 @@ class BarangController extends Controller
 
         $imageName = time() . '.' . $request->foto->extension();
         $request->foto->move(public_path('storage/images/barang'), $imageName);
-        
+
         $barang = new Barang();
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
@@ -78,16 +78,19 @@ class BarangController extends Controller
         $request->validate([
             'nama_barang' => 'required|string',
             'harga' => 'required|numeric',
-            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $imageName = time() . '.' . $request->foto->extension();
-        $request->foto->move(public_path('storage/images/barang'), $imageName);
+        if ($request->hasFile('foto')) {
+            File::delete(public_path('storage/images/barang/' . $barang->foto));
+            $imageName = time() . '.' . $request->foto->extension();
+            $request->foto->move(public_path('storage/images/barang'), $imageName);
+            $barang->foto = $imageName;
+        }
 
-        $barang ->kd_karyawan = Auth::id();
+        $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
         $barang->harga = $request->harga;
-        $barang->foto = $imageName;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
 
@@ -98,11 +101,11 @@ class BarangController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-public function destroy(Barang $barang)
-{
-    $barang->delete();
-    File::delete(public_path('storage/images/barang/' . $barang->foto));
-    return redirect()->route('barang.index')
-        ->with('success', 'Barang deleted successfully.');
-}
+    public function destroy(Barang $barang)
+    {
+        $barang->delete();
+        File::delete(public_path('storage/images/barang/' . $barang->foto));
+        return redirect()->route('barang.index')
+            ->with('success', 'Barang deleted successfully.');
+    }
 }
