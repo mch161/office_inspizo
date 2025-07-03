@@ -14,14 +14,14 @@ return new class extends Migration {
             $table->id('kd_keuangan');
             $table->integer('kd_karyawan');
             $table->string('jenis', 100);
-            $table->string('status', 50);
-            $table->string('masuk', 200);
-            $table->string('keluar', 200);
-            $table->string('kotak', 200);
-            $table->string('kategori', 100);
-            $table->text('keterangan');
-            $table->string('tanggal', 20);
-            $table->string('dibuat_oleh', 50);
+            $table->string('status', 50) -> default('0');
+            $table->string('masuk', 200) -> nullable();
+            $table->string('keluar', 200) -> nullable();
+            $table->string('kotak', 200) -> nullable();
+            $table->string('kategori', 100) -> nullable();
+            $table->text('keterangan') -> nullable();
+            $table->string('tanggal', 20) -> nullable();
+            $table->string('dibuat_oleh', 50) ;
             $table->timestamps();
 
             $table->foreign('kd_karyawan')->references('kd_karyawan')->on('karyawan');

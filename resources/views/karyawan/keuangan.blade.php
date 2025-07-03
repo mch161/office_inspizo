@@ -45,13 +45,11 @@
             <tr>
                 <th>No</th>
                 <th>Jenis</th>
-                <th>Status</th>
-                <th>Masuk</th>
-                <th>Keluar</th>
                 <th>Kotak</th>
                 <th>Kategori</th>
-                <th>Keterangan</th>
+                <th>Keterangan</th> 
                 <th>Tanggal</th>
+                <th>Status</th>
                 <th width="150px">Action</th>
             </tr>
         </thead>
@@ -63,7 +61,6 @@
                     <td>{{ $keuangan->status }}</td>
                     <td>{{ $keuangan->masuk }}</td>
                     <td>{{ $keuangan->keluar }}</td>
-                    <td>{{ $keuangan->kotak }}</td>
                     <td>{{ $keuangan->kategori }}</td>
                     <td>{{ $keuangan->keterangan }}</td>
                     <td>{{ $keuangan->created_at }}</td>

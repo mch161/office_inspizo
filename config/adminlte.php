@@ -325,15 +325,40 @@ return [
         ],
         [
             'text' => 'Barang',
-            'route' => 'barang.index',
             'icon' => 'fas fa-fw fa-warehouse',
             'can' => 'access-karyawan',
+            'submenu' => [
+                [
+                    'text' => 'Barang',
+                    'route' => 'barang.index',
+                ],
+                [
+                    'text' => 'Stok',
+                    'route' => '',
+                ]
+            ]
         ],
         [
             'text' => 'Keuangan',
-            'route' => 'keuangan.index',
             'icon' => 'fas fa-fw fa-coins',
             'can' => 'access-karyawan',
+            'submenu' => [
+                [
+                    'text' => 'Keuangan',
+                    'route' => "keuangan.index",
+                    'icon' => 'fas fa-fw fa-money-bill-wave',
+                ],
+                [
+                    'text' => 'Kotak',
+                    'route' => '',
+                    'icon' => 'fas fa-fw fa-box',
+
+                ],
+                [
+                    'text' => 'Kategori',
+                    'route' => 'fas fa-fw fa-wallet'
+                ],
+            ]
         ],
         ['header' => 'labels'],
         [
