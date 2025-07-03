@@ -31,8 +31,14 @@ class KeuanganController extends Controller
         $keuangan->keterangan = $request->keterangan;
         $keuangan->save();
 
-        return redirect()->route('keuangan.index')
-            ->with('success', 'Keuangan entry created successfully.');
+        if ($keuangan) {
+            return redirect()->route('keuangan.index')
+                ->with('success', 'Keuangan berhasil dibuat.');
+        }
+        else {
+            return redirect()->route('keuangan.index')
+                ->with('error', 'Keuangan gagal dibuat.');
+        }
     }
 }
 

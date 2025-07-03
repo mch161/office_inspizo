@@ -50,6 +50,45 @@
             }
         })
     })
+    @if (session()->has('success'))
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: 'success',
+            text: '{{ session('success') }}',
+        })
+
+    @endif
+    @if (session()->has('error'))
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: 'error',
+            text: '{{ session('error') }}',
+        })
+    @endif
 </script>
 @endsection
 
@@ -65,11 +104,11 @@
             <label for="harga">Harga</label>
             <input type="number" class="form-control" id="harga" name="harga" required>
         </div>
-        <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name/>
+        <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name />
 
         <x-slot name="footerSlot">
             <x-adminlte-button theme="success" label="Simpan" type="submit" form="barangForm" />
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger"/>
+            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
         </x-slot>
     </form>
 </x-adminlte-modal>
@@ -91,7 +130,8 @@
                 <img id="current_foto_preview" src="" alt="Foto Saat Ini"
                     style="max-width: 200px; max-height: 200px; margin-bottom: 10px;">
             </div>
-            <x-adminlte-input-file name="foto" id="edit_foto" label="Upload Foto Baru (Kosongkan jika tidak ingin ganti)" placeholder="Pilih file"/>
+            <x-adminlte-input-file name="foto" id="edit_foto"
+                label="Upload Foto Baru (Kosongkan jika tidak ingin ganti)" placeholder="Pilih file" />
 
         </div>
         <x-slot name="footerSlot">

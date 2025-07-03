@@ -49,9 +49,15 @@ class BarangController extends Controller
         $barang->foto = $imageName;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
-
-        return redirect()->route('barang.index')
-            ->with('success', 'Barang created successfully.');
+        
+        if ($barang) {
+            return redirect()->route('barang.index')
+                ->with('success', 'Barang berhasil dibuat.');
+        }
+        else {
+            return redirect()->route('barang.index')
+                ->with('error', 'Barang gagal dibuat.');
+        }
     }
 
     /**
@@ -94,8 +100,14 @@ class BarangController extends Controller
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
 
-        return redirect()->route('barang.index')
-            ->with('success', 'Barang updated successfully.');
+        if ($barang) {
+            return redirect()->route('barang.index')
+                ->with('success', 'Barang berhasil diupdate.');
+        }
+        else {
+            return redirect()->route('barang.index')
+                ->with('error', 'Barang gagal diupdate.');
+        }
     }
 
     /**
@@ -105,7 +117,14 @@ class BarangController extends Controller
     {
         $barang->delete();
         File::delete(public_path('storage/images/barang/' . $barang->foto));
-        return redirect()->route('barang.index')
-            ->with('success', 'Barang deleted successfully.');
+
+        if ($barang) {
+            return redirect()->route('barang.index')
+                ->with('success', 'Barang berhasil dihapus.');
+        }
+        else {
+            return redirect()->route('barang.index')
+                ->with('error', 'Barang gagal dihapus.');
+        }
     }
 }

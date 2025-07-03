@@ -33,8 +33,14 @@ class JurnalController extends Controller
         $jurnal->dibuat_oleh = Auth::user()->nama;
         $jurnal->save();
 
-        return redirect()->route('jurnal.index')
-            ->with('success', 'Jurnal entry created successfully.');
+        if ($jurnal) {
+            return redirect()->route('jurnal.index')
+                ->with('success', 'Jurnal berhasil dibuat.');
+        }
+        else {
+            return redirect()->route('jurnal.index')
+                ->with('error', 'Jurnal gagal dibuat.');
+        }
     }
 
     public function update(Request $request, Jurnal $jurnal)
@@ -50,14 +56,26 @@ class JurnalController extends Controller
         $jurnal->isi_jurnal = $request->isi_jurnal_edit;
         $jurnal->save();
 
-        return redirect()->route('jurnal.index')
-                         ->with('success', 'Jurnal entry updated successfully.');
+        if ($jurnal) {
+            return redirect()->route('jurnal.index')
+                ->with('success', 'Jurnal berhasil diupdate.');
+        }
+        else {
+            return redirect()->route('jurnal.index')
+                ->with('error', 'Jurnal gagal diupdate.');
+        }
     }
     public function destroy(Jurnal $jurnal)
     {
         $jurnal->delete();
 
-        return redirect()->route('jurnal.index')
-            ->with('success', 'Jurnal entry deleted successfully.');
+        if ($jurnal) {
+            return redirect()->route('jurnal.index')
+                ->with('success', 'Jurnal berhasil dihapus.');
+        }
+        else {
+            return redirect()->route('jurnal.index')
+                ->with('error', 'Jurnal gagal dihapus.');
+        }
     }
 }
