@@ -331,10 +331,12 @@ return [
                 [
                     'text' => 'Barang',
                     'route' => 'barang.index',
+                    'icon' => 'fas fa-fw fa-box-open'
                 ],
                 [
                     'text' => 'Stok',
                     'route' => '',
+                    'icon' => 'fas fa-fw fa-box'
                 ]
             ]
         ],
@@ -350,12 +352,12 @@ return [
                 ],
                 [
                     'text' => 'Kotak',
-                    'route' => '',
-                    'icon' => 'fas fa-fw fa-box',
-
+                    'route' => 'keuangan.kotak',
+                    'icon' => 'fas fa-fw fa-credit-card',
                 ],
                 [
                     'text' => 'Kategori',
+                    'route' => '',
                     'icon' => 'fas fa-fw fa-wallet'
                 ],
             ]
