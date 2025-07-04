@@ -352,7 +352,7 @@ return [
                 ],
                 [
                     'text' => 'Kotak',
-                    'route' => 'keuangan.kotak',
+                    'route' => 'kotak.index',
                     'icon' => 'fas fa-fw fa-credit-card',
                 ],
                 [

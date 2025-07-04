@@ -3,18 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Keuangan;
+use App\Models\Keuangan_Kotak;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class KeuanganController extends Controller
 {
-    public function index()
-    {
-        $keuangans = Keuangan::with('karyawan')->get();
-        return view('karyawan.keuangan', [
-            "keuangans" => $keuangans
-        ]);
-    }
+public function index()
+{
+    $keuangans = Keuangan::with('karyawan')->get();
+    $kotak = Keuangan_Kotak::all();
+    return view('karyawan.keuangan.keuangan', [
+        "keuangans" => $keuangans,
+        "kotak" => $kotak
+    ]);
+}
 
     public function store(Request $request)
     {

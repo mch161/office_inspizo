@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Keuangan_Kotak;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class KotakKeuanganController extends Controller
 {
@@ -11,7 +13,10 @@ class KotakKeuanganController extends Controller
      */
     public function index()
     {
-        //
+        $kotak = Keuangan_Kotak::with('karyawan')->get();
+        return view('karyawan.keuangan.kotak', [
+            "kotak" => $kotak
+        ]);
     }
 
     /**
@@ -27,7 +32,15 @@ class KotakKeuanganController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama' => 'required|string',
+        ]);
+
+        $kotak = new Keuangan_Kotak();
+        $kotak->nama = $request->nama;
+        $kotak->dibuat_oleh = Auth::user()->nama;
+        $kotak->save();
+        return redirect()->route('kotak.index')->with('success', 'Kotak keuangan berhasil dibuat.');
     }
 
     /**
@@ -57,8 +70,17 @@ class KotakKeuanganController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Keuangan_Kotak $kotak)
     {
-        //
+        $kotak->delete();
+        
+        if ($kotak) {
+            return redirect()->route('kotak.index')
+                ->with('success', 'Kotak keuangan berhasil dihapus.');
+        }
+        else {
+            return redirect()->route('kotak.index')
+                ->with('error', 'Kotak keuangan gagal dihapus.');
+        }
     }
 }

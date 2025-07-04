@@ -31,8 +31,8 @@
                 </x-slot>
             </x-adminlte-input-date>
 
-            <x-adminlte-select name="optionsTest1">
-                <x-adminlte-options :options="['Masuk', 'Keluar']" empty-option="Select an option..." />
+            <x-adminlte-select name="kd_kotak" required>
+                <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()" empty-option="Pilih kotak..." />
             </x-adminlte-select>
 
 

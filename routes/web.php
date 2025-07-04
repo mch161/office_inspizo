@@ -20,6 +20,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('jurnal', App\Http\Controllers\JurnalController::class);
     Route::resource('barang', App\Http\Controllers\BarangController::class);
     Route::resource('keuangan', App\Http\Controllers\KeuanganController::class);
+    Route::resource('kotak', App\Http\Controllers\KotakKeuanganController::class);
 });
 
 Route::middleware(['can:access'])->group(function () {
