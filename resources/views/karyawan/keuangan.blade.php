@@ -15,8 +15,8 @@
 @endsection
 
 @section('content')
-    <x-adminlte-modal id="modalTambah" title="Tambahkan Jurnal" theme="success" icon="fas fa-clipboard" size='lg'>
-        <form action="{{ route('keuangan.store') }}" method="POST" id="jurnalForm">
+    <x-adminlte-modal id="modalTambah" title="Tambahkan Histori Keuangan" theme="success" icon="fas fa-clipboard" size='lg'>
+        <form action="{{ route('keuangan.store') }}" method="POST" id="keuanganForm">
             @csrf
             {{-- Date picker --}}
             @php
@@ -31,13 +31,19 @@
                 </x-slot>
             </x-adminlte-input-date>
 
-            <x-adminlte-select name="optionsTest1">
+            <x-adminlte-select name="jenis" label="jenis">
                 <x-adminlte-options :options="['Masuk', 'Keluar']" empty-option="Select an option..." />
             </x-adminlte-select>
 
+            <x-adminlte-textarea name="isi_jurnal" label="Keterangan" rows=5 igroup-size="sm"
+                placeholder="Tuliskan isi jurnal di sini..." required>
+                <x-slot name="prependSlot">
+                    <div class="input-group-text bg-dark">
+                        <i class="fas fa-lg fa-file-alt text-warning"></i>
+                    </div>
+                </x-slot>
+            </x-adminlte-textarea>
 
-
-            
             <x-slot name="footerSlot">
                 <x-adminlte-button theme="success" label="Simpan" type="submit" form="jurnalForm" />
                 <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
