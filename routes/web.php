@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\KaryawanLoginController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\JurnalController;
-use Illuminate\Support\Facades\App;
 
 Route::get('/', function () {
     return view('welcome');

@@ -29,12 +29,12 @@
     </form>
 </x-adminlte-modal>
 
-<table id="KotakTable">
+<table id="KotakTable" class="table table-bordered table-striped">
     <thead>
-        <tr>
-            <th>No</th>
+        <tr class="table-primary">
+            <th width="5%">No</th>
             <th>Nama Kotak</th>
-            <th>Action</th>
+            <th width="150px" rigth>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -63,6 +63,24 @@
 <script>
     $(document).ready(function () {
         $('#KotakTable').DataTable();
+    });
+    $('#KotakTable').on('click', '.tombol-hapus', function (e) {
+        e.preventDefault();
+        let form = $(this).closest('form');
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        })
     });
     @if (session()->has('success'))
 

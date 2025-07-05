@@ -3,7 +3,7 @@
 @section('title', 'Jurnal')
 
 @section('plugins.Sweetalert2', true)
-@section('plugins.Summernote', true) {{-- Make sure Summernote plugin is enabled --}}
+@section('plugins.Summernote', true)
 
 @section('content_header')
 <h1>Jurnal</h1>
@@ -15,7 +15,6 @@
 
 @section('content')
 
-{{-- MODAL TAMBAH --}}
 <x-adminlte-modal id="modalTambah" title="Tambahkan Jurnal" theme="success" icon="fas fa-clipboard" size='lg'>
     <form action="{{ route('jurnal.store') }}" method="POST" id="jurnalForm">
         @csrf
@@ -35,7 +34,6 @@
             </x-adminlte-input-date>
         </div>
 
-        {{-- FIX 1: Gave the "Add" textarea a unique ID --}}
         <x-adminlte-textarea name="isi_jurnal" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
 
         <x-slot name="footerSlot">
@@ -45,7 +43,6 @@
     </form>
 </x-adminlte-modal>
 
-{{-- MODAL EDIT --}}
 <x-adminlte-modal id="modalEdit" title="Edit Jurnal" theme="primary" icon="fas fa-edit" size='lg'>
     <form method="POST" id="form-edit-jurnal">
         @csrf
@@ -66,7 +63,6 @@
             </x-adminlte-input-date>
         </div>
 
-        {{-- FIX 1: Gave the "Edit" textarea a unique ID --}}
         <x-adminlte-textarea name="isi_jurnal" id="summernote_edit" label="Keterangan"></x-adminlte-textarea>
 
         <x-slot name="footerSlot">
@@ -99,7 +95,6 @@
                 <td>{{ $jurnal->dibuat_oleh }}</td>
                 <td>{!! $jurnal->isi_jurnal !!}</td>
                 <td>
-                    {{-- The data-isi_jurnal attribute now holds the raw HTML --}}
                     <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
                         data-id="{{ $jurnal->kd_jurnal }}"
                         data-tanggal="{{ $jurnal->tanggal }}"
@@ -124,10 +119,7 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        // Initialize DataTables
         $('#JurnalTable').DataTable();
-
-        // FIX 2: Define Summernote options once
         var summernoteOptions = {
             height: 250,
             placeholder: 'Masukkan keterangan jurnal di sini...',
@@ -142,34 +134,27 @@
             ]
         };
 
-        // FIX 2: Initialize both Summernote editors with their unique IDs
         $('#summernote_add').summernote(summernoteOptions);
         $('#summernote_edit').summernote(summernoteOptions);
     });
-
-    // FIX 3: Simplified and corrected Edit button click handler
+r
     $('#JurnalTable').on('click', '.tombol-edit', function () {
         let id = $(this).data('id');
         let tanggal = $(this).data('tanggal');
         let jam = $(this).data('jam');
         let isi_jurnal = $(this).data('isi_jurnal');
 
-        // Populate the simple input fields
         $('#tanggal_edit').val(tanggal);
         $('#jam_edit').val(jam);
 
-        // Use the Summernote 'code' method to set its content
         $('#summernote_edit').summernote('code', isi_jurnal);
 
-        // Set the form's action attribute for the update
         let form = $('#form-edit-jurnal');
         let updateUrl = "{{ route('jurnal.update', ':id') }}";
         updateUrl = updateUrl.replace(':id', id);
         form.attr('action', updateUrl);
     });
 
-
-    // Delete confirmation script
     $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
         e.preventDefault();
         let form = $(this).closest('form');
@@ -189,7 +174,6 @@
         })
     });
 
-    // Toastr notifications for success/error messages
     @if (session()->has('success'))
         const Toast = Swal.mixin({
             toast: true,

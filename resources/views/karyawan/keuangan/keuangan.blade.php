@@ -54,17 +54,17 @@
             </x-slot>
         </form>
     </x-adminlte-modal>
-    <table id="KeuanganTable">
+    <table id="KeuanganTable" class="table table-bordered table-striped">
         <thead>
-            <tr>
-                <th>No</th>
+            <tr class="table-primary">
+                <th width="5%">No</th>
                 <th>Jenis</th>
                 <th>Kotak</th>
                 <th>Kategori</th>
                 <th>Keterangan</th>
                 <th>Tanggal</th>
                 <th>Status</th>
-                <th width="150px">Action</th>
+                <th width="150px" rigth>Action</th>
             </tr>
         </thead>
         <tbody>
