@@ -23,15 +23,19 @@ public function index()
     {
         $request->validate([
             'tanggal' => 'required|date',
-            'jumlah' => 'required|numeric',
+            'jenis' => 'required',
+            'kotak' => 'required',
+            'jumlah' => 'numeric',
             'keterangan' => 'required|string',
         ]);
 
         $keuangan = new Keuangan();
         $keuangan->kd_karyawan = Auth::id();
         $keuangan->tanggal = $request->tanggal;
+        $keuangan->kd_kotak = $request->kotak;
         $keuangan->jumlah = $request->jumlah;
         $keuangan->keterangan = $request->keterangan;
+        $keuangan->dibuat_oleh = Auth::user()->nama;
         $keuangan->save();
 
         if ($keuangan) {

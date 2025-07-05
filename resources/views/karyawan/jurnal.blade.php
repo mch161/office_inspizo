@@ -3,9 +3,10 @@
 @section('title', 'Jurnal')
 
 @section('plugins.Sweetalert2', true)
+@section('plugins.Summernote', true) {{-- Make sure Summernote plugin is enabled --}}
 
 @section('content_header')
-    <h1>Jurnal</h1>
+<h1>Jurnal</h1>
 @stop
 
 @section('css')
@@ -14,45 +15,28 @@
 
 @section('content')
 
+{{-- MODAL TAMBAH --}}
 <x-adminlte-modal id="modalTambah" title="Tambahkan Jurnal" theme="success" icon="fas fa-clipboard" size='lg'>
     <form action="{{ route('jurnal.store') }}" method="POST" id="jurnalForm">
         @csrf
         <div class="row">
-            {{-- Date picker --}}
-            @php
-                $config = ['format' => 'YYYY-MM-DD'];
-            @endphp
-            <x-adminlte-input-date name="tanggal" :config="$config" placeholder="Pilih tanggal..." label="Tanggal"
-                igroup-size="md" required>
+            @php $config = ['format' => 'YYYY-MM-DD']; @endphp
+            <x-adminlte-input-date name="tanggal" :config="$config" placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
                 <x-slot name="appendSlot">
-                    <div class="input-group-text bg-dark">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
+                    <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
 
-            {{-- Time picker --}}
-            @php
-                $config = ['format' => 'HH:mm'];
-            @endphp
-            <x-adminlte-input-date name="jam" :config="$config" placeholder="Pilih jam..." label="Jam" igroup-size="md"
-                required>
+            @php $config = ['format' => 'HH:mm']; @endphp
+            <x-adminlte-input-date name="jam" :config="$config" placeholder="Pilih jam..." label="Jam" igroup-size="md" required>
                 <x-slot name="appendSlot">
-                    <div class="input-group-text bg-dark">
-                        <i class="fas fa-clock"></i>
-                    </div>
+                    <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
         </div>
 
-        <x-adminlte-textarea name="isi_jurnal" label="Isi Jurnal" rows=5 igroup-size="sm"
-            placeholder="Tuliskan isi jurnal di sini..." required>
-            <x-slot name="prependSlot">
-                <div class="input-group-text bg-dark">
-                    <i class="fas fa-lg fa-file-alt text-warning"></i>
-                </div>
-            </x-slot>
-        </x-adminlte-textarea>
+        {{-- FIX 1: Gave the "Add" textarea a unique ID --}}
+        <x-adminlte-textarea name="isi_jurnal" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
 
         <x-slot name="footerSlot">
             <x-adminlte-button theme="success" label="Simpan" type="submit" form="jurnalForm" />
@@ -61,56 +45,39 @@
     </form>
 </x-adminlte-modal>
 
+{{-- MODAL EDIT --}}
 <x-adminlte-modal id="modalEdit" title="Edit Jurnal" theme="primary" icon="fas fa-edit" size='lg'>
     <form method="POST" id="form-edit-jurnal">
         @csrf
         @method('PUT')
         <div class="row">
-            {{-- Date picker --}}
-            @php
-                $config = ['format' => 'YYYY-MM-DD'];
-            @endphp
-            <x-adminlte-input-date name="tanggal_edit" id="tanggal_edit" :config="$config" placeholder="Pilih tanggal..." label="Tanggal"
-                igroup-size="md" required>
+            @php $config = ['format' => 'YYYY-MM-DD']; @endphp
+            <x-adminlte-input-date name="tanggal" id="tanggal_edit" :config="$config" placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
                 <x-slot name="appendSlot">
-                    <div class="input-group-text bg-dark">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
+                    <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
 
-            {{-- Time picker --}}
-            @php
-                $config = ['format' => 'HH:mm'];
-            @endphp
-            <x-adminlte-input-date name="jam_edit" id="jam_edit" :config="$config" placeholder="Pilih jam..." label="Jam" igroup-size="md"
-                required>
+            @php $config = ['format' => 'HH:mm']; @endphp
+            <x-adminlte-input-date name="jam" id="jam_edit" :config="$config" placeholder="Pilih jam..." label="Jam" igroup-size="md" required>
                 <x-slot name="appendSlot">
-                    <div class="input-group-text bg-dark">
-                        <i class="fas fa-clock"></i>
-                    </div>
+                    <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
         </div>
 
-        <x-adminlte-textarea name="isi_jurnal_edit" id="isi_jurnal_edit" label="Isi Jurnal" rows=5 igroup-size="sm"
-            placeholder="Tuliskan isi jurnal di sini..." required>
-            <x-slot name="prependSlot">
-                <div class="input-group-text bg-dark">
-                    <i class="fas fa-lg fa-file-alt text-warning"></i>
-                </div>
-            </x-slot>
-        </x-adminlte-textarea>
+        {{-- FIX 1: Gave the "Edit" textarea a unique ID --}}
+        <x-adminlte-textarea name="isi_jurnal" id="summernote_edit" label="Keterangan"></x-adminlte-textarea>
 
         <x-slot name="footerSlot">
-            <x-adminlte-button theme="primary" label="Edit" type="submit" form="form-edit-jurnal"/>
+            <x-adminlte-button theme="primary" label="Simpan Perubahan" type="submit" form="form-edit-jurnal" />
             <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
         </x-slot>
     </form>
 </x-adminlte-modal>
 
-<x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
-    data-target="#modalTambah" />
+
+<x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal" data-target="#modalTambah" />
 
 <table id="JurnalTable" class="display">
     <thead>
@@ -130,20 +97,21 @@
                 <td>{{ $jurnal->tanggal }}</td>
                 <td>{{ $jurnal->jam }}</td>
                 <td>{{ $jurnal->dibuat_oleh }}</td>
-                <td>{{ $jurnal->isi_jurnal }}</td>
+                <td>{!! $jurnal->isi_jurnal !!}</td>
                 <td>
+                    {{-- The data-isi_jurnal attribute now holds the raw HTML --}}
                     <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
-                        data-id="{{ $jurnal->kd_jurnal }}" data-tanggal="{{ $jurnal->tanggal }}"
-                        data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
+                        data-id="{{ $jurnal->kd_jurnal }}"
+                        data-tanggal="{{ $jurnal->tanggal }}"
+                        data-jam="{{ $jurnal->jam }}"
+                        data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
                         Edit
                     </button>
 
                     <form action="{{ route('jurnal.destroy', $jurnal->kd_jurnal) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm tombol-hapus">
-                            Hapus
-                        </button>
+                        <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
                     </form>
                 </td>
             </tr>
@@ -156,25 +124,52 @@
 @section('js')
 <script>
     $(document).ready(function () {
+        // Initialize DataTables
         $('#JurnalTable').DataTable();
+
+        // FIX 2: Define Summernote options once
+        var summernoteOptions = {
+            height: 250,
+            placeholder: 'Masukkan keterangan jurnal di sini...',
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        };
+
+        // FIX 2: Initialize both Summernote editors with their unique IDs
+        $('#summernote_add').summernote(summernoteOptions);
+        $('#summernote_edit').summernote(summernoteOptions);
     });
 
-    $('.tombol-edit').on('click', function () {
+    // FIX 3: Simplified and corrected Edit button click handler
+    $('#JurnalTable').on('click', '.tombol-edit', function () {
         let id = $(this).data('id');
         let tanggal = $(this).data('tanggal');
         let jam = $(this).data('jam');
         let isi_jurnal = $(this).data('isi_jurnal');
 
+        // Populate the simple input fields
         $('#tanggal_edit').val(tanggal);
         $('#jam_edit').val(jam);
-        $('#isi_jurnal_edit').val(isi_jurnal);
 
+        // Use the Summernote 'code' method to set its content
+        $('#summernote_edit').summernote('code', isi_jurnal);
+
+        // Set the form's action attribute for the update
         let form = $('#form-edit-jurnal');
         let updateUrl = "{{ route('jurnal.update', ':id') }}";
         updateUrl = updateUrl.replace(':id', id);
         form.attr('action', updateUrl);
     });
 
+
+    // Delete confirmation script
     $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
         e.preventDefault();
         let form = $(this).closest('form');
@@ -193,8 +188,9 @@
             }
         })
     });
-        @if (session()->has('success'))
 
+    // Toastr notifications for success/error messages
+    @if (session()->has('success'))
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -206,15 +202,12 @@
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
         });
-
         Toast.fire({
             icon: 'success',
             text: '{{ session('success') }}',
         })
-
     @endif
-        @if (session()->has('error'))
-
+    @if (session()->has('error'))
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -226,7 +219,6 @@
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
         });
-
         Toast.fire({
             icon: 'error',
             text: '{{ session('error') }}',

@@ -31,8 +31,12 @@
                 </x-slot>
             </x-adminlte-input-date>
 
-            <x-adminlte-select name="optionsTest1">
+            <x-adminlte-select name="jenis" label="Jenis">
                 <x-adminlte-options :options="['Masuk', 'Keluar']" empty-option="Select an option..." />
+            </x-adminlte-select>
+
+            <x-adminlte-select name="kotak" label="Kotak">
+                <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()" empty-option="Select an option..." />
             </x-adminlte-select>
 
             <x-adminlte-textarea name="isi_jurnal" label="Keterangan" rows=5 igroup-size="sm"
@@ -45,7 +49,7 @@
             </x-adminlte-textarea>
 
             <x-slot name="footerSlot">
-                <x-adminlte-button theme="success" label="Simpan" type="submit" form="jurnalForm" />
+                <x-adminlte-button theme="success" label="Simpan" type="submit" form="keuanganForm" />
                 <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
             </x-slot>
         </form>
@@ -68,12 +72,11 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $keuangan->jenis }}</td>
-                    <td>{{ $keuangan->status }}</td>
-                    <td>{{ $keuangan->masuk }}</td>
-                    <td>{{ $keuangan->keluar }}</td>
+                    <td>{{ $keuangan->kotak->nama }}</td>
                     <td>{{ $keuangan->kategori }}</td>
                     <td>{{ $keuangan->keterangan }}</td>
                     <td>{{ $keuangan->created_at }}</td>
+                    <td>{{ $keuangan->status }}</td>
                     <td>
                         <form action="{{ route('keuangan.destroy', $keuangan->kd_keuangan) }}" method="POST"
                             style="display:inline;">
