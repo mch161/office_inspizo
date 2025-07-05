@@ -137,7 +137,7 @@
         $('#summernote_add').summernote(summernoteOptions);
         $('#summernote_edit').summernote(summernoteOptions);
     });
-r
+
     $('#JurnalTable').on('click', '.tombol-edit', function () {
         let id = $(this).data('id');
         let tanggal = $(this).data('tanggal');
