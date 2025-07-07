@@ -14,7 +14,7 @@ class KategoriKeuanganController extends Controller
     {
         $kategori = Keuangan_Kategori::with('karyawan')->get();
         return view('karyawan.keuangan.kategori', [
-            "keuangan" => $kategori,
+            "kategori" => $kategori,
         ]);
     }
 
