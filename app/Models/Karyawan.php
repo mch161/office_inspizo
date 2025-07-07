@@ -62,7 +62,12 @@ class Karyawan extends Authenticatable
 
     public function canCreateChats(): bool
     {
-        return true; // Adjust this logic as needed, e.g., based on user roles or permissions
+        return true;
+    }
+
+    public function canCreateGroups(): bool
+    {
+        return true;
     }
 
     protected $primaryKey = 'kd_karyawan';
