@@ -16,20 +16,10 @@
         <div class="text-center">
             <h1 class="text-4xl font-bold mb-4">Inzpizo Office</h1>
             <p class="text-lg text-gray-600">this is app for Inspizo Office management  </p>
-            @if (Auth::guard('karyawan')->check())
-                <script>window.location.href = "{{ route('dashboard') }}";</script>
-            @else
-
                 @if (Route::has('login'))
                 <a href="{{ route('login') }}"
                     class="mt-4 inline-block px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Login</a>
                 @endif
-
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}"
-                        class="mt-4 inline-block px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600">Register</a>
-                @endif
-            @endif
         </div>
     </div>
 </body>
