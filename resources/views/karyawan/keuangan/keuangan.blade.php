@@ -100,7 +100,9 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            $('#KeuanganTable').DataTable();
+            $('#KeuanganTable').DataTable({
+                scrollX: true
+            });
         });
         @if (session()->has('success'))
 

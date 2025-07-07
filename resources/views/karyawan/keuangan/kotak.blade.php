@@ -62,7 +62,9 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#KotakTable').DataTable();
+        $('#KotakTable').DataTable({
+            scrollX: true
+        });
     });
     $('#KotakTable').on('click', '.tombol-hapus', function (e) {
         e.preventDefault();

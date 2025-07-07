@@ -119,7 +119,9 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#JurnalTable').DataTable();
+        $('#JurnalTable').DataTable({
+            scrollX: true
+        });
         var summernoteOptions = {
             height: 250,
             placeholder: 'Masukkan keterangan jurnal di sini...',

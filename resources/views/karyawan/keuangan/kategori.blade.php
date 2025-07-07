@@ -62,7 +62,9 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#KotakTable').DataTable();
+        $('#KotakTable').DataTable({
+            scrollX: true
+        });
     });
     @if (session()->has('success'))
 
