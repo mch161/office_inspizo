@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Keuangan_Kategori;
 use Illuminate\Http\Request;
 
 class KategoriKeuanganController extends Controller
@@ -11,7 +12,10 @@ class KategoriKeuanganController extends Controller
      */
     public function index()
     {
-        //
+        $kategori = Keuangan_Kategori::with('karyawan')->get();
+        return view('karyawan.keuangan.kategori', [
+            "keuangan" => $kategori,
+        ]);
     }
 
     /**

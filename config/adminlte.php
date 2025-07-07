@@ -357,7 +357,7 @@ return [
                 ],
                 [
                     'text' => 'Kategori',
-                    'route' => '',
+                    'route' => 'kategori.index',
                     'icon' => 'fas fa-fw fa-wallet'
                 ],
             ]
