@@ -31,9 +31,13 @@
                 </x-slot>
             </x-adminlte-input-date>
 
-            <x-adminlte-select name="jenis" label="Jenis">
-                <x-adminlte-options :options="['Masuk', 'Keluar']" empty-option="Select an option..." />
-            </x-adminlte-select>
+            <x-adminlte-input name="jumlah pemasukan" label="Jumlah" placeholder="Masukkan jumlah..." igroup-size="md" required>
+                <x-slot name="prependSlot">
+                    <div class="input-group-text">
+                        <i class="fa-solid fa-money-bill-trend-up"></i>
+                    </div>
+                </x-slot>
+            </x-adminlte-input>
 
             <x-adminlte-select name="kotak" label="Kotak">
                 <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()" empty-option="Select an option..." />

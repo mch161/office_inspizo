@@ -133,7 +133,7 @@ return [
     |
     */
 
-    'usermenu_enabled' => true,
+    'usermenu_enabled' => false,
     'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
@@ -258,7 +258,7 @@ return [
 
     'use_route_url' => false,
     'dashboard_url' => '/',
-    'logout_url' => 'logout',
+    'logout_url' => null,
     'login_url' => 'login',
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
