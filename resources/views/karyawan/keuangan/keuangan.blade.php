@@ -5,9 +5,6 @@
 @section('content_header')
 <h1>Keuangan</h1>
 <div class="d-flex justify-content-end">
-    <x-adminlte-button label="Tambahkan Pengeluaran" class="mb-2 bg-blue" data-toggle="modal"
-        data-target="#modalKeluar" />
-
     <x-adminlte-button label="Tambahkan Pemasukan" class="mb-2 bg-blue" data-toggle="modal"
         data-target="#modalTambah" />
 </div>
@@ -20,7 +17,7 @@
 
 @section('content')
 <x-adminlte-modal id="modalTambah" title="Tambahkan Histori Keuangan" theme="success" icon="fas fa-clipboard" size='lg'>
-    <form action="{{ route('keuangan.store') }}" method="POST" id="modalTambah">
+    <form action="{{ route('keuangan.store') }}" method="POST" id="formTambah">
         @csrf
         {{-- Date picker --}}
         @php
@@ -43,54 +40,9 @@
             </x-slot>
         </x-adminlte-input>
 
-        <x-adminlte-select name="kotak" label="Kotak">
-            <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()"
-                empty-option="Select an option..." />
+        <x-adminlte-select name="jenis" label="Jenis">
+            <x-adminlte-options :options="['Masuk' => 'Masuk', 'Keluar' => 'Keluar']" empty-option="Select an option..." />
         </x-adminlte-select>
-
-        <x-adminlte-select name="kategori" label="Kategori">
-            <x-adminlte-options :options="$kategori->pluck('nama', 'kd_kategori')->toArray()"
-                empty-option="Select an option..." />
-        </x-adminlte-select>
-
-        <x-adminlte-textarea name="isi_jurnal" label="Keterangan" rows=5 igroup-size="sm"
-            placeholder="Tuliskan isi jurnal di sini..." required>
-            <x-slot name="prependSlot">
-                <div class="input-group-text bg-dark">
-                    <i class="fas fa-lg fa-file-alt text-warning"></i>
-                </div>
-            </x-slot>
-        </x-adminlte-textarea>
-
-        <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Simpan" type="submit" form="keuanganForm" />
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
-        </x-slot>
-    </form>
-</x-adminlte-modal>
-<x-adminlte-modal id="modalKeluar" title="Tambahkan Histori Keuangan" theme="success" icon="fas fa-clipboard" size='lg'>
-    <form action="{{ route('keuangan.store') }}" method="POST" id="ModalKeluar">
-        @csrf
-        {{-- Date picker --}}
-        @php
-            $config = ['format' => 'YYYY-MM-DD'];
-        @endphp
-        <x-adminlte-input-date name="tanggal" :config="$config" placeholder="Pilih tanggal..." label="Tanggal"
-            igroup-size="md" required>
-            <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark">
-                    <i class="fas fa-calendar-day"></i>
-                </div>
-            </x-slot>
-        </x-adminlte-input-date>
-
-        <x-adminlte-input name="masuk" label="Uang Keluar" placeholder="Masukkan jumlah..." igroup-size="md" required>
-            <x-slot name="prependSlot">
-                <div class="input-group-text">
-                    <i class="fa-solid fa-money-bill-trend-up"></i>
-                </div>
-            </x-slot>
-        </x-adminlte-input>
 
         <x-adminlte-select name="kotak" label="Kotak">
             <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()"
@@ -112,11 +64,13 @@
         </x-adminlte-textarea>
 
         <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Simpan" type="submit" form="keuanganForm" />
+            <x-adminlte-button theme="success" label="Simpan" type="submit" form="formTambah" />
             <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
         </x-slot>
     </form>
 </x-adminlte-modal>
+
+
 
 <table id="KeuanganTable" class="table table-bordered table-striped">
     <thead>

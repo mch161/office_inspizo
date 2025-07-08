@@ -37,6 +37,7 @@ public function index()
         $keuangan->kd_karyawan = Auth::id();
         $keuangan->tanggal = $request->tanggal;
         $keuangan->kd_kotak = $request->kotak;
+        $keuangan->jenis = $request->jenis;
         $keuangan->kd_kategori = $request->kategori;
         $keuangan->jumlah = $request->jumlah;
         $keuangan->keterangan = $request->keterangan;
