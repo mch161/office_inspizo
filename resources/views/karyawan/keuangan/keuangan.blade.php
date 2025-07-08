@@ -43,6 +43,10 @@
                 <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()" empty-option="Select an option..." />
             </x-adminlte-select>
 
+                        <x-adminlte-select name="kategori" label="katgori">
+                <x-adminlte-options :options="$kategori->pluck('nama', 'kd_kategori')->toArray()" empty-option="Select an option..." />
+            </x-adminlte-select>
+
             <x-adminlte-textarea name="isi_jurnal" label="Keterangan" rows=5 igroup-size="sm"
                 placeholder="Tuliskan isi jurnal di sini..." required>
                 <x-slot name="prependSlot">
