@@ -301,8 +301,8 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'type' => 'navbar-search',
-            'text' => 'search',
+            'text' => 'Chats',
+            'icon' => 'fas fa-fw fa-comments',
             'topnav_right' => true,
         ],
         [
