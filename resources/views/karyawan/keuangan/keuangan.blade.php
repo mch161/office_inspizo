@@ -85,7 +85,7 @@
             </x-slot>
         </x-adminlte-input-date>
 
-        <x-adminlte-input name="masuk" label="Uang Keluar" placeholder="Masukkan jumlah..." igroup-size="md" required>
+        <x-adminlte-input name="keluar" label="Uang Keluar" placeholder="Masukkan jumlah..." igroup-size="md" required>
             <x-slot name="prependSlot">
                 <div class="input-group-text">
                     <i class="fa-solid fa-money-bill-trend-up"></i>
@@ -140,7 +140,7 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $keuangan->jenis }}</td>
-                <td>{{ $keuangan->masuk - $keuangan->keluar }}</td>
+                <td>{{ number_format($keuangan->masuk - $keuangan->keluar) }}</td>
                 <td>{{ $keuangan->kotak->nama }}</td>
                 <td>{{ $keuangan->kategori->nama }}</td>
                 <td>{{ $keuangan->keterangan }}</td>
@@ -166,7 +166,7 @@
 <script>
     $(document).ready(function () {
         $('#KeuanganTable').DataTable({
-            scrollX: true
+            scrollX: true,
             paging: false,
             scrollCollapse: true,
             scrollY: '200px'
