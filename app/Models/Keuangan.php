@@ -30,4 +30,9 @@ class Keuangan extends Model
         return $this->belongsTo(Keuangan_Kotak::class, 'kd_kotak', 'kd_kotak');
     }
 
+    public function kategori()
+    {
+        return $this->belongsTo(Keuangan_Kategori::class, 'kd_kategori', 'kd_kategori');
+    }
+
 }

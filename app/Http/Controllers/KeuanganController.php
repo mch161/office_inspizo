@@ -29,16 +29,19 @@ public function index()
             'jenis' => 'required',
             'kotak' => 'required',
             'kategori' => 'required',
-            'jumlah' => 'numeric',
+            'masuk' => 'numeric',
+            'keluar' => 'numeric',
             'keterangan' => 'required|string',
         ]);
 
         $keuangan = new Keuangan();
         $keuangan->kd_karyawan = Auth::id();
         $keuangan->tanggal = $request->tanggal;
+        $keuangan->jenis = $request->jenis;
         $keuangan->kd_kotak = $request->kotak;
         $keuangan->kd_kategori = $request->kategori;
-        $keuangan->jumlah = $request->jumlah;
+        $keuangan->masuk = $request->input('masuk', 0);
+        $keuangan->keluar = $request->input('keluar', 0);
         $keuangan->keterangan = $request->keterangan;
         $keuangan->dibuat_oleh = Auth::user()->nama;
         $keuangan->save();
@@ -50,6 +53,20 @@ public function index()
         else {
             return redirect()->route('keuangan.index')
                 ->with('error', 'Keuangan gagal dibuat.');
+        }
+    }
+
+    public function destroy(Keuangan $keuangan)
+    {
+        $keuangan->delete();
+
+        if ($keuangan) {
+            return redirect()->route('keuangan.index')
+                ->with('success', 'Keuangan berhasil dihapus.');
+        }
+        else {
+            return redirect()->route('keuangan.index')
+                ->with('error', 'Keuangan gagal dihapus.');
         }
     }
 }

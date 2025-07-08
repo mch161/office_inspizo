@@ -2,27 +2,28 @@
 
 @section('title', 'Keuangan')
 
+@section('plugins.Sweetalert2', true)
+
 @section('content_header')
 <h1>Keuangan</h1>
 <div class="d-flex justify-content-end">
     <x-adminlte-button label="Tambahkan Pengeluaran" class="mb-2 bg-blue" data-toggle="modal"
         data-target="#modalKeluar" />
 
-    <x-adminlte-button label="Tambahkan Pemasukan" class="mb-2 bg-blue" data-toggle="modal"
-        data-target="#modalTambah" />
+    <x-adminlte-button label="Tambahkan Pemasukan" class="mb-2 bg-blue" data-toggle="modal" data-target="#modalMasuk" />
 </div>
 
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
 @endsection
 
 @section('content')
-<x-adminlte-modal id="modalTambah" title="Tambahkan Histori Keuangan" theme="success" icon="fas fa-clipboard" size='lg'>
-    <form action="{{ route('keuangan.store') }}" method="POST" id="modalTambah">
+<x-adminlte-modal id="modalMasuk" title="Tambahkan Histori Keuangan" theme="success" icon="fas fa-clipboard" size='lg'>
+    <form action="{{ route('keuangan.store') }}" method="POST" id="modalMasukForm">
         @csrf
-        {{-- Date picker --}}
+        <input type="hidden" name="jenis" value="Masuk">
         @php
             $config = ['format' => 'YYYY-MM-DD'];
         @endphp
@@ -53,8 +54,8 @@
                 empty-option="Select an option..." />
         </x-adminlte-select>
 
-        <x-adminlte-textarea name="isi_jurnal" label="Keterangan" rows=5 igroup-size="sm"
-            placeholder="Tuliskan isi jurnal di sini..." required>
+        <x-adminlte-textarea name="keterangan" label="Keterangan" rows=5 igroup-size="sm"
+            placeholder="Tuliskan isi keterangan di sini..." required>
             <x-slot name="prependSlot">
                 <div class="input-group-text bg-dark">
                     <i class="fas fa-lg fa-file-alt text-warning"></i>
@@ -63,15 +64,15 @@
         </x-adminlte-textarea>
 
         <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Simpan" type="submit" form="keuanganForm" />
+            <x-adminlte-button theme="success" label="Simpan" type="submit" form="modalMasukForm" />
             <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
         </x-slot>
     </form>
 </x-adminlte-modal>
 <x-adminlte-modal id="modalKeluar" title="Tambahkan Histori Keuangan" theme="success" icon="fas fa-clipboard" size='lg'>
-    <form action="{{ route('keuangan.store') }}" method="POST" id="ModalKeluar">
+    <form action="{{ route('keuangan.store') }}" method="POST" id="modalKeluarForm">
         @csrf
-        {{-- Date picker --}}
+        <input type="hidden" name="jenis" value="Keluar">
         @php
             $config = ['format' => 'YYYY-MM-DD'];
         @endphp
@@ -102,8 +103,8 @@
                 empty-option="Select an option..." />
         </x-adminlte-select>
 
-        <x-adminlte-textarea name="isi_jurnal" label="Keterangan" rows=5 igroup-size="sm"
-            placeholder="Tuliskan isi jurnal di sini..." required>
+        <x-adminlte-textarea name="keterangan" label="Keterangan" rows=5 igroup-size="sm"
+            placeholder="Tuliskan isi keterangan di sini..." required>
             <x-slot name="prependSlot">
                 <div class="input-group-text bg-dark">
                     <i class="fas fa-lg fa-file-alt text-warning"></i>
@@ -112,7 +113,7 @@
         </x-adminlte-textarea>
 
         <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Simpan" type="submit" form="keuanganForm" />
+            <x-adminlte-button theme="success" label="Simpan" type="submit" form="modalKeluarForm" />
             <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
         </x-slot>
     </form>
@@ -123,6 +124,7 @@
         <tr class="table-primary">
             <th width="5%">No</th>
             <th>Jenis</th>
+            <th>Jumlah</th>
             <th>Kotak</th>
             <th>Kategori</th>
             <th>Keterangan</th>
@@ -136,8 +138,9 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $keuangan->jenis }}</td>
+                <td>{{ $keuangan->masuk - $keuangan->keluar }}</td>
                 <td>{{ $keuangan->kotak->nama }}</td>
-                <td>{{ $keuangan->kategori }}</td>
+                <td>{{ $keuangan->kategori->nama }}</td>
                 <td>{{ $keuangan->keterangan }}</td>
                 <td>{{ $keuangan->created_at }}</td>
                 <td>{{ $keuangan->status }}</td>
@@ -158,49 +161,70 @@
 @stop
 
 @section('js')
-    <script>
-        $(document).ready(function () {
-            $('#KeuanganTable').DataTable({
-                scrollX: true
-            });
+<script>
+    $(document).ready(function () {
+        $('#KeuanganTable').DataTable({
+            scrollX: true
+            paging: false,
+            scrollCollapse: true,
+            scrollY: '200px'
         });
-        @if (session()->has('success'))
+    });
+    $('#keuanganTable').on('click', '.tombol-hapus', function (e) {
+        e.preventDefault();
+        let form = $(this).closest('form');
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        })
+    });
+    @if (session()->has('success'))
 
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
 
-            Toast.fire({
-                icon: 'success',
-                text: '{{ session('success') }}',
-            })
-        @endif
-            @if (session()->has('error'))
+        Toast.fire({
+            icon: 'success',
+            text: '{{ session('success') }}',
+        })
+    @endif
+    @if (session()->has('error'))
 
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                });
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
 
-                Toast.fire({
-                    icon: 'error',
-                    text: '{{ session('error') }}',
-                })
-            @endif
-    </script>
+        Toast.fire({
+            icon: 'error',
+            text: '{{ session('error') }}',
+        })
+    @endif
+</script>
 @endsection

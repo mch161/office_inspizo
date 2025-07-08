@@ -29,8 +29,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('kd_karyawan');
             $table->string('jenis', 100);
             $table->string('status', 50)->default('0');
-            $table->string('masuk', 200)->nullable();
-            $table->string('keluar', 200)->nullable();
+            $table->string('masuk', 200)->default('0');
+            $table->string('keluar', 200)->default('0');
 
             $table->unsignedBigInteger('kd_kotak')->nullable();
             $table->unsignedBigInteger('kd_kategori')->nullable();
