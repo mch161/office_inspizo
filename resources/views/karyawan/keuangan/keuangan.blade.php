@@ -48,7 +48,7 @@
                 empty-option="Select an option..." />
         </x-adminlte-select>
 
-        <x-adminlte-select name="kategori" label="katgori">
+        <x-adminlte-select name="kategori" label="Kategori">
             <x-adminlte-options :options="$kategori->pluck('nama', 'kd_kategori')->toArray()"
                 empty-option="Select an option..." />
         </x-adminlte-select>
@@ -97,7 +97,7 @@
                 empty-option="Select an option..." />
         </x-adminlte-select>
 
-        <x-adminlte-select name="kategori" label="katgori">
+        <x-adminlte-select name="kategori" label="Kategori">
             <x-adminlte-options :options="$kategori->pluck('nama', 'kd_kategori')->toArray()"
                 empty-option="Select an option..." />
         </x-adminlte-select>
