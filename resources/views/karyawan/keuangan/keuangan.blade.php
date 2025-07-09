@@ -144,7 +144,8 @@
         <tr class="table-primary">
             <th width="5%">No</th>
             <th>Jenis</th>
-            <th>Jumlah</th>
+            <th>Masuk</th>
+            <th>Keluar</th>
             <th>Kotak</th>
             <th>Kategori</th>
             <th>Keterangan</th>
@@ -158,7 +159,8 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $keuangan->jenis }}</td>
-                <td>{{ number_format($keuangan->masuk - $keuangan->keluar) }}</td>
+                <td>{{ $keuangan->masuk}}</td>
+                <td>{{ $keuangan->keluar}}</td>
                 <td>{{ $keuangan->kotak->nama }}</td>
                 <td>{{ $keuangan->kategori->nama }}</td>
                 <td>{{ $keuangan->keterangan }}</td>
