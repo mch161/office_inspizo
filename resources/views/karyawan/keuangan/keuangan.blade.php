@@ -27,7 +27,7 @@
         @php
             $config = ['format' => 'YYYY-MM-DD'];
         @endphp
-        <x-adminlte-input-date name="tanggal" :config="$config" placeholder="Pilih tanggal..." label="Tanggal"
+        <x-adminlte-input-date id="tanggal" name="tanggal" :config="$config" placeholder="Pilih tanggal..." label="Tanggal"
             igroup-size="md" required>
             <x-slot name="appendSlot">
                 <div class="input-group-text bg-dark">
@@ -74,9 +74,9 @@
         @csrf
         <input type="hidden" name="jenis" value="Keluar">
         @php
-            $config = ['format' => 'YYYY-MM-DD'];
+            $config2 = ['format' => 'YYYY-MM-DD'];
         @endphp
-        <x-adminlte-input-date name="tanggal" :config="$config" placeholder="Pilih tanggal..." label="Tanggal"
+        <x-adminlte-input-date id="tanggal2" name="tanggal" :config="$config2" placeholder="Pilih tanggal..." label="Tanggal"
             igroup-size="md" required>
             <x-slot name="appendSlot">
                 <div class="input-group-text bg-dark">
