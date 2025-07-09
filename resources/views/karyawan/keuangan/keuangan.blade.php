@@ -27,10 +27,10 @@
         @php
             $config = ['format' => 'YYYY-MM-DD'];
         @endphp
-        <x-adminlte-input-date id="tanggal" name="tanggal" :config="$config" placeholder="Pilih tanggal..." label="Tanggal"
-            igroup-size="md" required>
+        <x-adminlte-input-date id="tanggal" value="{{ date('Y-m-d') }}" name="tanggal" :config="$config"
+            placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
             <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark">
+                <div class="input-group-text">
                     <i class="fas fa-calendar-day"></i>
                 </div>
             </x-slot>
@@ -39,26 +39,35 @@
         <x-adminlte-input name="masuk" label="Uang Masuk" placeholder="Masukkan jumlah..." igroup-size="md" required>
             <x-slot name="prependSlot">
                 <div class="input-group-text">
-                    <i class="fa-solid fa-money-bill-trend-up"></i>
+                    <i class="fas fa-money-bill"></i>
                 </div>
             </x-slot>
         </x-adminlte-input>
 
         <x-adminlte-select name="kotak" label="Kotak">
-            <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()"
-                empty-option="Select an option..." />
+            <x-slot name="prependSlot">
+                <div class="input-group-text">
+                    <i class="fas fa-lg fa-credit-card"></i>
+                </div>
+            </x-slot>
+            <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()" empty-option="Pilih kotak..." />
         </x-adminlte-select>
 
         <x-adminlte-select name="kategori" label="Kategori">
+            <x-slot name="prependSlot">
+                <div class="input-group-text">
+                    <i class="fas fa-lg fa-wallet"></i>
+                </div>
+            </x-slot>
             <x-adminlte-options :options="$kategori->pluck('nama', 'kd_kategori')->toArray()"
-                empty-option="Select an option..." />
+                empty-option="Pilih kategori..." />
         </x-adminlte-select>
 
         <x-adminlte-textarea name="keterangan" label="Keterangan" rows=5 igroup-size="sm"
             placeholder="Tuliskan isi keterangan di sini..." required>
             <x-slot name="prependSlot">
-                <div class="input-group-text bg-dark">
-                    <i class="fas fa-lg fa-file-alt text-warning"></i>
+                <div class="input-group-text">
+                    <i class="fas fa-lg fa-file-alt"></i>
                 </div>
             </x-slot>
         </x-adminlte-textarea>
@@ -76,10 +85,10 @@
         @php
             $config2 = ['format' => 'YYYY-MM-DD'];
         @endphp
-        <x-adminlte-input-date id="tanggal2" name="tanggal" :config="$config2" placeholder="Pilih tanggal..." label="Tanggal"
-            igroup-size="md" required>
+        <x-adminlte-input-date id="tanggal2" value="{{ date('Y-m-d') }}" name="tanggal" :config="$config2"
+            placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
             <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark">
+                <div class="input-group-text">
                     <i class="fas fa-calendar-day"></i>
                 </div>
             </x-slot>
@@ -88,26 +97,35 @@
         <x-adminlte-input name="keluar" label="Uang Keluar" placeholder="Masukkan jumlah..." igroup-size="md" required>
             <x-slot name="prependSlot">
                 <div class="input-group-text">
-                    <i class="fa-solid fa-money-bill-trend-up"></i>
+                    <i class="fas fa-money-bill"></i>
                 </div>
             </x-slot>
         </x-adminlte-input>
 
         <x-adminlte-select name="kotak" label="Kotak">
-            <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()"
-                empty-option="Select an option..." />
+            <x-slot name="prependSlot">
+                <div class="input-group-text">
+                    <i class="fas fa-lg fa-credit-card"></i>
+                </div>
+            </x-slot>
+            <x-adminlte-options :options="$kotak->pluck('nama', 'kd_kotak')->toArray()" empty-option="Pilih kotak..." />
         </x-adminlte-select>
 
         <x-adminlte-select name="kategori" label="Kategori">
+            <x-slot name="prependSlot">
+                <div class="input-group-text">
+                    <i class="fas fa-lg fa-wallet"></i>
+                </div>
+            </x-slot>
             <x-adminlte-options :options="$kategori->pluck('nama', 'kd_kategori')->toArray()"
-                empty-option="Select an option..." />
+                empty-option="Pilih kategori..." />
         </x-adminlte-select>
 
         <x-adminlte-textarea name="keterangan" label="Keterangan" rows=5 igroup-size="sm"
             placeholder="Tuliskan isi keterangan di sini..." required>
             <x-slot name="prependSlot">
-                <div class="input-group-text bg-dark">
-                    <i class="fas fa-lg fa-file-alt text-warning"></i>
+                <div class="input-group-text">
+                    <i class="fas fa-lg fa-file-alt"></i>
                 </div>
             </x-slot>
         </x-adminlte-textarea>
@@ -172,7 +190,7 @@
             scrollY: '200px'
         });
     });
-    $('#keuanganTable').on('click', '.tombol-hapus', function (e) {
+    $('#KeuanganTable').on('click', '.tombol-hapus', function (e) {
         e.preventDefault();
         let form = $(this).closest('form');
         Swal.fire({

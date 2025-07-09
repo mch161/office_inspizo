@@ -258,7 +258,7 @@ return [
 
     'use_route_url' => false,
     'dashboard_url' => '/',
-    'logout_url' => null,
+    'logout_url' => false,
     'login_url' => 'login',
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
@@ -301,8 +301,9 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'text' => 'Chats',
-            'icon' => 'fas fa-fw fa-comments',
+            'text' => '',
+            'route' => 'chats',
+            'icon' => 'fas fa-comments',
             'topnav_right' => true,
         ],
         [

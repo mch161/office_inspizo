@@ -29,12 +29,12 @@
     </form>
 </x-adminlte-modal>
 
-<table id="kategoriTable">
+<table id="kategoriTable" class="table table-bordered table-striped">
     <thead>
-        <tr>
-            <th>No</th>
+        <tr class="table-primary">
+            <th width="5%">No</th>
             <th>Nama kategori</th>
-            <th>Action</th>
+            <th width="150px" rigth>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -63,7 +63,10 @@
 <script>
     $(document).ready(function () {
         $('#kategoriTable').DataTable({
-            scrollX: true
+            scrollX: true,
+            paging: false,
+            scrollCollapse: true,
+            scrollY: '200px'
         });
     });
     $('#kategoriTable').on('click', '.tombol-hapus', function (e) {

@@ -63,7 +63,10 @@
 <script>
     $(document).ready(function () {
         $('#KotakTable').DataTable({
-            scrollX: true
+            scrollX: true,
+            paging: false,
+            scrollCollapse: true,
+            scrollY: '200px'
         });
     });
     $('#KotakTable').on('click', '.tombol-hapus', function (e) {

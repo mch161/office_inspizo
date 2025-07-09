@@ -20,14 +20,16 @@
         @csrf
         <div class="row">
             @php $config = ['format' => 'YYYY-MM-DD']; @endphp
-            <x-adminlte-input-date name="tanggal" :config="$config" placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
+            <x-adminlte-input-date name="tanggal" value="{{ date('Y-m-d') }}" :config="$config"
+                placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
 
             @php $config = ['format' => 'HH:mm']; @endphp
-            <x-adminlte-input-date name="jam" :config="$config" placeholder="Pilih jam..." label="Jam" igroup-size="md" required>
+            <x-adminlte-input-date name="jam" value="{{ date('H:i') }}" :config="$config" placeholder="Pilih jam..."
+                label="Jam" igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
                 </x-slot>
@@ -49,14 +51,16 @@
         @method('PUT')
         <div class="row">
             @php $config = ['format' => 'YYYY-MM-DD']; @endphp
-            <x-adminlte-input-date name="tanggal" id="tanggal_edit" :config="$config" placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
+            <x-adminlte-input-date name="tanggal" id="tanggal_edit" :config="$config" placeholder="Pilih tanggal..."
+                label="Tanggal" igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
 
             @php $config = ['format' => 'HH:mm']; @endphp
-            <x-adminlte-input-date name="jam" id="jam_edit" :config="$config" placeholder="Pilih jam..." label="Jam" igroup-size="md" required>
+            <x-adminlte-input-date name="jam" id="jam_edit" :config="$config" placeholder="Pilih jam..." label="Jam"
+                igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
                 </x-slot>
@@ -73,15 +77,16 @@
 </x-adminlte-modal>
 
 
-<x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal" data-target="#modalTambah" />
+<x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
+    data-target="#modalTambah" />
 
-<table id="JurnalTable" class="display">
+<table id="JurnalTable" class="table table-bordered table-striped">
     <thead>
-        <tr>
-            <th>No.</th>
-            <th>Tanggal</th>
-            <th>Jam</th>
-            <th>Nama Karyawan</th>
+        <tr class="table-primary">
+            <th width="5%">No.</th>
+            <th width="100px">Tanggal</th>
+            <th width="100px">Jam</th>
+            <th width="150px">Nama Karyawan</th>
             <th>Isi Jurnal</th>
             <th width="150px">Action</th>
         </tr>
@@ -96,10 +101,8 @@
                 <td>{!! $jurnal->isi_jurnal !!}</td>
                 <td>
                     <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
-                        data-id="{{ $jurnal->kd_jurnal }}"
-                        data-tanggal="{{ $jurnal->tanggal }}"
-                        data-jam="{{ $jurnal->jam }}"
-                        data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
+                        data-id="{{ $jurnal->kd_jurnal }}" data-tanggal="{{ $jurnal->tanggal }}"
+                        data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
                         Edit
                     </button>
 
@@ -120,7 +123,10 @@
 <script>
     $(document).ready(function () {
         $('#JurnalTable').DataTable({
-            scrollX: true
+            scrollX: true,
+            paging: false,
+            scrollCollapse: true,
+            scrollY: '200px'
         });
         var summernoteOptions = {
             height: 250,
@@ -135,7 +141,7 @@
                 ['view', ['fullscreen', 'codeview', 'help']]
             ]
         };
-        
+
         $('#summernote_add').summernote(summernoteOptions);
         $('#summernote_edit').summernote(summernoteOptions);
     });
