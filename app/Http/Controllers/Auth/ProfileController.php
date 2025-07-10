@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ChangePasswordController extends Controller
+class ProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('auth.changepassword');
+        return view('auth.profile');
     }
 
     /**
