@@ -2,8 +2,7 @@
 
 namespace App\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Support\HtmlString;
 use Illuminate\Support\Facades\Auth;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 
@@ -22,26 +21,26 @@ class BuildUserMenu
      */
     public function handle(BuildingMenu $event)
     {
-        $user = null;
-        $userName = null;
-
         if (Auth::guard('karyawan')->check()) {
+
             $user = Auth::guard('karyawan')->user();
             $userName = $user->username;
-        }
-        elseif (Auth::guard('pelanggan')->check()) {
-            $user = Auth::guard('pelanggan')->user();
-            $userName = $user->username;
-        }
+            $userPhoto = $user->foto;
+            $imgSrc = $userPhoto
+                ? asset('storage/profile' . $userPhoto)
+                : asset('storage/profile/default.png');
 
-        if ($user) {
+            $imgTag = '<img src="' . $imgSrc . '" class="img-circle" alt="User Image" style="width: 28px; height: 28px; margin-right: 5px;">';
+
+            $menuText = new HtmlString($imgTag . $userName);
+
             $event->menu->add([
                 'header' => 'ACCOUNT_SETTINGS'
             ]);
 
             $event->menu->add([
-                'text' => $userName,
-                'icon' => 'fas fa-fw fa-user',
+                'text' => $menuText,
+                'icon' => '',
                 'submenu' => [
                     [
                         'text' => 'change_password',
