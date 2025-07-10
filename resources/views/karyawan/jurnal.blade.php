@@ -28,7 +28,7 @@
             </x-adminlte-input-date>
 
             @php $config = ['format' => 'HH:mm']; @endphp
-            <x-adminlte-input-date name="jam" value="{{ date('H:i') }}" :config="$config" placeholder="Pilih jam..."
+            <x-adminlte-input-date name="jam" id="jam" :config="$config" placeholder="Pilih jam..."
                 label="Jam" igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
@@ -161,7 +161,6 @@
         updateUrl = updateUrl.replace(':id', id);
         form.attr('action', updateUrl);
     });
-
     $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
         e.preventDefault();
         let form = $(this).closest('form');
@@ -180,7 +179,18 @@
             }
         })
     });
-
+    $(document).ready(function() {
+        const timeInput = $('#jam');
+        function updateRealTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            timeInput.val(`${hours}:${minutes}`);
+        }
+        setInterval(updateRealTime, 1000);
+        updateRealTime();
+    });
     @if (session()->has('success'))
         const Toast = Swal.mixin({
             toast: true,
