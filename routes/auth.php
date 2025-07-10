@@ -9,3 +9,5 @@ Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout
 
 Route::get('/register', [App\Http\Controllers\Auth\LoginController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\Auth\LoginController::class, 'register'])->name('register.submit');
+
+Route::get('/changepassword', [App\Http\Controllers\ChangePasswordController::class, 'index'])->name('changepassword');

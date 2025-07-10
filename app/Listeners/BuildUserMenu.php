@@ -45,7 +45,7 @@ class BuildUserMenu
                 'submenu' => [
                     [
                         'text' => 'change_password',
-                        'url' => 'auth/passwords/edit',
+                        'route' => 'changepassword',
                         'icon' => 'fas fa-fw fa-lock',
                     ],
                     [
