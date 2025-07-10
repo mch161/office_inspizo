@@ -43,8 +43,8 @@ class BuildUserMenu
                 'icon' => '',
                 'submenu' => [
                     [
-                        'text' => 'change_password',
-                        'route' => 'changepassword',
+                        'text' => 'Profile',
+                        'route' => 'profile',
                         'icon' => 'fas fa-fw fa-lock',
                     ],
                     [
