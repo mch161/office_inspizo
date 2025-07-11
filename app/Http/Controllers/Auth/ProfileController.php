@@ -1,65 +1,73 @@
 <?php
 
-namespace App\Http\Controllers\auth;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Show the user's profile page.
      */
     public function index()
     {
-        return view('auth.profile');
+        $user = Auth::guard('karyawan')->user();
+        return view('auth.profile', ['user' => $user]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Update the user's profile information.
      */
-    public function create()
+    public function update(Request $request)
     {
-        //
-    }
+        $user = Auth::guard('karyawan')->user();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if ($request->hasFile('foto')) {
+            $validator = Validator::make($request->all(), [
+                'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+            $path = $request->file('foto')->store('profile', 'public');
+            $user->foto = $path;
+            $user->save();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            return response()->json([
+                'success' => 'Foto sukses diupload.',
+                'path' => Storage::url($path)
+            ]);
+        }
+
+        // Handle full form update
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string|max:255',
+            'username' => ['required', 'string', 'max:255', Rule::unique('karyawan')->ignore($user->kd_karyawan, 'kd_karyawan')],
+            'nip' => 'nullable|string|max:255',
+            'nik' => 'nullable|string|max:255',
+            'alamat' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user->update($request->all());
+
+        return response()->json([
+            'success' => 'Profil sukses diupdate!',
+            'user' => $user->fresh()
+        ]);
     }
 }

@@ -11,3 +11,4 @@ Route::get('/register', [App\Http\Controllers\Auth\LoginController::class, 'show
 Route::post('/register', [App\Http\Controllers\Auth\LoginController::class, 'register'])->name('register.submit');
 
 Route::get('/profile', [App\Http\Controllers\Auth\ProfileController::class, 'index'])->name('profile');
+Route::post('/profile/update', [App\Http\Controllers\Auth\ProfileController::class, 'update'])->name('profile.update');

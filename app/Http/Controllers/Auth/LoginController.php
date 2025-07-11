@@ -53,12 +53,11 @@ class LoginController extends Controller
                             ->first();
 
         if ($karyawan && Hash::check($password, $karyawan->password)) {
-            Auth::guard('karyawan')->login($karyawan, $remember); // Pass the remember value
+            Auth::guard('karyawan')->login($karyawan, $remember);
             $request->session()->regenerate();
             return redirect()->intended('dashboard');
         }
 
-        // If authentication fails for both, redirect back with an error
         return back()->withErrors([
             'login' => 'The provided credentials do not match our records.',
         ])->onlyInput('login');
@@ -81,7 +80,6 @@ class LoginController extends Controller
             'email' => 'required|string|email|max:255|unique:pelanggan,email|unique:karyawan,email',
             'password' => 'required|string|min:8|confirmed',
         ], [
-            // Custom error messages start here
             'nama_pelanggan.required' => 'Nama lengkap wajib diisi.',
             'telp_pelanggan.unique' => 'Nomor telepon sudah terdaftar pada akun lain.',
             'alamat_pelanggan.required' => 'Alamat wajib diisi.',
@@ -98,7 +96,7 @@ class LoginController extends Controller
         if ($validator->fails()) {
             return redirect('register')
                         ->withErrors($validator)
-                        ->withInput($request->all()); // Use ->all() to flash all input, including password
+                        ->withInput($request->all());
         }
 
 

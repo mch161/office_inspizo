@@ -27,7 +27,7 @@ class BuildUserMenu
             $userName = $user->username;
             $userPhoto = $user->foto;
             $imgSrc = $userPhoto
-                ? asset('storage/profile' . $userPhoto)
+                ? asset('storage/' . $userPhoto)
                 : asset('storage/profile/default.png');
 
             $imgTag = '<img src="' . $imgSrc . '" class="img-circle" alt="User Image" style="width: 28px; height: 28px; margin-right: 5px;">';
@@ -45,7 +45,7 @@ class BuildUserMenu
                     [
                         'text' => 'Profile',
                         'route' => 'profile',
-                        'icon' => 'fas fa-fw fa-lock',
+                        'icon' => 'fas fa-fw fa-user',
                     ],
                     [
                         'text' => 'logout',
