@@ -11,9 +11,8 @@ class PresensiController extends Controller
      */
     public function index()
     {
-        //
+        return view('presensi');
     }
-
     /**
      * Show the form for creating a new resource.
      */
