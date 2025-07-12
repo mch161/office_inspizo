@@ -28,7 +28,7 @@ class BuildUserMenu
             $userPhoto = $user->foto;
             $imgSrc = $userPhoto
                 ? asset('storage/' . $userPhoto)
-                : asset('storage/profile/default.png');
+                : asset('default.png');
 
             $imgTag = '<img src="' . $imgSrc . '" class="img-circle" alt="User Image" style="width: 28px; height: 28px; margin-right: 5px;">';
 
@@ -53,6 +53,14 @@ class BuildUserMenu
                         'icon' => 'fas fa-fw fa-sign-out-alt'
                     ],
                 ],
+            ]);
+        }
+
+        if (Auth::guard('karyawan')->check() && Auth::guard('karyawan')->user()->role == 'superadmin') {
+            $event->menu->add([
+                'text' => 'Tambah User',
+                'route' => 'users.index',
+                'icon' => 'fas fa-fw fa-user-plus',
             ]);
         }
     }

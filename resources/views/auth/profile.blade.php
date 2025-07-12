@@ -70,7 +70,7 @@
                     </form>
                     <div class="profile-pic-container" id="profile-pic-trigger">
                         <img class="profile-user-img img-fluid img-circle" id="profile-pic-preview"
-                            src="{{ $user->foto ? Storage::url($user->foto) : asset('storage/profile/default.png') }}"
+                            src="{{ $user->foto ? Storage::url($user->foto) : asset('default.png') }}"
                             alt="User profile picture">
                         <div class="upload-overlay">
                             <i class="fas fa-camera"></i>
