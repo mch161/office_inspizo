@@ -19,7 +19,7 @@ require __DIR__ . '/auth.php';
 
 Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('jurnal', App\Http\Controllers\JurnalController::class);
-    Route::resource('presensi', App\Http\Controllers\PresensiControllerxx::class);
+    Route::resource('presensi', App\Http\Controllers\PresensiController::class);
     Route::resource('barang', App\Http\Controllers\BarangController::class);
     Route::resource('stok', App\Http\Controllers\StokController::class);
     Route::resource('keuangan', App\Http\Controllers\KeuanganController::class);
