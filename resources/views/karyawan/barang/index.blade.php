@@ -10,6 +10,27 @@
 
 @section('css')
 <style>
+    .barang-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 columns on desktop */
+        gap: 32px;
+        justify-items: center;
+    }
+    @media (max-width: 1200px) {
+        .barang-container {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    @media (max-width: 900px) {
+        .barang-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 600px) {
+        .barang-container {
+            grid-template-columns: 1fr;
+        }
+    }
 
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
@@ -23,12 +44,6 @@
         -moz-appearance: textfield;
     }
 
-    .barang-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 32px;
-        justify-items: center;
-    }
     .barang-card {
         background: #fff;
         border-radius: 12px;
@@ -72,16 +87,6 @@
         top: 0.5rem;
         right: 0.5rem;
         z-index: 10;
-    }
-    @media (max-width: 1000px) {
-        .barang-container {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    @media (max-width: 700px) {
-        .barang-container {
-            grid-template-columns: 1fr;
-        }
     }
 </style>
 @endsection

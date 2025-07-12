@@ -319,6 +319,12 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
+            'text' => 'Presensi',
+            'route' => 'jurnal.index',
+            'icon' => 'fas fa-fw fa-user',
+            'can' => 'access-karyawan',
+        ],
+        [
             'text' => 'Jurnal',
             'route' => 'jurnal.index',
             'icon' => 'fas fa-fw fa-book',
