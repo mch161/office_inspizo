@@ -320,7 +320,7 @@ return [
         ],
         [
             'text' => 'Presensi',
-            'route' => 'jurnal.index',
+            'route' => 'presensi.index',
             'icon' => 'fas fa-fw fa-user',
             'can' => 'access-karyawan',
         ],
