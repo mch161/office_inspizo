@@ -3,7 +3,7 @@
 @section('title', 'Barang')
 
 @section('content_header')
-<h1>Barang</h1>
+<h1>Stok</h1>
 @stop
 
 @section('plugins.Sweetalert2', true)
@@ -26,3 +26,4 @@
 </style>
 
 @endsection
+

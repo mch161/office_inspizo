@@ -336,7 +336,7 @@ return [
                 ],
                 [
                     'text' => 'Stok',
-                    'route' => '',
+                    'route' => 'stok.index',
                     'icon' => 'fas fa-fw fa-box'
                 ]
             ]
