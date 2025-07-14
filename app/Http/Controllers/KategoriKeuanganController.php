@@ -62,9 +62,18 @@ class KategoriKeuanganController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $kategori = Keuangan_Kategori::findOrFail($id);
+
+        $request->validate([
+            'nama' => 'required|string',
+        ]);
+
+        $kategori->nama = $request->nama;
+        $kategori->dibuat_oleh = Auth::user()->nama;
+        $kategori->save();
+        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diupdate.');
     }
 
     /**

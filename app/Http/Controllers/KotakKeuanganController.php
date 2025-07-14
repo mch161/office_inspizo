@@ -62,9 +62,18 @@ class KotakKeuanganController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $stok = Keuangan_Kotak::findOrFail($id);
+
+        $request->validate([
+            'nama' => 'required|string',
+        ]);
+
+        $stok->nama = $request->nama;
+        $stok->dibuat_oleh = Auth::user()->nama;
+        $stok->save();
+        return redirect()->route('kotak.index')->with('success', 'Kotak berhasil diupdate.');
     }
 
     /**
