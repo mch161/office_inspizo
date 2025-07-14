@@ -101,17 +101,20 @@
                 <td>{{ $jurnal->dibuat_oleh }}</td>
                 <td>{!! $jurnal->isi_jurnal !!}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
-                        data-id="{{ $jurnal->kd_jurnal }}" data-tanggal="{{ $jurnal->tanggal }}"
-                        data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
-                        Edit
-                    </button>
+                    @if (Auth::guard('karyawan')->user()->kd_karyawan == $jurnal->kd_karyawan)
+                        <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
+                            data-id="{{ $jurnal->kd_jurnal }}" data-tanggal="{{ $jurnal->tanggal }}"
+                            data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
+                            Edit
+                        </button>
 
-                    <form action="{{ route('jurnal.destroy', $jurnal->kd_jurnal) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
-                    </form>
+                        <form action="{{ route('jurnal.destroy', $jurnal->kd_jurnal) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
+                        </form>
+                    @endif
+
                 </td>
             </tr>
         @endforeach

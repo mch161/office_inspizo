@@ -11,15 +11,8 @@ class JurnalController extends Controller
 {
     public function index()
     {
-        $karyawan = Auth::guard('karyawan')->user();
-        if ($karyawan->isAdmin()) {
-            $jurnals = Jurnal::with('karyawan')->latest()->get();
-        } else {
-            $jurnals = Jurnal::with('karyawan')
-                             ->where('kd_karyawan', $karyawan->kd_karyawan)
-                             ->latest()
-                             ->get();
-        }
+
+        $jurnals = Jurnal::get()->all();
         
         return view('karyawan.jurnal', [
             "jurnals" => $jurnals
@@ -39,7 +32,7 @@ class JurnalController extends Controller
         $jurnal->tanggal = $request->tanggal;
         $jurnal->jam = $request->jam;
         $jurnal->isi_jurnal = $request->isi_jurnal;
-        $jurnal->dibuat_oleh = Auth::guard('karyawan')->user()->kd_karyawan;
+        $jurnal->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
         $jurnal->save();
 
         return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil dibuat.');
