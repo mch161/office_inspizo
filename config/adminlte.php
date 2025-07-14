@@ -331,6 +331,23 @@ return [
             'can' => 'access-karyawan',
         ],
         [
+            'text' => 'Forms',
+            'icon' => 'fas fa-fw fa-newspaper',
+            'can' => 'access-karyawan',
+            'submenu' => [
+                [
+                    'text' => 'Form Reimburse',
+                    'route' => '',
+                    'icon' => 'fas fa-fw fa-box-open'
+                ],
+                [
+                    'text' => 'Form Izin',
+                    'route' => '',
+                    'icon' => 'fas fa-fw fa-box'
+                ]
+            ]
+        ],
+        [
             'text' => 'Barang',
             'icon' => 'fas fa-fw fa-warehouse',
             'can' => 'access-karyawan',
