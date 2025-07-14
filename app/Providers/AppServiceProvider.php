@@ -31,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('access-karyawan', function ($user = null) {
             return Auth::guard('karyawan')->check();
         });
+        Gate::define('superadmin', function ($user = null) {
+            return Auth::guard('karyawan')->check() && Auth::guard('karyawan')->user()->role == 'superadmin';
+        });
     }
 }
 

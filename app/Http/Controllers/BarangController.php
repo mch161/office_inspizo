@@ -93,7 +93,7 @@ class BarangController extends Controller
             $request->foto->move(public_path('storage/images/barang'), $imageName);
             $barang->foto = $imageName;
         }
-
+        
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
         $barang->harga = $request->harga;

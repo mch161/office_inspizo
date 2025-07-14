@@ -27,6 +27,10 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('kategori', App\Http\Controllers\KategoriKeuanganController::class);
 });
 
+Route::middleware(['can:superadmin'])->group(function () {
+    Route::resource('users', App\Http\Controllers\Auth\UserController::class);
+});
+
 Route::middleware(['can:access'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
