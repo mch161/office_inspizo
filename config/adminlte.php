@@ -319,6 +319,12 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
+            'text' => 'Presensi',
+            'route' => 'presensi.index',
+            'icon' => 'fas fa-fw fa-user',
+            'can' => 'access-karyawan',
+        ],
+        [
             'text' => 'Jurnal',
             'route' => 'jurnal.index',
             'icon' => 'fas fa-fw fa-book',
@@ -336,7 +342,7 @@ return [
                 ],
                 [
                     'text' => 'Stok',
-                    'route' => '',
+                    'route' => 'stok.index',
                     'icon' => 'fas fa-fw fa-box'
                 ]
             ]
