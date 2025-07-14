@@ -2,62 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\presensi; // <-- Use your Presensi model
 use Illuminate\Http\Request;
 
 class PresensiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('presensi');
-    }
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        // Get all logs, with the newest ones first
+        $logs = Presensi::latest('timestamp')->get(); // <-- Use your Presensi model
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Return the view, passing the logs data to it
+        return view('presensi', compact('logs'));
     }
 }
