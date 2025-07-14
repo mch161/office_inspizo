@@ -10,7 +10,7 @@
 @stop
 
 @section('css')
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
+
 @endsection
 
 @section('content')
@@ -28,8 +28,8 @@
             </x-adminlte-input-date>
 
             @php $config = ['format' => 'HH:mm']; @endphp
-            <x-adminlte-input-date name="jam" id="jam" :config="$config" placeholder="Pilih jam..."
-                label="Jam" igroup-size="md" required>
+            <x-adminlte-input-date name="jam" id="jam" :config="$config" placeholder="Pilih jam..." label="Jam"
+                igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
                 </x-slot>
@@ -51,23 +51,24 @@
         @method('PUT')
         <div class="row">
             @php $config = ['format' => 'YYYY-MM-DD']; @endphp
-            <x-adminlte-input-date name="tanggal" id="tanggal_edit" :config="$config" placeholder="Pilih tanggal..."
-                label="Tanggal" igroup-size="md" required>
+            <x-adminlte-input-date name="tanggal_edit" id="tanggal_edit" :config="$config"
+                placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required value="{{ old('tanggal') }}">
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
 
             @php $config = ['format' => 'HH:mm']; @endphp
-            <x-adminlte-input-date name="jam" id="jam_edit" :config="$config" placeholder="Pilih jam..." label="Jam"
-                igroup-size="md" required>
+            <x-adminlte-input-date name="jam_edit" id="jam_edit" :config="$config" placeholder="Pilih jam..."
+                label="Jam" igroup-size="md" required value="{{ old('jam') }}">
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
         </div>
 
-        <x-adminlte-textarea name="isi_jurnal" id="summernote_edit" label="Keterangan"></x-adminlte-textarea>
+        <x-adminlte-textarea name="isi_jurnal_edit" id="summernote_edit"
+            label="Keterangan">{{ old('isi_jurnal') }}</x-adminlte-textarea>
 
         <x-slot name="footerSlot">
             <x-adminlte-button theme="primary" label="Simpan Perubahan" type="submit" form="form-edit-jurnal" />
@@ -124,9 +125,9 @@
     $(document).ready(function () {
         $('#JurnalTable').DataTable({
             scrollX: true,
-            paging: false,
             scrollCollapse: true,
-            scrollY: '200px'
+            pageLength: 10,
+            lengthChange: false,
         });
         var summernoteOptions = {
             height: 250,
@@ -145,21 +146,51 @@
         $('#summernote_add').summernote(summernoteOptions);
         $('#summernote_edit').summernote(summernoteOptions);
     });
-    $('#JurnalTable').on('click', '.tombol-edit', function () {
-        let id = $(this).data('id');
-        let tanggal = $(this).data('tanggal');
-        let jam = $(this).data('jam');
-        let isi_jurnal = $(this).data('isi_jurnal');
+    $(document).ready(function () {
+        $('.tombol-edit').on('click', function () {
+            const id = $(this).data('id');
+            const tanggal = $(this).data('tanggal');
+            const jam = $(this).data('jam');
+            const isi_jurnal = $(this).data('isi_jurnal');
 
-        $('#tanggal_edit').val(tanggal);
-        $('#jam_edit').val(jam);
+            if (!"{{ $errors->any() && session('invalid_jurnal') }}") {
 
-        $('#summernote_edit').summernote('code', isi_jurnal);
+                $('#tanggal_edit').val(tanggal);
+                $('#jam_edit').val(jam);
+                $('#summernote_edit').summernote('code', isi_jurnal);
+            }
 
-        let form = $('#form-edit-jurnal');
-        let updateUrl = "{{ route('jurnal.update', ':id') }}";
-        updateUrl = updateUrl.replace(':id', id);
-        form.attr('action', updateUrl);
+            let form = $('#form-edit-jurnal');
+            let updateUrl = "{{ url('jurnal') }}/" + id;
+            form.attr('action', updateUrl);
+        });
+
+        @if ($errors->any() && session('invalid_jurnal'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'error',
+                text: '{{ session('invalid_jurnal') }}',
+            })
+            const errorJurnalId = "{{ session('error_jurnal_id') }}";
+
+            if (errorJurnalId) {
+                let form = $('#form-edit-jurnal');
+                let updateUrl = "{{ url('jurnal') }}/" + errorJurnalId;
+                form.attr('action', updateUrl);
+            }
+
+            $('#modalEdit').modal('show');
+        @endif
     });
     $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
         e.preventDefault();
@@ -179,13 +210,13 @@
             }
         })
     });
-    $(document).ready(function() {
+    $(document).ready(function () {
         const timeInput = $('#jam');
         function updateRealTime() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            
+
             timeInput.val(`${hours}:${minutes}`);
         }
         setInterval(updateRealTime, 1000);
