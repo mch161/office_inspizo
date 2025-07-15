@@ -9,12 +9,20 @@ use Illuminate\Support\Facades\Validator; // <-- Tambahkan ini
 
 class JurnalController extends Controller
 {
-    public function index()
+    public function jurnalku()
     {
 
-        $jurnals = Jurnal::get()->all();
+        $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->get();
         
-        return view('karyawan.jurnal', [
+        return view('karyawan.jurnal.jurnalku', [
+            "jurnals" => $jurnals
+        ]);
+    }
+
+    public function jurnal_kita()
+    {
+        $jurnals = Jurnal::all();
+        return view('karyawan.jurnal.jurnal_kita', [
             "jurnals" => $jurnals
         ]);
     }
@@ -35,7 +43,7 @@ class JurnalController extends Controller
         $jurnal->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
         $jurnal->save();
 
-        return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil dibuat.');
+        return redirect()->route('jurnalku')->with('success', 'Jurnal berhasil dibuat.');
     }
 
     public function update(Request $request, $id)
@@ -47,7 +55,7 @@ class JurnalController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->route('jurnal.index')
+            return redirect()->route('jurnalku')
                 ->withErrors($validator)
                 ->withInput($request->all())
                 ->with('invalid_jurnal', 'Jurnal gagal diupdate.')
@@ -60,7 +68,7 @@ class JurnalController extends Controller
         $jurnal->isi_jurnal = $request->input('isi_jurnal_edit');
         $jurnal->save();
 
-        return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil diupdate.');
+        return redirect()->route('jurnalku')->with('success', 'Jurnal berhasil diupdate.');
     }
 
     public function destroy($id)
@@ -68,6 +76,6 @@ class JurnalController extends Controller
         $jurnal = Jurnal::findOrFail($id);
         $jurnal->delete();
 
-        return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil dihapus.');
+        return redirect()->route('jurnalku')->with('success', 'Jurnal berhasil dihapus.');
     }
 }

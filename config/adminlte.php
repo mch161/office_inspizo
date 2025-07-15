@@ -30,8 +30,8 @@ return [
     |
     */
 
-    'use_ico_only' => true,
-    'use_full_favicon' => false,
+    'use_ico_only' => false,
+    'use_full_favicon' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -326,20 +326,26 @@ return [
         ],
         [
             'text' => 'Jurnal',
-            'route' => 'jurnal.index',
             'icon' => 'fas fa-fw fa-book',
             'can' => 'access-karyawan',
+            'submenu' => [
+                [
+                    'text' => 'Jurnal',
+                    'route' => 'jurnalku',
+                    'icon' => 'fas fa-fw fa-book-open'
+                ],
+                [
+                    'text' => 'Jurnal Kita',
+                    'route' => 'jurnal_kita',
+                    'icon' => 'fas fa-fw fa-book-open'
+                ]
+            ]
         ],
         [
             'text' => 'Forms',
             'icon' => 'fas fa-fw fa-newspaper',
             'can' => 'access-karyawan',
             'submenu' => [
-                [
-                    'text' => 'Form Reimburse',
-                    'route' => '',
-                    'icon' => 'fas fa-fw fa-box-open'
-                ],
                 [
                     'text' => 'Form Izin',
                     'route' => '',
@@ -370,19 +376,27 @@ return [
             'can' => 'access-karyawan',
             'submenu' => [
                 [
+                    'text' => 'Form Reimburse',
+                    'route' => '',
+                    'icon' => 'fas fa-fw fa-box-open',
+                ],
+                [
                     'text' => 'Keuangan',
                     'route' => "keuangan.index",
                     'icon' => 'fas fa-fw fa-money-bill-wave',
+                    'can' => 'superadmin',
                 ],
                 [
                     'text' => 'Kotak',
                     'route' => 'kotak.index',
                     'icon' => 'fas fa-fw fa-credit-card',
+                    'can' => 'superadmin',
                 ],
                 [
                     'text' => 'Kategori',
                     'route' => 'kategori.index',
-                    'icon' => 'fas fa-fw fa-wallet'
+                    'icon' => 'fas fa-fw fa-wallet',
+                    'can' => 'superadmin',
                 ],
             ]
         ],

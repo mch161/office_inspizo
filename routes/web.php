@@ -19,6 +19,8 @@ require __DIR__ . '/auth.php';
 
 Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('jurnal', App\Http\Controllers\JurnalController::class);
+    Route::get('jurnalku', [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
+    Route::get('jurnal_kita', [App\Http\Controllers\JurnalController::class, 'jurnal_kita'])->name('jurnal_kita');
     Route::resource('presensi', App\Http\Controllers\PresensiController::class);
     Route::resource('barang', App\Http\Controllers\BarangController::class);
     Route::resource('stok', App\Http\Controllers\StokController::class);

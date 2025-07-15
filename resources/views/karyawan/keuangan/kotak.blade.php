@@ -65,7 +65,7 @@
                     <form action="{{ route('kotak.destroy', $k->kd_kotak) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Delete</button>
+                        <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
                     </form>
                 </td>
             </tr>

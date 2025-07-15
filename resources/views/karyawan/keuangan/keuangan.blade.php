@@ -6,12 +6,7 @@
 
 @section('content_header')
 <h1>Keuangan</h1>
-<div class="d-flex justify-content-end">
-    <x-adminlte-button label="Tambahkan Pengeluaran" class="mb-2 bg-blue" data-toggle="modal"
-        data-target="#modalKeluar" />
 
-    <x-adminlte-button label="Tambahkan Pemasukan" class="mb-2 bg-blue" data-toggle="modal" data-target="#modalMasuk" />
-</div>
 
 @stop
 
@@ -137,6 +132,14 @@
     </form>
 </x-adminlte-modal>
 
+<div class="d-flex justify-content-end">
+    <button type="button" class="btn btn-default bg-blue" data-toggle="modal" data-target="#modalMasuk">
+        Tambahkan Pemasukan <i class="fas fa-arrow-up"></i>
+    </button>
+    <button type="button" class="btn btn-default bg-blue" data-toggle="modal" data-target="#modalKeluar">
+        <i class="fas fa-arrow-down"></i> Tambahkan Pengeluaran
+    </button>
+</div>
 
 
 <table id="KeuanganTable" class="table table-bordered table-striped">
@@ -159,8 +162,8 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $keuangan->jenis }}</td>
-                <td>{{ $keuangan->masuk}}</td>
-                <td>{{ $keuangan->keluar}}</td>
+                <td>{{ number_format($keuangan->masuk) }}</td>
+                <td>{{ number_format($keuangan->keluar) }}</td>
                 <td>{{ $keuangan->kotak->nama }}</td>
                 <td>{{ $keuangan->kategori->nama }}</td>
                 <td>{{ $keuangan->keterangan }}</td>
@@ -180,6 +183,16 @@
         @endforeach
     </tbody>
 </table>
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">Total Keuangan</h3>
+    </div>
+    <div class="card-body">
+        <div>Total Pemasukan: {{ number_format($keuangans->sum('masuk')) }}</div>
+        <div>Total Pengeluaran: {{ number_format($keuangans->sum('keluar')) }}</div>
+    </div>
+</div>
 @stop
 
 @section('js')

@@ -32,34 +32,27 @@ class LoginController extends Controller
 
         $login = $request->input('login');
         $password = $request->input('password');
-        $remember = $request->boolean('remember'); // Get the "remember me" value
+        $remember = $request->boolean('remember');
 
-        // Attempt to log in as a Pelanggan
-        $pelanggan = Pelanggan::where('email', $login)
-                              ->orWhere('username', $login)
-                              ->orWhere('telp_pelanggan', $login)
-                              ->first();
-
-        if ($pelanggan && Hash::check($password, $pelanggan->password)) {
-            Auth::guard('pelanggan')->login($pelanggan, $remember); // Pass the remember value
-            $request->session()->regenerate();
-            return redirect()->intended('dashboard');
-        }
-
-        // If not a Pelanggan, attempt to log in as a Karyawan
         $karyawan = Karyawan::where('email', $login)
-                            ->orWhere('username', $login)
-                            ->orWhere('telp', $login)
-                            ->first();
+            ->orWhere('username', $login)
+            ->orWhere('telp', $login)
+            ->first();
 
-        if ($karyawan && Hash::check($password, $karyawan->password)) {
+        if ($karyawan && Hash::check($password, $karyawan->password) && $karyawan->status == 1) {
             Auth::guard('karyawan')->login($karyawan, $remember);
             $request->session()->regenerate();
             return redirect()->intended('dashboard');
         }
 
+        if ($karyawan && Hash::check($password, $karyawan->password) && $karyawan->status == 0) {
+            $error_message = 'Akun Anda belum diaktifkan.';
+        } else {
+            $error_message = 'Email, username, atau nomor telepon yang Anda masukkan tidak cocok.';
+        }
+
         return back()->withErrors([
-            'login' => 'The provided credentials do not match our records.',
+            'status' => $error_message,
         ])->onlyInput('login');
     }
 
@@ -76,7 +69,7 @@ class LoginController extends Controller
             'alamat_pelanggan' => 'required|string|max:255',
             'nama_perusahaan' => 'nullable|string|max:255',
             'nik' => 'nullable|string|max:20',
-            'username' => 'required|string|max:255|unique:pelanggan,username|unique:karyawan,username',            
+            'username' => 'required|string|max:255|unique:pelanggan,username|unique:karyawan,username',
             'email' => 'required|string|email|max:255|unique:pelanggan,email|unique:karyawan,email',
             'password' => 'required|string|min:8|confirmed',
         ], [
@@ -95,8 +88,8 @@ class LoginController extends Controller
 
         if ($validator->fails()) {
             return redirect('register')
-                        ->withErrors($validator)
-                        ->withInput($request->all());
+                ->withErrors($validator)
+                ->withInput($request->all());
         }
 
 

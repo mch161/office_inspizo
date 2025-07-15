@@ -58,9 +58,9 @@ class BuildUserMenu
 
         if (Auth::guard('karyawan')->check() && Auth::guard('karyawan')->user()->role == 'superadmin') {
             $event->menu->add([
-                'text' => 'Tambah User',
+                'text' => 'Manage Users',
                 'route' => 'users.index',
-                'icon' => 'fas fa-fw fa-user-plus',
+                'icon' => 'fas fa-fw fa-users',
             ]);
         }
     }

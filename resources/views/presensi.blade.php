@@ -14,8 +14,8 @@
                         <th width='5%'>ID</th>
                         <th width="300px">Date</th>
                         <th width="100px">Time</th>
-                        <th>Verified</th>
-                        <th>Status</th>
+                        <th width="100px">Verified</th>
+                        <th width="100px">Status</th>
                     </tr>
                 </thead>
                 <tbody>
