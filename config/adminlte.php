@@ -377,7 +377,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'Form Reimburse',
-                    'route' => '',
+                    'route' => 'reimburse.index',
                     'icon' => 'fas fa-fw fa-box-open',
                 ],
                 [
