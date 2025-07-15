@@ -22,7 +22,7 @@
                     @foreach($logs as $log)
                         <tr>
                             <td>{{ $log->user_id }}</td>
-                            <td>{{ $log->timestamp->format('d F Y') }}</td>
+                            <td>{{ $log->timestamp->format('Y m d') }}</td>
                             <td>{{ $log->timestamp->format('H:i:s') }}</td>
                             <td>
                                 @if($log->verified)

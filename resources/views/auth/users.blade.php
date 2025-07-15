@@ -10,7 +10,7 @@
 @stop
 
 @section('css')
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
+ 
 <style>
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,

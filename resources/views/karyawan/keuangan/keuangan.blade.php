@@ -11,7 +11,7 @@
 @stop
 
 @section('css')
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css" />
+ 
 @endsection
 
 @section('content')

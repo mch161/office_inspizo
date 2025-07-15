@@ -27,6 +27,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('keuangan', App\Http\Controllers\KeuanganController::class);
     Route::resource('kotak', App\Http\Controllers\KotakKeuanganController::class);
     Route::resource('kategori', App\Http\Controllers\KategoriKeuanganController::class);
+    Route::resource('reimburse', App\Http\Controllers\ReimburseController::class);
 });
 
 Route::middleware(['can:superadmin'])->group(function () {
