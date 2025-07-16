@@ -320,9 +320,22 @@ return [
         ],
         [
             'text' => 'Presensi',
-            'route' => 'presensi.index',
             'icon' => 'fas fa-fw fa-user',
             'can' => 'access-karyawan',
+            'submenu' => [
+                [
+                    'text' => 'Tabel Fingerprint',
+                    'route' => 'presensi.index',
+                    'icon' => 'fa fas fa-fingerprint',
+                    'can' => 'access-karyawan',
+                ],
+                [
+                    'text' => 'Tabel Izin',
+                    'icon' => 'fa fas fa-envelope-open',
+                    'route' => 'izin.index',
+                    'can' => 'access-karyawan'
+                ],
+            ]
         ],
         [
             'text' => 'Jurnal',
@@ -330,7 +343,7 @@ return [
             'can' => 'access-karyawan',
             'submenu' => [
                 [
-                    'text' => 'Jurnal',
+                    'text' => 'Jurnalku',
                     'route' => 'jurnalku',
                     'icon' => 'fas fa-fw fa-book-open'
                 ],
@@ -348,8 +361,8 @@ return [
             'submenu' => [
                 [
                     'text' => 'Form Izin',
-                    'route' => 'izin.index',
-                    'icon' => 'fas fa-fw fa-box'
+                    'route' => 'izin.form',
+                    'icon' => 'fas fa-fw fa-envelope'
                 ],
                 [
                     'text' => 'Form Reimburse',

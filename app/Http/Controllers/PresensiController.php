@@ -13,6 +13,6 @@ class PresensiController extends Controller
         $logs = Presensi::latest('timestamp')->get(); // <-- Use your Presensi model
 
         // Return the view, passing the logs data to it
-        return view('presensi', compact('logs'));
+        return view('karyawan.presensi.presensi', compact('logs'));
     }
 }

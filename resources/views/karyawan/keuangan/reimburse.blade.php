@@ -2,17 +2,21 @@
 
 @section('title', 'Reimburse')
 
+@section('content_header')
+<h1>Table Reimburse</h1>
+@stop
 {{-- Include SweetAlert2 and DataTables plugins --}}
 @section('plugins.Sweetalert2', true)
 @section('plugins.Datatables', true)
 
-@section('content_header')
-<h1>Tabel Reimburse</h1>
-@stop
-
 @section('css')
-    {{-- Custom styles for better table appearance --}}
+    {{-- Custom styles for a polished table appearance --}}
     <style>
+        .card {
+            border-radius: .5rem;
+            box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+        }
+
         #ReimburseTable th,
         #ReimburseTable td {
             vertical-align: middle !important;
@@ -21,107 +25,91 @@
 
         #ReimburseTable .keterangan-column {
             text-align: left;
-            max-width: 350px;
-            /* Limit width of description */
+            max-width: 300px;
             white-space: normal;
-            /* Allow text to wrap */
         }
 
         .reimburse-image {
             width: 150px;
             height: auto;
-            border-radius: 8px;
+            border-radius: .5rem;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
         }
 
         .reimburse-image:hover {
             transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-sm i {
+            margin-right: .25rem;
         }
     </style>
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Daftar Pengajuan Reimburse</h3>
-    </div>
-    <div class="card-body">
-        <table id="ReimburseTable" class="table table-bordered table-striped table-hover">
-            <thead class="table-primary">
-                <tr>
-                    <th width="5%">No</th>
-                    <th>Nominal</th>
-                    <th>Foto</th>
-                    <th>Keterangan</th>
-                    <th>Tanggal</th>
-                    <th width="10%">Status</th>
-                    <th width="15%">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($reimburse as $item)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        {{-- Format number as Indonesian Rupiah --}}
-                        <td>Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                        <td>
-                            {{-- Make image clickable to open modal --}}
-                            <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
-                                data-src="{{ asset('storage/images/reimburse/' . $item->foto) }}">
-                                <img class="reimburse-image" src="{{ asset('storage/images/reimburse/' . $item->foto) }}"
-                                    alt="Foto Reimburse">
-                            </a>
-                        </td>
-                        {{-- Render HTML from Summernote and align left --}}
-                        <td class="keterangan-column">{!! $item->keterangan !!}</td>
-                        {{-- Format date to be more readable --}}
-                        <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
-                        <td>
-                            @if ($item->status == '0')
-                                <span class="badge badge-warning">Menunggu</span>
-                            @else
-                                <span class="badge badge-success">Selesai</span>
-                            @endif
-                        </td>
-                        <td>
-                            <form class="action-form" action="{{ route('reimburse.update', $item->kd_reimburse) }}"
-                                method="POST">
-                                @csrf
-                                @method('PUT')
+<table id="ReimburseTable" class="table table-bordered table-striped table-hover">
+    <thead class="table-primary">
+        <tr>
+            <th width="5%" class="text-left">ID</th>
+            <th class="text-left">Nominal</th>
+            <th class="text-left">Foto</th>
+            <th class="text-left">Keterangan</th>
+            <th class="text-left">Tanggal</th>
+            <th width="10%" class="text-left">Status</th>
+            <th width="15%" class="text-left">Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($reimburse as $item)
+            <tr>
+                <td class="text-left">{{ $loop->iteration }}</td>
+                <td class="text-left">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                <td class="text-left">
+                    <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
+                        data-src="{{ asset('storage/images/reimburse/' . $item->foto) }}">
+                        <img class="reimburse-image" src="{{ asset('storage/images/reimburse/' . $item->foto) }}"
+                            alt="Foto Reimburse">
+                    </a>
+                </td>
+                <td class="keterangan-column text-left">{!! $item->keterangan !!}</td>
+                <td class="text-left">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
+                <td class="text-left">
+                    @if ($item->status == '0')
+                        <span class="badge badge-info">Menunggu</span>
+                    @else
+                        <span class="badge badge-success">Selesai</span>
+                    @endif
+                </td>
+                <td class="text-left">
+                    <form class="action-form" action="{{ route('reimburse.update', $item->kd_reimburse) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        @if ($item->status == '0')
+                            <input type="hidden" name="status" value="1">
+                            <button type="submit" class="btn btn-sm btn-success">
+                                <i class="fas fa-check"></i> Selesai
+                            </button>
+                        @else
+                            <input type="hidden" name="status" value="0">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-times"></i> Batalkan
+                            </button>
+                        @endif
+                    </form>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
 
-                                @if ($item->status == '0')
-                                    {{-- Add a hidden input to hold the status value --}}
-                                    <input type="hidden" name="status" value="1">
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-check"></i> Selesai
-                                    </button>
-                                @else
-                                    {{-- Add a hidden input for the "cancel" action --}}
-                                    <input type="hidden" name="status" value="0">
-                                    <button type="submit" class="btn btn-sm btn-secondary">
-                                        <i class="fas fa-times"></i> Batalkan
-                                    </button>
-                                @endif
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Image Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-body text-center">
+            <div class="modal-body text-center p-0">
                 <img id="modalImage" src="" class="img-fluid" alt="Reimburse Image">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
@@ -131,12 +119,16 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        // Initialize DataTable
+        // Initialize DataTable with some options
         $('#ReimburseTable').DataTable({
             "responsive": true,
             "lengthChange": false,
             "autoWidth": false,
             "pageLength": 10,
+            "language": {
+                "search": "_INPUT_",
+                "searchPlaceholder": "Cari data..."
+            }
         });
 
         // Handle image popup modal
@@ -150,16 +142,15 @@
         $('.action-form').on('submit', function (e) {
             e.preventDefault();
             let form = this;
-            let button = $(this).find('button[type="submit"]');
-            let isCompleting = button.val() == '1';
+            let isCompleting = $(this).find('input[name="status"]').val() == '1';
 
             Swal.fire({
                 title: 'Anda yakin?',
                 text: isCompleting ? "Tandai reimburse ini sebagai selesai?" : "Batalkan status selesai reimburse ini?",
-                icon: 'warning',
+                icon: isCompleting ? 'question' : 'warning',
                 showCancelButton: true,
-                confirmButtonColor: isCompleting ? '#28a745' : '#6c757d',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#d33', // blue
+                cancelButtonColor: '#007bff',
                 confirmButtonText: 'Ya, lanjutkan!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
@@ -169,7 +160,7 @@
             })
         });
 
-        // Display success/error toasts
+        // Display success/error toasts if they exist
         @if (session()->has('success'))
             const Toast = Swal.mixin({
                 toast: true,
