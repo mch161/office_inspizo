@@ -34,7 +34,7 @@
                             <td>@if ( $log ->status == "0")
                                 Masuk
                                 @else
-                                Keluar
+                                Pulang
                             @endif</td>
                         </tr>
                     @endforeach

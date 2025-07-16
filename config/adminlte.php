@@ -348,9 +348,14 @@ return [
             'submenu' => [
                 [
                     'text' => 'Form Izin',
-                    'route' => '',
+                    'route' => 'izin.index',
                     'icon' => 'fas fa-fw fa-box'
-                ]
+                ],
+                [
+                    'text' => 'Form Reimburse',
+                    'route' => 'reimburse.index',
+                    'icon' => 'fas fa-fw fa-box-open',
+                ],
             ]
         ],
         [
@@ -375,11 +380,6 @@ return [
             'icon' => 'fas fa-fw fa-coins',
             'can' => 'access-karyawan',
             'submenu' => [
-                [
-                    'text' => 'Form Reimburse',
-                    'route' => 'reimburse.index',
-                    'icon' => 'fas fa-fw fa-box-open',
-                ],
                 [
                     'text' => 'Keuangan',
                     'route' => "keuangan.index",
