@@ -31,7 +31,7 @@
             <h3 class="card-title">Formulir</h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('reimburse.store') }}" method="POST" id="reimburseForm">
+            <form action="{{ route('reimburse.store') }}" method="POST" id="reimburseForm" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     @php $config = ['format' => 'YYYY-MM-DD']; @endphp
