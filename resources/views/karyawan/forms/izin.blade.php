@@ -19,7 +19,7 @@
         <h3 class="card-title">Formulir</h3>
     </div>
     <div class="card-body">
-        <form action="{{ route('izin.store') }}" method="POST" id="izinForm">
+        <form action="{{ route('izin.store') }}" method="POST" id="izinForm" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 @php $config = ['format' => 'YYYY-MM-DD']; @endphp
@@ -44,10 +44,10 @@
                     style="max-width: 20%; display: block; padding: 5px;display:none;">
             </div>
 
-            <x-adminlte-input-file name="foto" label="Foto surak dokter (Opsional)" placeholder="Pilih file" show-file-name
+            <x-adminlte-input-file name="foto" label="Foto surat dokter (Opsional)" placeholder="Pilih file" show-file-name
                 onchange="if(this.files.length){document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';}else{document.getElementById('preview').style.display = 'none';}"  />
 
-            <x-adminlte-textarea name="isi_izin" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
+            <x-adminlte-textarea name="keterangan" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
 
             <div name="card-footer">
                 <x-adminlte-button theme="success" label="Simpan" type="submit" form="izinForm" />
@@ -61,12 +61,6 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#izinTable').DataTable({
-            scrollX: true,
-            scrollCollapse: true,
-            pageLength: 10,
-            lengthChange: false,
-        });
         var summernoteOptions = {
             height: 250,
             placeholder: 'Masukkan keterangan izin di sini...',
@@ -82,71 +76,6 @@
         };
 
         $('#summernote_add').summernote(summernoteOptions);
-        $('#summernote_edit').summernote(summernoteOptions);
-    });
-    $(document).ready(function () {
-        $('.tombol-edit').on('click', function () {
-            const id = $(this).data('id');
-            const tanggal = $(this).data('tanggal');
-            const jam = $(this).data('jam');
-            const isi_izin = $(this).data('isi_izin');
-
-            if (!"{{ $errors->any() && session('invalid_izin') }}") {
-
-                $('#tanggal_edit').val(tanggal);
-                $('#jam_edit').val(jam);
-                $('#summernote_edit').summernote('code', isi_izin);
-            }
-
-            let form = $('#form-edit-izin');
-            let updateUrl = "{{ url('izin') }}/" + id;
-            form.attr('action', updateUrl);
-        });
-
-        @if ($errors->any() && session('invalid_izin'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('invalid_izin') }}',
-            })
-            const errorizinId = "{{ session('error_izin_id') }}";
-
-            if (errorizinId) {
-                let form = $('#form-edit-izin');
-                let updateUrl = "{{ url('izin') }}/" + errorizinId;
-                form.attr('action', updateUrl);
-            }
-
-            $('#modalEdit').modal('show');
-        @endif
-    });
-    $('#izinTable').on('click', '.tombol-hapus', function (e) {
-        e.preventDefault();
-        let form = $(this).closest('form');
-        Swal.fire({
-            title: 'Yakin ingin menghapus?',
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        })
     });
     $(document).ready(function () {
         const timeInput = $('#jam');
