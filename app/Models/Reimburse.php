@@ -13,6 +13,7 @@ class Reimburse extends Model
         'kd_karyawan',
         'tanggal',
         'jam',
+        'nominal',
         'foto',
         'keterangan',
         'status',

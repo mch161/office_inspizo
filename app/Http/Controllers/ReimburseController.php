@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Jurnal;
 use App\Models\Reimburse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,17 +41,19 @@ class ReimburseController extends Controller
             'tanggal' => 'required|date',
             'jam' => 'required',
             'keterangan' => 'required|string',
+            'nominal' => 'required|numeric'
         ]);
 
-        $jurnal = new Jurnal();
-        $jurnal->kd_karyawan = Auth::guard('karyawan')->user()->kd_karyawan;
-        $jurnal->tanggal = $request->tanggal;
-        $jurnal->jam = $request->jam;
-        $jurnal->isi_jurnal = $request->isi_jurnal;
-        $jurnal->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
-        $jurnal->save();
+        $reimburse = new Reimburse();
+        $reimburse->kd_karyawan = Auth::guard('karyawan')->user()->kd_karyawan;
+        $reimburse->tanggal = $request->tanggal;
+        $reimburse->jam = $request->jam;
+        $reimburse->nominal = $request->nominal;
+        $reimburse->isi_reimburse = $request->isi_reimburse;
+        $reimburse->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
+        $reimburse->save();
 
-        return redirect()->route('jurnalku')->with('success', 'Jurnal berhasil dibuat.');
+        return redirect()->route('reimburseku')->with('success', 'reimburse berhasil dibuat.');
     }
 
     /**
