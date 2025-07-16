@@ -376,14 +376,15 @@ return [
             'can' => 'access-karyawan',
             'submenu' => [
                 [
-                    'text' => 'Form Reimburse',
-                    'route' => 'reimburse.index',
-                    'icon' => 'fas fa-fw fa-box-open',
-                ],
-                [
                     'text' => 'Keuangan',
                     'route' => "keuangan.index",
                     'icon' => 'fas fa-fw fa-money-bill-wave',
+                    'can' => 'superadmin',
+                ],
+                [
+                    'text' => 'Tabel Reimburse',
+                    'route' => 'reimburse.index',
+                    'icon' => 'fas fa-fw fa-box-open',
                     'can' => 'superadmin',
                 ],
                 [

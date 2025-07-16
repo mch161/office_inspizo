@@ -11,7 +11,7 @@
 @stop
 
 @section('css')
- 
+
 @endsection
 
 @section('content')
@@ -200,7 +200,8 @@
     $(document).ready(function () {
         $('#KeuanganTable').DataTable({
             scrollX: true,
-            paging: false,
+            pageLength: 5,
+            lengthChange: false,
             scrollCollapse: true,
             scrollY: '200px'
         });

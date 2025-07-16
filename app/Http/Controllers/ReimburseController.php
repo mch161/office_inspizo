@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Reimburse;
 use Illuminate\Http\Request;
 
 class ReimburseController extends Controller
@@ -11,7 +12,10 @@ class ReimburseController extends Controller
      */
     public function index()
     {
-        return view('karyawan.keuangan.reimburse');
+        $reimburse = Reimburse::all();
+        return view('karyawan.keuangan.reimburse', [
+            "reimburse" => $reimburse
+        ]);
     }
 
     /**

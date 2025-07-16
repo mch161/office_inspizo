@@ -16,8 +16,9 @@ return new class extends Migration
             $table->integer('kd_karyawan');
             $table->string('tanggal', 20);
             $table->string('jam', 20);
-            $table->string('foto', 255);
+            $table->string('foto', 255)->nullable();
             $table->text('keterangan');
+            $table->string('status', 1)->default('0');
             $table->string('dibuat_oleh', 50);
             $table->timestamps();
 
