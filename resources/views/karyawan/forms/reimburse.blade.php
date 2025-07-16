@@ -70,7 +70,7 @@
 
 
 
-                <x-adminlte-textarea name="isi_reimburse" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
+                <x-adminlte-textarea name="keterangan" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
 
                 <div name="card-footer">
                     <x-adminlte-button theme="success" label="Simpan" type="submit" form="reimburseForm" />

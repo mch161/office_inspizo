@@ -40,17 +40,22 @@ class ReimburseController extends Controller
         $request->validate([
             'tanggal' => 'required|date',
             'jam' => 'required|string',
-            'foto' => 'required|string',
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'keterangan' => 'required|string',
-            'nominal' => 'required|numeric'
+            'nominal' => 'required|numeric',
         ]);
+
+
+        $imageName = time() . '.' . $request->foto->extension();
+        $request->foto->move(public_path('storage/images/reimburse'), $imageName);
 
         $reimburse = new Reimburse();
         $reimburse->kd_karyawan = Auth::guard('karyawan')->user()->kd_karyawan;
         $reimburse->tanggal = $request->tanggal;
         $reimburse->jam = $request->jam;
         $reimburse->nominal = $request->nominal;
-        $reimburse->isi_reimburse = $request->isi_reimburse;
+        $reimburse->foto = $imageName;
+        $reimburse->keterangan = $request->keterangan;
         $reimburse->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
         $reimburse->save();
 
