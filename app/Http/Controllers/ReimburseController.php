@@ -58,9 +58,17 @@ class ReimburseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $reimburse = Reimburse::findOrFail($id);
+        $reimburse->status = $request->status;
+        $reimburse->save();
+        if ($request) {
+            return redirect()->route('reimburse.index')->with('success', 'Reimburse berhasil diupdate.');
+        }
+        else {
+            return redirect()->route('reimburse.index')->with('error', 'Reimburse gagal diupdate.');
+        }
     }
 
     /**
