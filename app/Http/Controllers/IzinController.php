@@ -32,19 +32,26 @@ class IzinController extends Controller
         $request->validate( [
             'tanggal' => 'required|date',
             'jam' => 'required',
-            'foto' => 'string',
-            'keterangan' => 'required|string'
-
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'keterangan' => 'required|string',
         ]);
+
+        if ($request->hasFile('foto')) {
+            $imageName = time() . '.' . $request->foto->extension();
+            $request->foto->move(public_path('storage/images/izin'), $imageName);
+        }
 
         $izin = new Izin();
         $izin->kd_karyawan = Auth::guard('karyawan')->user()->kd_karyawan;
         $izin->tanggal = $request->tanggal;
         $izin->jam = $request->jam;
-        $izin->isi_izin = $request->isi_izin;
+        $izin->foto = $imageName ?? null;
+        $izin->keterangan = $request->keterangan;
+        $izin->status = '0';
         $izin->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
         $izin->save();
-        return redirect()->route('izin')->with('success', 'izin berhasil dibuat.');
+        return redirect()->route('izin.index')->with('success', 'izin berhasil dibuat.');
+
     }
 
     /**
