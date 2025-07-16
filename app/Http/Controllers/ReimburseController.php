@@ -39,7 +39,8 @@ class ReimburseController extends Controller
     {
         $request->validate([
             'tanggal' => 'required|date',
-            'jam' => 'required',
+            'jam' => 'required|string',
+            'foto' => 'required|string',
             'keterangan' => 'required|string',
             'nominal' => 'required|numeric'
         ]);
