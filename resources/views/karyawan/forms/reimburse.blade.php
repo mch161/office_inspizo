@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Jurnal')
+@section('title', 'reimburse')
 
 @section('plugins.Sweetalert2', true)
 @section('plugins.Summernote', true)
@@ -19,7 +19,7 @@
         <h3 class="card-title">Formulir</h3>
     </div>
     <div class="card-body">
-        <form action="{{ route('jurnal.store') }}" method="POST" id="jurnalForm">
+        <form action="{{ route('reimburse.store') }}" method="POST" id="reimburseForm">
             @csrf
             <div class="row">
                 @php $config = ['format' => 'YYYY-MM-DD']; @endphp
@@ -47,10 +47,10 @@
             <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name
                 onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
 
-            <x-adminlte-textarea name="isi_jurnal" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
+            <x-adminlte-textarea name="isi_reimburse" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
 
             <div name="card-footer">
-                <x-adminlte-button theme="success" label="Simpan" type="submit" form="jurnalForm" />
+                <x-adminlte-button theme="success" label="Simpan" type="submit" form="reimburseForm" />
                 <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
             </div>
         </form>
@@ -61,7 +61,7 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#JurnalTable').DataTable({
+        $('#reimburseTable').DataTable({
             scrollX: true,
             scrollCollapse: true,
             pageLength: 10,
@@ -69,7 +69,7 @@
         });
         var summernoteOptions = {
             height: 250,
-            placeholder: 'Masukkan keterangan jurnal di sini...',
+            placeholder: 'Masukkan keterangan reimburse di sini...',
             toolbar: [
                 ['style', ['style']],
                 ['font', ['bold', 'italic', 'underline', 'clear']],
@@ -89,21 +89,21 @@
             const id = $(this).data('id');
             const tanggal = $(this).data('tanggal');
             const jam = $(this).data('jam');
-            const isi_jurnal = $(this).data('isi_jurnal');
+            const isi_reimburse = $(this).data('isi_reimburse');
 
-            if (!"{{ $errors->any() && session('invalid_jurnal') }}") {
+            if (!"{{ $errors->any() && session('invalid_reimburse') }}") {
 
                 $('#tanggal_edit').val(tanggal);
                 $('#jam_edit').val(jam);
-                $('#summernote_edit').summernote('code', isi_jurnal);
+                $('#summernote_edit').summernote('code', isi_reimburse);
             }
 
-            let form = $('#form-edit-jurnal');
-            let updateUrl = "{{ url('jurnal') }}/" + id;
+            let form = $('#form-edit-reimburse');
+            let updateUrl = "{{ url('reimburse') }}/" + id;
             form.attr('action', updateUrl);
         });
 
-        @if ($errors->any() && session('invalid_jurnal'))
+        @if ($errors->any() && session('invalid_reimburse'))
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -117,20 +117,20 @@
             });
             Toast.fire({
                 icon: 'error',
-                text: '{{ session('invalid_jurnal') }}',
+                text: '{{ session('invalid_reimburse') }}',
             })
-            const errorJurnalId = "{{ session('error_jurnal_id') }}";
+            const errorreimburseId = "{{ session('error_reimburse_id') }}";
 
-            if (errorJurnalId) {
-                let form = $('#form-edit-jurnal');
-                let updateUrl = "{{ url('jurnal') }}/" + errorJurnalId;
+            if (errorreimburseId) {
+                let form = $('#form-edit-reimburse');
+                let updateUrl = "{{ url('reimburse') }}/" + errorreimburseId;
                 form.attr('action', updateUrl);
             }
 
             $('#modalEdit').modal('show');
         @endif
     });
-    $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
+    $('#reimburseTable').on('click', '.tombol-hapus', function (e) {
         e.preventDefault();
         let form = $(this).closest('form');
         Swal.fire({
