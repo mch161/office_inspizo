@@ -14,38 +14,48 @@
 @endsection
 
 @section('content')
-<x-adminlte-card label="" title="Form Reimburse" theme="info" icon="fas fa-lg fa-bell" maximizable>
+<div class="card">
+    <div class="card-header bg-primary">
+        <h3 class="card-title">Formulir</h3>
+    </div>
+    <div class="card-body">
         <form action="{{ route('jurnal.store') }}" method="POST" id="jurnalForm">
-        @csrf
-        <div class="row">
-            @php $config = ['format' => 'YYYY-MM-DD']; @endphp
-            <x-adminlte-input-date name="tanggal" value="{{ date('Y-m-d') }}" :config="$config"
-                placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
-                <x-slot name="appendSlot">
-                    <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
-                </x-slot>
-            </x-adminlte-input-date>
+            @csrf
+            <div class="row">
+                @php $config = ['format' => 'YYYY-MM-DD']; @endphp
+                <x-adminlte-input-date name="tanggal" value="{{ date('Y-m-d') }}" :config="$config"
+                    placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
+                    <x-slot name="appendSlot">
+                        <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
+                    </x-slot>
+                </x-adminlte-input-date>
 
-            @php $config = ['format' => 'HH:mm']; @endphp
-            <x-adminlte-input-date name="jam" id="jam" :config="$config" placeholder="Pilih jam..." label="Jam"
-                igroup-size="md" required>
-                <x-slot name="appendSlot">
-                    <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
-                </x-slot>
-            </x-adminlte-input-date>
-        </div>
+                @php $config = ['format' => 'HH:mm']; @endphp
+                <x-adminlte-input-date name="jam" id="jam" :config="$config" placeholder="Pilih jam..." label="Jam"
+                    igroup-size="md" required>
+                    <x-slot name="appendSlot">
+                        <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
+                    </x-slot>
+                </x-adminlte-input-date>
+            </div>
 
-        <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name
-            onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
+            <div class="mb-3">
+                <img id="preview" src="" alt="Image preview"
+                    style="max-width: 20%; display: block; padding: 5px;display:none;">
+            </div>
 
-        <x-adminlte-textarea name="isi_jurnal" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
+            <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name
+                onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
 
-        <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Simpan" type="submit" form="jurnalForm" />
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
-        </x-slot>
-    </form>
-</x-adminlte-card>
+            <x-adminlte-textarea name="isi_jurnal" id="summernote_add" label="Keterangan"></x-adminlte-textarea>
+
+            <div name="card-footer">
+                <x-adminlte-button theme="success" label="Simpan" type="submit" form="jurnalForm" />
+                <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
 
 @section('js')
