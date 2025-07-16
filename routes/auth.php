@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.submit');
 
+Route::post('/ganti-password', [App\Http\Controllers\Auth\ProfileController::class, 'updatePassword'])->name('ganti-password');
+
 Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 Route::get('/register', [App\Http\Controllers\Auth\LoginController::class, 'showRegisterForm'])->name('register');
