@@ -18,6 +18,11 @@ class ReimburseController extends Controller
         ]);
     }
 
+    public function reimburseForm()
+    {
+        return view('karyawan.forms.reimburse');
+    }
+
     /**
      * Show the form for creating a new resource.
      */

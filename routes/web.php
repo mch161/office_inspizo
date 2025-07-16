@@ -29,6 +29,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('kotak', App\Http\Controllers\KotakKeuanganController::class);
     Route::resource('kategori', App\Http\Controllers\KategoriKeuanganController::class);
     Route::resource('reimburse', App\Http\Controllers\ReimburseController::class);
+    Route::get('forms/reimburse', [App\Http\Controllers\ReimburseController::class, 'reimburseForm'])->name('reimburse.form');
     Route::resource('izin', App\Http\Controllers\IzinController::class);
 });
 

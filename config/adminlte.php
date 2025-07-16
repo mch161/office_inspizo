@@ -353,7 +353,7 @@ return [
                 ],
                 [
                     'text' => 'Form Reimburse',
-                    'route' => 'reimburse.index',
+                    'route' => 'reimburse.form',
                     'icon' => 'fas fa-fw fa-box-open',
                 ],
             ]
