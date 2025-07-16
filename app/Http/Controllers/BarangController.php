@@ -37,6 +37,7 @@ class BarangController extends Controller
             'nama_barang' => 'required|string',
             'harga' => 'required|numeric',
             'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'stok' => 'required|numeric|min:0',
         ]);
 
         $imageName = time() . '.' . $request->foto->extension();
@@ -46,6 +47,7 @@ class BarangController extends Controller
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
         $barang->harga = $request->harga;
+        $barang->stok = $request->stok;
         $barang->foto = $imageName;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
@@ -108,6 +110,33 @@ class BarangController extends Controller
             return redirect()->route('barang.index')
                 ->with('error', 'Barang gagal diupdate.');
         }
+    }
+
+    public function updateStok(Request $request, $id)
+    {
+        $barang = Barang::findOrFail($id);
+
+        $request->validate([
+            'tambah_stok' => 'nullable|numeric|min:0',
+            'kurangi_stok' => 'nullable|numeric|min:0',
+        ]);
+
+        if($request->has('tambah_stok') && $request->tambah_stok > 0) {
+            $barang->stok += $request->tambah_stok;
+            $barang->save();
+            return redirect()->route('barang.index')->with('success', 'Stok berhasil ditambahkan.');
+        }
+        
+        if($request->has('kurangi_stok') && $request->kurangi_stok > 0) {
+            if ($barang->stok < $request->kurangi_stok) {
+                return redirect()->route('barang.index')->with('error', 'Stok tidak mencukupi untuk dikurangi.');
+            }
+            $barang->stok -= $request->kurangi_stok;
+            $barang->save();
+            return redirect()->route('barang.index')->with('success', 'Stok berhasil dikurangi.');
+        }
+        
+        return redirect()->route('barang.index')->with('error', 'Tidak ada perubahan stok yang dilakukan.');
     }
 
     /**
