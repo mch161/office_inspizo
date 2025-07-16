@@ -12,9 +12,9 @@
                 <thead class="table-primary">
                     <tr>
                         <th width='5%'>ID</th>
-                        <th width="300px">Date</th>
-                        <th width="100px">Time</th>
-                        <th width="100px">Verified</th>
+                        <th width="300px">Tanggal</th>
+                        <th width="100px">waktu</th>
+                        <th width="100px">Verifikasi</th>
                         <th width="100px">Status</th>
                     </tr>
                 </thead>
@@ -31,7 +31,11 @@
                                     <span class="badge bg-danger">No</span>
                                 @endif
                             </td>
-                            <td>{{ $log->status }}</td>
+                            <td>@if ( $log ->status == "0")
+                                Masuk
+                                @else
+                                Keluar
+                            @endif</td>
                         </tr>
                     @endforeach
                 </tbody>
