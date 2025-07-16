@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Jurnal;
 use App\Models\Reimburse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReimburseController extends Controller
 {
@@ -36,7 +38,21 @@ class ReimburseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'tanggal' => 'required|date',
+            'jam' => 'required',
+            'keterangan' => 'required|string',
+        ]);
+
+        $jurnal = new Jurnal();
+        $jurnal->kd_karyawan = Auth::guard('karyawan')->user()->kd_karyawan;
+        $jurnal->tanggal = $request->tanggal;
+        $jurnal->jam = $request->jam;
+        $jurnal->isi_jurnal = $request->isi_jurnal;
+        $jurnal->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
+        $jurnal->save();
+
+        return redirect()->route('jurnalku')->with('success', 'Jurnal berhasil dibuat.');
     }
 
     /**
