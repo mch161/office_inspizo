@@ -71,6 +71,11 @@
         background: #f3f3f3;
     }
 
+    .barang-img:hover {
+        transform: scale(1.01);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
     .info-box-content {
         width: 100%;
         text-align: center;
@@ -226,12 +231,15 @@
                     </form>
                 </div>
             </div>
-            <img src="{{ asset('storage/images/barang/' . $b->foto) }}" alt="{{ $b->nama_barang }}" class="barang-img">
+            <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
+                data-src="{{ asset('storage/images/barang/' . $b->foto) }}">
+                <img class="barang-img" src="{{ asset('storage/images/barang/' . $b->foto) }}" alt="Foto Barang">
+            </a>
             <div class="info-box-content">
                 <span class="info-box-text">{{ $b->nama_barang }}</span>
                 <span class="info-box-number">{{ 'Rp' . number_format($b->harga, 2, ',', '.') }}</span>
             </div>
-                    <div class="stok-info">
+            <div class="stok-info">
                 Stok: {{ $b->stok }}
             </div>
         </div>
@@ -240,6 +248,16 @@
             <p class="text-center text-muted">Belum ada barang yang ditambahkan.</p>
         </div>
     @endforelse
+</div>
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center p-0">
+                <img id="modalImage" src="" class="img-fluid" alt="Barang Image">
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -252,6 +270,11 @@
             $(formId).attr('action', updateUrl);
             $(modalId).modal('show');
         }
+        $('.image-popup').on('click', function (e) {
+            e.preventDefault();
+            const imageUrl = $(this).data('src');
+            $('#modalImage').attr('src', imageUrl);
+        });
 
         $('.barang-container').on('click', '.tambah-stok-btn', function (e) {
             e.preventDefault();
