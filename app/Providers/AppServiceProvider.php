@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Barang;
 use App\Models\Karyawan;
+use App\Models\Stok;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        Barang::observe(\App\Observers\BarangObserver::class);
+        Stok::observe(\App\Observers\StokObserver::class);
 
         Karyawan::observe(\App\Observers\KaryawanObserver::class);
 

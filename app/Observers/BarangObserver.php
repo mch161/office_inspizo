@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Barang;
 use App\Models\Stok;
+use Illuminate\Support\Facades\Auth; // Impor Auth untuk mendapatkan user
 
 class BarangObserver
 {
@@ -12,12 +13,25 @@ class BarangObserver
      */
     public function created(Barang $barang): void
     {
-    // Create a new Stok entry when a Barang is created
-    $stok = new Stok();
-    $stok->kd_barang = $barang->kd_barang;
-    $stok->stok = $barang->stok;
-    $stok->save();
+        if ($barang->stok > 0) {
+            Stok::create([
+                'kd_barang'   => $barang->kd_barang,
+                'kd_karyawan' => $barang->kd_karyawan,
+                'stok_masuk'  => $barang->stok,
+                'stok_keluar' => 0,
+                'klasifikasi' => 'Stok Awal',
+                'keterangan'  => 'Stok awal saat barang dibuat.',
+                'dibuat_oleh' => $barang->dibuat_oleh,
+            ]);
+        }
+    }
 
+    /**
+     * Handle the Barang "deleting" event.
+     */
+    public function deleting(Barang $barang): void
+    {
+        Stok::where('kd_barang', $barang->kd_barang)->delete();
     }
 
     /**

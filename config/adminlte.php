@@ -382,9 +382,9 @@ return [
                     'icon' => 'fas fa-fw fa-box-open'
                 ],
                 [
-                    'text' => 'Stok',
+                    'text' => 'Riwayat Stok',
                     'route' => 'stok.index',
-                    'icon' => 'fas fa-fw fa-box'
+                    'icon' => 'fas fa-fw fa-history'
                 ]
             ]
         ],

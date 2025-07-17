@@ -37,7 +37,7 @@ class BarangController extends Controller
             'nama_barang' => 'required|string',
             'harga' => 'required|numeric',
             'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'stok' => 'required|numeric|min:0',
+            'stok' => 'nullable|numeric|min:0',
         ]);
 
         $imageName = time() . '.' . $request->foto->extension();
@@ -47,7 +47,7 @@ class BarangController extends Controller
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
         $barang->harga = $request->harga;
-        $barang->stok = $request->stok;
+        $barang->stok = $request->stok ?? 0;
         $barang->foto = $imageName;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();

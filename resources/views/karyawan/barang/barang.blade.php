@@ -111,15 +111,15 @@
         @csrf
         <div class="form-group">
             <label for="nama_barang">Nama Barang</label>
-            <input type="text" class="form-control" id="nama_barang" name="nama_barang" required>
+            <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan Nama Barang" required>
         </div>
         <div class="form-group">
             <label for="harga">Harga</label>
-            <input type="number" class="form-control" id="harga" name="harga" min="0" required>
+            <input type="number" class="form-control" id="harga" name="harga" min="0" placeholder="10000" required>
         </div>
         <div class="form-group">
             <label for="stok">Stok</label>
-            <input type="number" class="form-control" id="stok" name="stok" min="0" value="0" required>
+            <input type="number" class="form-control" id="stok" name="stok" min="0" placeholder="0">
         </div>
         <div class="mb-3">
             @error('image')
@@ -175,28 +175,37 @@
         </x-slot>
     </form>
 </x-adminlte-modal>
+
 <x-adminlte-modal id="modalTambahStok" title="Tambahkan Stok" theme="success" icon="fas fa-plus-circle" size='md'>
-    <form method="POST" id="stokFormTambah">
+    <form action="{{ route('stok.store') }}" method="POST" id="stokFormTambah">
         @csrf
-        @method('PUT')
-        <x-adminlte-input name="tambah_stok" label="Jumlah yang Ditambahkan" type="number" min="1" required />
+        <input type="hidden" name="kd_barang" id="tambah_kd_barang">
+        <input type="hidden" name="klasifikasi" value="Stok Masuk">
+        <x-adminlte-input name="jumlah" label="Jumlah yang Ditambahkan" type="number" min="1" required />
+        <x-adminlte-textarea name="keterangan" label="Keterangan (Opsional)"
+            placeholder="Contoh: Pembelian dari supplier A" />
         <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Tambahkan" type="submit" />
+            <x-adminlte-button theme="success" label="Tambahkan" type="submit" form="stokFormTambah" />
             <x-adminlte-button label="Batal" data-dismiss="modal" theme="secondary" />
         </x-slot>
     </form>
 </x-adminlte-modal>
+
 <x-adminlte-modal id="modalKurangiStok" title="Kurangi Stok" theme="danger" icon="fas fa-minus-circle" size='md'>
-    <form method="POST" id="stokFormKurang">
+    <form action="{{ route('stok.store') }}" method="POST" id="stokFormKurang">
         @csrf
-        @method('PUT')
-        <x-adminlte-input name="kurangi_stok" label="Jumlah yang Dikurangi" type="number" min="1" required />
+        <input type="hidden" name="kd_barang" id="kurang_kd_barang">
+        <input type="hidden" name="klasifikasi" value="Stok Keluar">
+        <x-adminlte-input name="jumlah" label="Jumlah yang Dikurangi" type="number" min="1" required />
+        <x-adminlte-textarea name="keterangan" label="Keterangan (Opsional)"
+            placeholder="Contoh: Penjualan kepada pelanggan B" />
         <x-slot name="footerSlot">
-            <x-adminlte-button theme="danger" label="Kurangi" type="submit" />
+            <x-adminlte-button theme="danger" label="Kurangi" type="submit" form="stokFormKurang" />
             <x-adminlte-button label="Batal" data-dismiss="modal" theme="secondary" />
         </x-slot>
     </form>
 </x-adminlte-modal>
+
 <div class="d-flex justify-content-end">
     <x-adminlte-button label="Tambahkan Barang" class="mb-2 bg-blue" data-toggle="modal" data-target="#modalTambah" />
 </div>
@@ -217,10 +226,10 @@
                         <i class="fas fa-edit fa-fw mr-2 text-info"></i>Edit
                     </a>
                     <a class="dropdown-item tambah-stok-btn" href="#" data-id="{{ $b->kd_barang }}">
-                        <i class="fas fa-arrow-up fa-fw mr-2 text-success"></i>Tambah Stok
+                        <i class="fas fa-plus-circle fa-fw mr-2 text-success"></i>Tambah Stok
                     </a>
                     <a class="dropdown-item kurangi-stok-btn" href="#" data-id="{{ $b->kd_barang }}">
-                        <i class="fas fa-arrow-down fa-fw mr-2 text-danger"></i>Kurangi Stok
+                        <i class="fas fa-minus-circle fa-fw mr-2 text-danger"></i>Kurangi Stok
                     </a>
                     <form action="{{ route('barang.destroy', $b->kd_barang) }}" method="POST" style="display:inline;">
                         @csrf
@@ -264,28 +273,25 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        function setupFormAction(button, modalId, formId) {
-            const id = $(button).data('id');
-            const updateUrl = "{{ url('barang') }}/" + id + "/updateStok";
-            $(formId).attr('action', updateUrl);
-            $(modalId).modal('show');
-        }
+        $('.barang-container').on('click', '.tambah-stok-btn', function (e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+            $('#tambah_kd_barang').val(id);
+            $('#modalTambahStok').modal('show');
+        });
+
+        $('.barang-container').on('click', '.kurangi-stok-btn', function (e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+            $('#kurang_kd_barang').val(id);
+            $('#modalKurangiStok').modal('show');
+        });
+
         $('.image-popup').on('click', function (e) {
             e.preventDefault();
             const imageUrl = $(this).data('src');
             $('#modalImage').attr('src', imageUrl);
         });
-
-        $('.barang-container').on('click', '.tambah-stok-btn', function (e) {
-            e.preventDefault();
-            setupFormAction(this, '#modalTambahStok', '#stokFormTambah');
-        });
-
-        $('.barang-container').on('click', '.kurangi-stok-btn', function (e) {
-            e.preventDefault();
-            setupFormAction(this, '#modalKurangiStok', '#stokFormKurang');
-        });
-
         $('.barang-container').on('click', '.edit-btn', function (e) {
             e.preventDefault();
             const id = $(this).data('id');
