@@ -236,6 +236,18 @@
                 saveProfileData();
             });
 
+            function toggleEditMode(enable) {
+                if (enable) {
+                    formInputs.removeAttr('readonly');
+                    $('#tombol-edit').hide();
+                    $('#tombol-simpan, #tombol-batal').show();
+                } else {
+                    formInputs.attr('readonly', true);
+                    $('#tombol-edit').show();
+                    $('#tombol-simpan, #tombol-batal').hide();
+                }
+            }
+
             $('.toggle-password-icon').on('click', function () {
                 const passwordInput = $(this).closest('.input-group').find('input');
                 const type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
