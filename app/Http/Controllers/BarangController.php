@@ -9,15 +9,19 @@ use Illuminate\Support\Facades\File;
 
 class BarangController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $barang = Barang::with('karyawan')->get();
-        return view('karyawan.barang.barang', [
-            "barang" => $barang
-        ]);
+        $search = $request->input('s');
+
+        $query = Barang::query();
+
+        if ($search) {
+            $query->where('nama_barang', 'like', '%' . $search . '%');
+        }
+
+        $barang = $query->get();
+
+        return view('karyawan.barang.barang', compact('barang'));
     }
 
     /**
@@ -51,12 +55,11 @@ class BarangController extends Controller
         $barang->foto = $imageName;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
-        
+
         if ($barang) {
             return redirect()->route('barang.index')
                 ->with('success', 'Barang berhasil dibuat.');
-        }
-        else {
+        } else {
             return redirect()->route('barang.index')
                 ->with('error', 'Barang gagal dibuat.');
         }
@@ -95,7 +98,7 @@ class BarangController extends Controller
             $request->foto->move(public_path('storage/images/barang'), $imageName);
             $barang->foto = $imageName;
         }
-        
+
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
         $barang->harga = $request->harga;
@@ -105,8 +108,7 @@ class BarangController extends Controller
         if ($barang) {
             return redirect()->route('barang.index')
                 ->with('success', 'Barang berhasil diupdate.');
-        }
-        else {
+        } else {
             return redirect()->route('barang.index')
                 ->with('error', 'Barang gagal diupdate.');
         }
@@ -121,13 +123,13 @@ class BarangController extends Controller
             'kurangi_stok' => 'nullable|numeric|min:0',
         ]);
 
-        if($request->has('tambah_stok') && $request->tambah_stok > 0) {
+        if ($request->has('tambah_stok') && $request->tambah_stok > 0) {
             $barang->stok += $request->tambah_stok;
             $barang->save();
             return redirect()->route('barang.index')->with('success', 'Stok berhasil ditambahkan.');
         }
-        
-        if($request->has('kurangi_stok') && $request->kurangi_stok > 0) {
+
+        if ($request->has('kurangi_stok') && $request->kurangi_stok > 0) {
             if ($barang->stok < $request->kurangi_stok) {
                 return redirect()->route('barang.index')->with('error', 'Stok tidak mencukupi untuk dikurangi.');
             }
@@ -135,7 +137,7 @@ class BarangController extends Controller
             $barang->save();
             return redirect()->route('barang.index')->with('success', 'Stok berhasil dikurangi.');
         }
-        
+
         return redirect()->route('barang.index')->with('error', 'Tidak ada perubahan stok yang dilakukan.');
     }
 
@@ -150,8 +152,7 @@ class BarangController extends Controller
         if ($barang) {
             return redirect()->route('barang.index')
                 ->with('success', 'Barang berhasil dihapus.');
-        }
-        else {
+        } else {
             return redirect()->route('barang.index')
                 ->with('error', 'Barang gagal dihapus.');
         }

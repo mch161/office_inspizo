@@ -111,7 +111,8 @@
         @csrf
         <div class="form-group">
             <label for="nama_barang">Nama Barang</label>
-            <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan Nama Barang" required>
+            <input type="text" class="form-control" id="nama_barang" name="nama_barang"
+                placeholder="Masukkan Nama Barang" required>
         </div>
         <div class="form-group">
             <label for="harga">Harga</label>
@@ -210,6 +211,15 @@
     <x-adminlte-button label="Tambahkan Barang" class="mb-2 bg-blue" data-toggle="modal" data-target="#modalTambah" />
 </div>
 <hr>
+<form action="{{ route('barang.index') }}" method="GET" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="s" class="form-control" placeholder="Cari nama barang..."
+            value="{{ request('search') }}">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">Cari</button>
+        </div>
+    </div>
+</form>
 <div class="barang-container">
     @forelse ($barang as $b)
         <div class="barang-card">
@@ -253,8 +263,16 @@
             </div>
         </div>
     @empty
-        <div class="col-md-12">
-            <p class="text-center text-muted">Belum ada barang yang ditambahkan.</p>
+        <div class="col-md">
+            @if (request('s'))
+                    <div class="text-muted text-center">
+                        <p>Tidak ada data barang yang sesuai dengan pencarian "{{ request('s') }}".</p>
+                    </div>
+                @else
+                    <div class="text-muted text-center">
+                        <p>Saat ini belum ada data barang yang tersedia di dalam sistem.</p>
+                    </div>
+                @endif
         </div>
     @endforelse
 </div>
@@ -294,11 +312,11 @@
         });
         $('.barang-container').on('click', '.edit-btn', function (e) {
             e.preventDefault();
-            const id = $(this).data('id');
+            
             const nama = $(this).data('nama');
             const harga = $(this).data('harga');
             const fotoUrl = $(this).data('foto');
-            const updateUrl = "{{ url('barang') }}/" + id;
+            const updateUrl = $(this).data('url');
 
             $('#edit_nama_barang').val(nama);
             $('#edit_harga').val(harga);
