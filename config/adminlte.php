@@ -402,7 +402,7 @@ return [
                 [
                     'text' => 'Tabel Reimburse',
                     'route' => 'reimburse.index',
-                    'icon' => 'fas fa-fw fa-box-open',
+                    'icon' => 'fas fa-fw fa-money-check',
                     'can' => 'superadmin',
                 ],
                 [

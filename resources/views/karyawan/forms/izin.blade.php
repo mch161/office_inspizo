@@ -11,36 +11,29 @@
 @stop
 
 @section('content')
-    <div class="card">
-        <div class="card-header bg-primary">
-            <h3 class="card-title">Formulir Pengajuan Izin</h3>
-        </div>
+    <div class="card card-primary card-outline">
         <div class="card-body">
             <form action="{{ route('izin.store') }}" method="POST" id="izinForm" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
-                    <div class="col-md-6">
                         @php
                             $config = ['format' => 'YYYY-MM-DD'];
                         @endphp
                         <x-adminlte-input-date name="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" :config="$config"
                             placeholder="Pilih tanggal..." label="Tanggal Izin" igroup-size="md" required>
                             <x-slot name="appendSlot">
-                                <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
+                                <div class="input-group-text bg-gray mr-3"><i class="fas fa-calendar-day"></i></div>
                             </x-slot>
                         </x-adminlte-input-date>
-                    </div>
-                    <div class="col-md-6">
                          @php
                             $config = ['format' => 'HH:mm'];
                         @endphp
                         <x-adminlte-input-date name="jam" id="jam" value="{{ old('jam', date('H:i')) }}" :config="$config" placeholder="Pilih jam..." label="Jam"
                             igroup-size="md" required>
                             <x-slot name="appendSlot">
-                                <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
+                                <div class="input-group-text bg-gray"><i class="fas fa-clock"></i></div>
                             </x-slot>
                         </x-adminlte-input-date>
-                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -51,27 +44,10 @@
                 <x-adminlte-input-file name="foto" label="Foto Surat Dokter (Opsional)" placeholder="Pilih file..."
                     igroup-size="md" onchange="previewImage(event)" />
 
-                @php
-                $config = [
-                    "height" => "150",
-                    "toolbar" => [
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
-                        ['fontsize', ['fontsize']],
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['height', ['height']],
-                        ['table', ['table']],
-                        ['insert', ['link']],
-                        ['view', ['fullscreen', 'codeview', 'help']],
-                    ],
-                ];
-                @endphp
-                <x-adminlte-text-editor name="keterangan" label="Keterangan" igroup-size="md"
-                    placeholder="Tuliskan alasan izin Anda di sini..." :config="$config">{{ old('keterangan') }}</x-adminlte-text-editor>
+                <x-adminlte-textarea name="keterangan" label="Keterangan" placeholder="Tuliskan keterangan izin Anda di sini..."></x-adminlte-textarea>
 
                 <div class="mt-4">
-                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Simpan</button>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Kirim</button>
                     <a href="{{ route('izin.form') }}" class="btn btn-danger"><i class="fas fa-times"></i> Batal</a>
                 </div>
             </form>

@@ -168,14 +168,12 @@
             "pageLength": 10,
         });
 
-        // Handle image popup modal
         $('.image-popup').on('click', function (e) {
             e.preventDefault();
             const imageUrl = $(this).data('src');
             $('#modalImage').attr('src', imageUrl);
         });
 
-        // Confirmation for approve/reject/delete actions
         function setupFormConfirmation(formClass, title, text, confirmButtonColor) {
             $('.' + formClass).on('submit', function (e) {
                 e.preventDefault();
@@ -186,7 +184,7 @@
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: confirmButtonColor,
-                    cancelButtonColor: '#6c757d',
+                    cancelButtonColor: '#007bff',
                     confirmButtonText: 'Ya, lanjutkan!',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
@@ -201,7 +199,6 @@
         setupFormConfirmation('reject-form', 'Anda yakin?', 'Tolak pengajuan izin ini?', '#dc3545');
         setupFormConfirmation('delete-form', 'Anda yakin?', 'Data yang dihapus tidak dapat dikembalikan!', '#dc3545');
 
-        // Display success/error toasts
         @if (session()->has('success'))
             const Toast = Swal.mixin({
                 toast: true,

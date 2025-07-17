@@ -7,71 +7,78 @@
 @stop
 
 @section('css')
- 
+
 @endsection
 
 @section('content')
-<div class="d-flex justify-content-end">
-    <x-adminlte-button label="Tambahkan kategori" class="mb-2 bg-blue" data-toggle="modal" data-target="#modalTambah" />
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-end">
+            <x-adminlte-button label="Tambahkan kategori" class="mb-2 bg-blue" data-toggle="modal"
+                data-target="#modalTambah" />
+        </div>
+
+        <x-adminlte-modal id="modalTambah" title="Tambahkan kategori" theme="success" icon="fas fa-box" size='lg'>
+            <form action="{{ route('kategori.store') }}" method="POST" id="kategoriForm" enctype="multipart/form-data">
+                @csrf
+                <div class="form-group">
+                    <label for="nama_kategori">Nama kategori</label>
+                    <input type="text" class="form-control" id="nama_kategori" name="nama" required>
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="success" label="Simpan" type="submit" form="kategoriForm" />
+                    <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+                </x-slot>
+            </form>
+        </x-adminlte-modal>
+
+        <x-adminlte-modal id="modalEdit" title="Edit Kategori" theme="primary" icon="fas fa-edit" size='lg'>
+            <form method="POST" id="form-edit-kategori" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="form-group">
+                    <label for="nama_kategori_edit">Nama kategori</label>
+                    <input type="text" class="form-control" id="nama_kategori_edit" name="nama" required>
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="primary" label="Simpan Perubahan" type="submit"
+                        form="form-edit-kategori" />
+                    <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+                </x-slot>
+            </form>
+        </x-adminlte-modal>
+
+        <table id="kategoriTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th width="5%">No</th>
+                    <th>Nama Kategori</th>
+                    <th width="150px" rigth>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($kategori as $k)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $k->nama }}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="{{ $k->kd_kategori }}" data-nama_kategori="{{ $k->nama }}">
+                                Edit
+                            </button>
+                            <form action="{{ route('kategori.destroy', $k->kd_kategori) }}" method="POST"
+                                style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<x-adminlte-modal id="modalTambah" title="Tambahkan kategori" theme="success" icon="fas fa-box" size='lg'>
-    <form action="{{ route('kategori.store') }}" method="POST" id="kategoriForm" enctype="multipart/form-data">
-        @csrf
-        <div class="form-group">
-            <label for="nama_kategori">Nama kategori</label>
-            <input type="text" class="form-control" id="nama_kategori" name="nama" required>
-        </div>
-        <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Simpan" type="submit" form="kategoriForm" />
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
-        </x-slot>
-    </form>
-</x-adminlte-modal>
-
-<x-adminlte-modal id="modalEdit" title="Edit Kategori" theme="primary" icon="fas fa-edit" size='lg'>
-    <form method="POST" id="form-edit-kategori" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-        <div class="form-group">
-            <label for="nama_kategori_edit">Nama kategori</label>
-            <input type="text" class="form-control" id="nama_kategori_edit" name="nama" required>
-        </div>
-        <x-slot name="footerSlot">
-            <x-adminlte-button theme="primary" label="Simpan Perubahan" type="submit" form="form-edit-kategori" />
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
-        </x-slot>
-    </form>
-</x-adminlte-modal>
-
-<table id="kategoriTable" class="table table-bordered table-striped">
-    <thead>
-        <tr class="table-primary">
-            <th width="5%">No</th>
-            <th>Nama Kategori</th>
-            <th width="150px" rigth>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($kategori as $k)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $k->nama }}</td>
-                <td>
-                    <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
-                        data-id="{{ $k->kd_kategori }}" data-nama_kategori="{{ $k->nama }}">
-                        Edit
-                    </button>
-                    <form action="{{ route('kategori.destroy', $k->kd_kategori) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
-                    </form>
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
 @stop
 
 @section('js')
