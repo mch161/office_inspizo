@@ -55,7 +55,7 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title" style="font-weight: 600;">Daftar Pengajuan Izin</h3>
-        @if (Auth::user()->role == 'karyawan')
+        @if (Auth::user()->role !== 'superadmin')
             <div class="card-tools">
                 <a href="{{ route('izin.form') }}" class="btn btn-primary btn-sm">
                     <i class="fas fa-plus"></i> Buat Pengajuan Izin
