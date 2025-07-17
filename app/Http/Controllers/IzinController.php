@@ -14,8 +14,11 @@ class IzinController extends Controller
      */
     public function index()
     {
-        // Fetch all requests, ordered by the newest first
-        $izin = Izin::latest()->get();
+        if (Auth::guard('karyawan')->user()->role == 'karyawan') {
+            $izin = Izin::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->get();
+        } else {
+            $izin = Izin::latest()->get();
+        }
         return view('karyawan.presensi.izin', [
             "izin" => $izin
         ]);

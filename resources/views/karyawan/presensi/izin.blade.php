@@ -7,93 +7,109 @@
 @section('plugins.Datatables', true)
 
 @section('css')
-    {{-- Custom styles for a polished table appearance --}}
-    <style>
-        .card {
-            border-radius: .5rem;
-            box-shadow: 0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.2);
-        }
-        #IzinTable th, #IzinTable td {
-            vertical-align: middle !important;
-            text-align: center;
-        }
-        #IzinTable .keterangan-column {
-            text-align: left;
-            max-width: 300px;
-            white-space: normal;
-        }
-        .izin-image {
-            width: 150px;
-            height: auto;
-            border-radius: .5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .izin-image:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: .5rem;
-        }
-        .btn-sm i {
-            margin-right: .25rem;
-        }
-    </style>
+{{-- Custom styles for a polished table appearance --}}
+<style>
+    .card {
+        border-radius: .5rem;
+        box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+    }
+
+    #IzinTable th,
+    #IzinTable td {
+        vertical-align: middle !important;
+        text-align: center;
+    }
+
+    #IzinTable .keterangan-column {
+        text-align: left;
+        max-width: 300px;
+        white-space: normal;
+    }
+
+    .izin-image {
+        width: 150px;
+        height: auto;
+        border-radius: .5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .izin-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: .5rem;
+    }
+
+    .btn-sm i {
+        margin-right: .25rem;
+    }
+</style>
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title" style="font-weight: 600;">Daftar Pengajuan Izin</h3>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title" style="font-weight: 600;">Daftar Pengajuan Izin</h3>
+        @if (Auth::user()->role == 'karyawan')
             <div class="card-tools">
                 <a href="{{ route('izin.form') }}" class="btn btn-primary btn-sm">
                     <i class="fas fa-plus"></i> Buat Pengajuan Izin
                 </a>
             </div>
-        </div>
-        <div class="card-body">
-            <table id="IzinTable" class="table table-bordered table-striped table-hover">
-                <thead class="table-primary">
-                    <tr>
-                        <th width="5%" class="text-left">No</th>
-                        <th class="text-left">Karyawan</th>
-                        <th class="text-left">Tanggal</th>
-                        <th class="text-left">Keterangan</th>
-                        <th class="text-left">Foto</th>
-                        <th width="10%" class="text-left">Status</th>
+        @endif
+
+    </div>
+    <div class="card-body">
+        <table id="IzinTable" class="table table-bordered table-striped table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th width="5%" class="text-left">No</th>
+                    <th class="text-left">Karyawan</th>
+                    <th class="text-left">Tanggal</th>
+                    <th class="text-left">Keterangan</th>
+                    <th class="text-left">Foto</th>
+                    <th width="10%" class="text-left">Status</th>
+                    @if (Auth::user()->role == 'superadmin')
                         <th width="20%" class="text-left">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{-- Make sure the $izin variable is being passed from your controller --}}
-                    @if(isset($izin))
-                        @foreach ($izin as $item)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->dibuat_oleh }}</td>
-                                <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
-                                <td class="keterangan-column">{!! $item->keterangan !!}</td>
-                                <td>
-                                    @if($item->foto)
-                                        <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal" data-src="{{ asset('storage/images/izin/' . $item->foto) }}">
-                                            <img class="izin-image" src="{{ asset('storage/images/izin/' . $item->foto) }}" alt="Foto Izin">
-                                        </a>
-                                    @else
-                                        <span class="text-muted">Tidak ada foto</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($item->status == '1')
-                                        <span class="badge badge-success">Disetujui</span>
-                                    @elseif ($item->status == '2')
-                                        <span class="badge badge-danger">Ditolak</span>
-                                    @else
-                                        <span class="badge badge-warning">Menunggu</span>
-                                    @endif
-                                </td>
+                    @endif
+
+                </tr>
+            </thead>
+            <tbody>
+                {{-- Make sure the $izin variable is being passed from your controller --}}
+                @if(isset($izin))
+                    @foreach ($izin as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->dibuat_oleh }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
+                            <td class="keterangan-column">{!! $item->keterangan !!}</td>
+                            <td>
+                                @if($item->foto)
+                                    <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
+                                        data-src="{{ asset('storage/images/izin/' . $item->foto) }}">
+                                        <img class="izin-image" src="{{ asset('storage/images/izin/' . $item->foto) }}"
+                                            alt="Foto Izin">
+                                    </a>
+                                @else
+                                    <span class="text-muted">Tidak ada foto</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($item->status == '1')
+                                    <span class="badge badge-success">Disetujui</span>
+                                @elseif ($item->status == '2')
+                                    <span class="badge badge-danger">Ditolak</span>
+                                @else
+                                    <span class="badge badge-warning">Menunggu</span>
+                                @endif
+                            </td>
+                            @if (auth()->user()->role == 'superadmin')
                                 <td>
                                     <div class="action-buttons">
                                         @if($item->status == '0')
@@ -124,25 +140,28 @@
                                             </button>
                                         </form>
                                     </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    <!-- Image Modal -->
-    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body text-center p-0">
-                    <img id="modalImage" src="" class="img-fluid" alt="Izin Image">
-                </div>
+                                </td>
+                            @endif
+                        </tr>
+                    @endforeach
+                @endif
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center p-0">
+                <img id="modalImage" src="" class="img-fluid" alt="Izin Image">
             </div>
         </div>
     </div>
+</div>
 @stop
 
 @section('js')
@@ -156,7 +175,7 @@
         });
 
         // Handle image popup modal
-        $('.image-popup').on('click', function(e) {
+        $('.image-popup').on('click', function (e) {
             e.preventDefault();
             const imageUrl = $(this).data('src');
             $('#modalImage').attr('src', imageUrl);
@@ -164,7 +183,7 @@
 
         // Confirmation for approve/reject/delete actions
         function setupFormConfirmation(formClass, title, text, confirmButtonColor) {
-            $('.' + formClass).on('submit', function(e) {
+            $('.' + formClass).on('submit', function (e) {
                 e.preventDefault();
                 let form = this;
                 Swal.fire({
