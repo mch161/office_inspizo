@@ -52,7 +52,7 @@
                 <tr>
                     <th width="5%">No</th>
                     <th>Nama Kotak</th>
-                    <th width="150px" rigth>Action</th>
+                    <th width="150px" rigth>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,7 +86,16 @@
             scrollX: true,
             paging: false,
             scrollCollapse: true,
-            scrollY: '200px'
+            scrollY: '200px',
+            language: {
+                lengthMenu: "Tampilkan _MENU_ entri",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total entri)",
+                search: "Cari:",
+                searchPlaceholder: "Cari data..."
+            }
         });
 
         $('.tombol-edit').on('click', function () {

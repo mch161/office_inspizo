@@ -109,89 +109,95 @@
     </div>
 </div>
 
-        <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-body text-center p-0">
-                        <img id="modalImage" src="" class="img-fluid" alt="Reimburse Image">
-                    </div>
-                </div>
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center p-0">
+                <img id="modalImage" src="" class="img-fluid" alt="Reimburse Image">
             </div>
         </div>
-        @stop
+    </div>
+</div>
+@stop
 
-        @section('js')
-        <script>
-            $(document).ready(function () {
-                $('#ReimburseTable').DataTable({
-                    "responsive": true,
-                    "lengthChange": false,
-                    "autoWidth": false,
-                    "pageLength": 10,
-                    "language": {
-                        "search": "_INPUT_",
-                        "searchPlaceholder": "Cari data..."
-                    }
-                });
+@section('js')
+<script>
+    $(document).ready(function () {
+        $('#ReimburseTable').DataTable({
+            responsive: true,
+            lengthChange: false,
+            autoWidth: false,
+            pageLength: 10,
+            scrollX: true,
+            language: {
+                lengthMenu: "Tampilkan _MENU_ entri",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total entri)",
+                search: "Cari:",
+                searchPlaceholder: "Cari data..."
+            }
+        });
 
-                $('.image-popup').on('click', function (e) {
-                    e.preventDefault();
-                    const imageUrl = $(this).data('src');
-                    $('#modalImage').attr('src', imageUrl);
-                });
+        $('.image-popup').on('click', function (e) {
+            e.preventDefault();
+            const imageUrl = $(this).data('src');
+            $('#modalImage').attr('src', imageUrl);
+        });
 
-                $('.action-form').on('submit', function (e) {
-                    e.preventDefault();
-                    let form = this;
-                    let isCompleting = $(this).find('input[name="status"]').val() == '1';
+        $('.action-form').on('submit', function (e) {
+            e.preventDefault();
+            let form = this;
+            let isCompleting = $(this).find('input[name="status"]').val() == '1';
 
-                    Swal.fire({
-                        title: 'Anda yakin?',
-                        text: isCompleting ? "Tandai reimburse ini sebagai selesai?" : "Batalkan status selesai reimburse ini?",
-                        icon: isCompleting ? 'question' : 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33', 
-                        cancelButtonColor: '#007bff',
-                        confirmButtonText: 'Ya, lanjutkan!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    })
-                });
+            Swal.fire({
+                title: 'Anda yakin?',
+                text: isCompleting ? "Tandai reimburse ini sebagai selesai?" : "Batalkan status selesai reimburse ini?",
+                icon: isCompleting ? 'question' : 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#007bff',
+                confirmButtonText: 'Ya, lanjutkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        });
 
-                @if (session()->has('success'))
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                        }
-                    });
-                    Toast.fire({
-                        icon: 'success',
-                        text: '{{ session('success') }}',
-                    })
-                @endif
-                @if (session()->has('error'))
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                    });
-                    Toast.fire({
-                        icon: 'error',
-                        text: '{{ session('error') }}',
-                    })
-                @endif
+        @if (session()->has('success'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
             });
-        </script>
-        @stop
+            Toast.fire({
+                icon: 'success',
+                text: '{{ session('success') }}',
+            })
+        @endif
+        @if (session()->has('error'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+            Toast.fire({
+                icon: 'error',
+                text: '{{ session('error') }}',
+            })
+        @endif
+    });
+</script>
+@stop

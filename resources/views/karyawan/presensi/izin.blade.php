@@ -5,12 +5,11 @@
 @section('content_header')
 <h1>Tabel Izin</h1>
 @endsection
-{{-- Include SweetAlert2 and DataTables plugins --}}
+
 @section('plugins.Sweetalert2', true)
 @section('plugins.Datatables', true)
 
 @section('css')
-{{-- Custom styles for a polished table appearance --}}
 <style>
     .card {
         border-radius: .5rem;
@@ -78,7 +77,6 @@
         </tr>
     </thead>
     <tbody>
-        {{-- Make sure the $izin variable is being passed from your controller --}}
         @if(isset($izin))
             @foreach ($izin as $item)
                 <tr>
@@ -109,7 +107,6 @@
                         <td>
                             <div class="action-buttons">
                                 @if($item->status == '0')
-                                    {{-- FIX: Pass the entire $item object to the route helper --}}
                                     <form class="approve-form" action="{{ route('izin.update', $item) }}" method="POST">
                                         @csrf
                                         @method('PUT')
@@ -127,7 +124,6 @@
                                         </button>
                                     </form>
                                 @endif
-                                {{-- FIX: Pass the entire $item object to the route helper --}}
                                 <form class="delete-form" action="{{ route('izin.destroy', $item) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
@@ -162,10 +158,20 @@
 <script>
     $(document).ready(function () {
         $('#IzinTable').DataTable({
-            "responsive": true,
-            "lengthChange": false,
-            "autoWidth": false,
-            "pageLength": 10,
+            responsive: true,
+            lengthChange: false,
+            autoWidth: false,
+            pageLength: 10,
+            scrollX: true,
+            language: {
+                lengthMenu: "Tampilkan _MENU_ entri",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total entri)",
+                search: "Cari:",
+                searchPlaceholder: "Cari data..."
+            }
         });
 
         $('.image-popup').on('click', function (e) {

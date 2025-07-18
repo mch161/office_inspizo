@@ -10,7 +10,7 @@
 @stop
 
 @section('css')
- 
+
 <style>
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
@@ -177,7 +177,16 @@
                 "searchable": false,
                 "orderable": false,
                 "targets": 0
-            }]
+            }],
+            language: {
+                lengthMenu: "Tampilkan _MENU_ entri",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total entri)",
+                search: "Cari:",
+                searchPlaceholder: "Cari data..."
+            }
         });
 
         table.on('draw.dt', function () {
