@@ -89,7 +89,7 @@
             <th width="100px">Jam</th>
             <th width="150px">Nama Karyawan</th>
             <th>Isi Jurnal</th>
-            <th width="150px">Action</th>
+            <th width="150px">Aksi</th>
         </tr>
     </thead>
     <tbody>
@@ -129,6 +129,15 @@
             scrollCollapse: true,
             pageLength: 10,
             lengthChange: false,
+            language: {
+                lengthMenu: "Tampilkan _MENU_ entri",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total entri)",
+                search: "Cari:",
+                searchPlaceholder: "Cari data..."
+            }
         });
         var summernoteOptions = {
             height: 250,

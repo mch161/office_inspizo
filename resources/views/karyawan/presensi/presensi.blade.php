@@ -47,14 +47,21 @@
     <script>
         $(function () {
             $("#presensiTable").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "scrollX": true,
-                "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-                // Set default order: Date (desc), then Time (desc)
-                "order": [[ 1, "desc" ], [ 2, "desc" ]]
-            }).buttons().container().appendTo('#presensiTable_wrapper .col-md-6:eq(0)');
+                responsive: true,
+                lengthChange: false,
+                scrollX: true,
+                autoWidth: false,
+                order: [[1, "desc"], [2, "desc"]],
+                language: {
+                    lengthMenu: "Tampilkan _MENU_ entri",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    infoEmpty: "Tidak ada data yang tersedia",
+                    infoFiltered: "(difilter dari _MAX_ total entri)",
+                    search: "Cari:",
+                    searchPlaceholder: "Cari data..."
+                }
+            });
         });
     </script>
 @stop
