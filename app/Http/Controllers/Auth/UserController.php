@@ -27,6 +27,7 @@ class UserController extends Controller
             'nip' => 'nullable|string|max:20',
             'nik' => 'nullable|string|max:20',
             'role' => 'required|string',
+            'finger_id' => 'nullable|string|max:20',
             'email' => 'required|string|email|max:255|unique:karyawan,email',
             'password' => 'required|string|min:8|confirmed',
         ], [
@@ -58,9 +59,10 @@ class UserController extends Controller
             'nip' => $request->nip,
             'nik' => $request->nik,
             'role' => $request->role,
+            'id_finger' => $request->finger_id,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'status' => 1, // Set status default ke aktif
+            'status' => 1,
         ]);
 
         if ($user) {
@@ -93,6 +95,7 @@ class UserController extends Controller
             'edit-nik' => 'nullable|string|max:20',
             'edit-role' => 'required|string',
             'edit-status' => 'required|string',
+            'edit-finger_id' => 'nullable|string',
             'edit-email' => ['required', 'string', 'email', 'max:255', Rule::unique('karyawan', 'email')->ignore($user->kd_karyawan, 'kd_karyawan')],
             'edit-password' => 'nullable|string|min:8|confirmed',
         ], [
@@ -126,6 +129,7 @@ class UserController extends Controller
         $user->nik = $request->input('edit-nik');
         $user->role = $request->input('edit-role');
         $user->status = $request->input('edit-status');
+        $user->finger_id = $request->input('edit-finger_id');
         $user->email = $request->input('edit-email');
         if ($request->filled('edit-password')) {
             $user->password = Hash::make($request->input('edit-password'));

@@ -4,100 +4,142 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use App\Models\Fingerprint;
 use App\Models\Presensi;
+use App\Models\Karyawan;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class FetchPresensiCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     */
-    protected $signature = 'presensi:fetch';
+    protected $signature = 'presensi:fetch {--dari=} {--sampai=} {--all}';
+    protected $description = 'Sinkronisasi log mentah, lalu proses dan simpan rekap harian';
 
-    /**
-     * The console command description.
-     */
-    protected $description = 'Fetches attendance log data directly from the attendance machine via SOAP';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+public function handle()
     {
-        $this->info('Connecting to the attendance machine...');
+        if (!$this->syncronizeRawLogs()) {
+            return 1;
+        }
 
-        // --- Configuration for your attendance machine ---
-        $deviceIp = '192.168.88.9'; // The IP of the machine itself
-        $deviceKey = '0';            // The communication key (usually 0)
+        $period = $this->getDateRange();
+        $startDate = $period->getStartDate()->format('Y-m-d');
+        $endDate = $period->getEndDate()->format('Y-m-d');
 
-        // --- This is the SOAP XML request payload ---
+        $this->info("Menghapus rekap lama dari tanggal {$startDate} hingga {$endDate}...");
+        Presensi::whereBetween('tanggal', [$startDate, $endDate])->delete();
+        $this->info("Rekap lama berhasil dihapus.");
+
+        foreach ($period as $date) {
+            $this->processAndStoreReport($date);
+        }
+
+        $this->info('Semua proses selesai!');
+        return 0;
+    }
+
+    private function syncronizeRawLogs()
+    {
+        $this->info('Menyinkronkan log mentah dari mesin...');
+        $deviceIp = '192.168.88.9';
+        $deviceKey = '0';
         $soapRequest = "<GetAttLog><ArgComKey xsi:type=\"xsd:integer\">{$deviceKey}</ArgComKey><Arg><PIN xsi:type=\"xsd:integer\">All</PIN></Arg></GetAttLog>";
-
+        
         try {
-            // 1. Send the SOAP request to the device's web service endpoint
-            $response = Http::withBody($soapRequest, 'text/xml')
-                ->timeout(30) // Set a 30-second timeout
-                ->post("http://{$deviceIp}/iWsService");
-
+            $response = Http::withBody($soapRequest, 'text/xml')->post("http://{$deviceIp}/iWsService");
             if (!$response->successful()) {
-                $this->error('Failed to connect to the attendance machine. Please check the IP address.');
-                return 1; // Exit with an error code
+                $this->error('Gagal terhubung ke mesin.'); return false;
             }
 
-            // 2. Parse the XML response to find all the <Row> elements
-            preg_match_all('/<Row>(.*?)<\/Row>/s', $response->body(), $matches);
-
+            preg_match_all('/<Row>(.*?)<\\/Row>/s', $response->body(), $matches);
             if (empty($matches[1])) {
-                $this->info('No new attendance logs were found on the machine.');
-                return 0; // Exit successfully
+                $this->info('Tidak ada log baru.'); return true;
             }
 
-            $this->info(count($matches[1]) . ' logs found. Processing and storing...');
-
-            // 3. Loop through each log entry and save it to our database
             foreach ($matches[1] as $rowXml) {
-                $pin      = $this->parseTag($rowXml, 'PIN');
+                $pin = $this->parseTag($rowXml, 'PIN');
                 $dateTime = $this->parseTag($rowXml, 'DateTime');
-                $verified = (bool) $this->parseTag($rowXml, 'Verified');
-                $status   = (int) $this->parseTag($rowXml, 'Status');
+                if (!$pin || !$dateTime) continue;
 
-                // Skip if the essential data (PIN or DateTime) is missing
-                if (!$pin || !$dateTime) {
-                    continue;
-                }
-
-                // Use updateOrCreate to prevent creating duplicate log entries.
-                // It finds a log with the same user_id and timestamp, or creates a new one.
-                Presensi::updateOrCreate(
-                    [
-                        'user_id'   => $pin,
-                        'timestamp' => Carbon::parse($dateTime),
-                    ],
-                    [
-                        'verified' => $verified,
-                        'status'   => $status,
-                    ]
+                Fingerprint::updateOrCreate(
+                    ['user_id' => $pin, 'timestamp' => Carbon::parse($dateTime)],
+                    ['verified' => (bool)$this->parseTag($rowXml, 'Verified'), 'status' => (int)$this->parseTag($rowXml, 'Status')]
                 );
             }
-
-            $this->info('Successfully synchronized attendance data!');
-            return 0; // Exit successfully
-
+            $this->info('Sinkronisasi log mentah berhasil!');
+            return true;
         } catch (\Exception $e) {
-            // This will catch network connection errors or other issues
-            $this->error('An error occurred: ' . $e->getMessage());
-            return 1; // Exit with an error code
+            $this->error('Error sinkronisasi: ' . $e->getMessage());
+            return false;
         }
     }
 
-    /**
-     * A helper function to parse values from inside XML tags.
-     */
+    private function processAndStoreReport(Carbon $date)
+    {
+        $this->info("Memproses rekap untuk tanggal: " . $date->format('d-m-Y'));
+        
+        $rawLogs = Fingerprint::whereDate('timestamp', $date)->get();
+        if ($rawLogs->isEmpty()) {
+            $this->warn("Tidak ada log mentah untuk tanggal " . $date->format('d-m-Y') . ", dilewati.");
+            return;
+        }
+
+        $logsByUser = $rawLogs->groupBy('user_id');
+        $karyawanList = Karyawan::whereIn('finger_id', $logsByUser->keys())->get()->keyBy('finger_id');
+        $rekapToInsert = [];
+
+        foreach ($logsByUser as $fingerId => $logs) {
+            $karyawan = $karyawanList[$fingerId] ?? null;
+            
+            $jamMasuk = Carbon::parse($logs->min('timestamp'));
+            $jamKeluar = $logs->count() > 1 ? Carbon::parse($logs->max('timestamp')) : null;
+
+            $jamMasukStandar = $date->copy()->setTime(8, 0);
+            $jamKeluarStandar = $date->copy()->setTime($date->isSaturday() ? 16 : 17, 0);
+
+            $terlambat = $jamMasuk->isAfter($jamMasukStandar) ? $jamMasukStandar->diff($jamMasuk)->format('%H jam %i mnt') : 'Tidak';
+            $pulangCepat = $jamKeluar && $jamKeluar->isBefore($jamKeluarStandar) ? $jamKeluar->diff($jamKeluarStandar)->format('%H jam %i mnt') : 'Tidak';
+            
+            $rekapToInsert[] = [
+                'kd_karyawan'  => $karyawan->kd_karyawan ?? null,
+                'nama'         => $karyawan->nama ?? 'Karyawan Tidak Ditemukan ID: ' . $fingerId,
+                'tanggal'      => $date->format('Y-m-d'),
+                'jam_masuk'    => $jamMasuk->format('H:i:s'),
+                'jam_keluar'   => $jamKeluar ? $jamKeluar->format('H:i:s') : null,
+                'terlambat'    => $terlambat,
+                'pulang_cepat' => $pulangCepat,
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ];
+        }
+
+        if (!empty($rekapToInsert)) {
+            Presensi::insert($rekapToInsert);
+        }
+    }
+
+    private function getDateRange(): CarbonPeriod
+    {
+        if ($this->option('dari') && $this->option('sampai')) {
+            return CarbonPeriod::create($this->option('dari'), $this->option('sampai'));
+        }
+        if ($this->option('dari')) {
+            return CarbonPeriod::create($this->option('dari'), Carbon::now());
+        }
+        if ($this->option('sampai')) {
+            return CarbonPeriod::create(Carbon::createFromFormat('Y-m-d', '2025-04-05'), $this->option('sampai'));
+        }
+        if ($this->option('all')) {
+            return CarbonPeriod::create(Carbon::createFromFormat('Y-m-d', '2025-04-05'), Carbon::now());
+        }
+        return CarbonPeriod::create(Carbon::today(), Carbon::today());
+    }
+
     private function parseTag(string $string, string $tag): ?string
     {
-        if (preg_match("/<{$tag}>(.*?)<\/{$tag}>/", $string, $matches)) {
+        if (preg_match("/<{$tag}>(.*?)<\\/{$tag}>/s", $string, $matches)) {
             return $matches[1];
         }
         return null;
     }
 }
+

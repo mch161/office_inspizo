@@ -2,17 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\presensi; // <-- Use your Presensi model
 use Illuminate\Http\Request;
+use App\Models\Presensi;
+use Carbon\Carbon;
 
 class PresensiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Get all logs, with the newest ones first
-        $logs = Presensi::latest('timestamp')->get(); // <-- Use your Presensi model
+        $tanggal = $request->input('tanggal');
 
-        // Return the view, passing the logs data to it
-        return view('karyawan.presensi.presensi', compact('logs'));
+        if ($tanggal) {
+            $rekapData = Presensi::whereDate('tanggal', $tanggal)
+                            ->orderBy('nama', 'asc')
+                            ->get();
+        } else {
+            $rekapData = Presensi::orderBy('tanggal', 'desc')
+                            ->orderBy('nama', 'asc')
+                            ->get();
+        }
+
+
+        return view('karyawan.presensi.presensi', [
+            'rekapData' => $rekapData,
+            'tanggal' => $tanggal,
+        ]);
     }
 }

@@ -52,6 +52,7 @@
             <option value="karyawan">Karyawan</option>
             <option value="magang">Magang</option>
         </x-adminlte-select>
+        <x-adminlte-input name="finger_id" label="ID Fingerprint" placeholder="0" type="number" value="{{ old('finger_id') }}" />
         <x-adminlte-input name="email" label="Email" placeholder="Email" value="{{ old('email') }}" />
         <x-adminlte-input name="password" label="Password" type="password" placeholder="Password"
             value="{{ old('password') }}" />
@@ -93,6 +94,8 @@
             <option value="1">Aktif</option>
             <option value="0">Tidak Aktif</option>
         </x-adminlte-select>
+        <x-adminlte-input name="edit-finger_id" id="edit-finger_id" label="ID Fingerprint" placeholder="0"
+            type="number" value="{{ old('edit-finger_id') }}" />
         <x-adminlte-input name="edit-email" id="edit-email" label="Email" placeholder="Email"
             value="{{ old('edit-email') }}" />
         <x-adminlte-input name="edit-password" id="edit-password" label="Password" type="password"
@@ -119,6 +122,7 @@
             <th width="150px" class="dt-left">NIK</th>
             <th width="150px">Email</th>
             <th width="50px">Role</th>
+            <th width="50px">ID Finger</th>
             <th width="50px">Status</th>
             <th width="150px">Aksi</th>
         </tr>
@@ -135,6 +139,7 @@
                 <td class="dt-left">{{ $u->nik ?? '-' }}</td>
                 <td>{{ $u->email ?? '-' }}</td>
                 <td>{{ $u->role ?? '-' }}</td>
+                <td>{{ $u->finger_id ?? '-' }}</td>
                 <td>
                     @if ($u->status == '1')
                         <span class="badge badge-success">Aktif</span>
@@ -147,7 +152,7 @@
                         data-id="{{ $u->kd_karyawan }}" data-nama="{{ $u->nama }}" data-username="{{ $u->username }}"
                         data-telp="{{ $u->telp }}" data-alamat="{{ $u->alamat }}" data-nip="{{ $u->nip }}"
                         data-nik="{{ $u->nik }}" data-email="{{ $u->email }}" data-role="{{ $u->role }}"
-                        data-password="{{ $u->password }}" data-status="{{ $u->status }}">
+                        data-finger="{{ $u->id_finger }}" data-password="{{ $u->password }}" data-status="{{ $u->status }}">
                         Edit
                     </button>
                 </td>
@@ -211,6 +216,7 @@
         const alamat = $(this).data('alamat');
         const nip = $(this).data('nip');
         const nik = $(this).data('nik');
+        const finger = $(this).data('finger');
         const email = $(this).data('email');
         const role = $(this).data('role');
         const status = $(this).data('status');
@@ -221,6 +227,7 @@
         $('#edit-alamat').val(alamat);
         $('#edit-nip').val(nip);
         $('#edit-nik').val(nik);
+        $('#edit-finger_id').val(finger);
         $('#edit-email').val(email);
         $('#edit-role').val(role);
         $('#edit-status').val(status);

@@ -19,10 +19,13 @@ class Presensi extends Model
 
 
     protected $fillable = [
-        'user_id',
-        'timestamp',
-        'verified',
-        'status',
+        'kd_karyawan',
+        'nama',
+        'tanggal',
+        'jam_masuk',
+        'jam_keluar',
+        'terlambat',
+        'pulang_cepat',
     ];
 
     /**
@@ -30,8 +33,7 @@ class Presensi extends Model
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'timestamp' => 'datetime',
-        'verified' => 'boolean',
+   protected $casts = [
+        'tanggal' => 'date',
     ];
 }

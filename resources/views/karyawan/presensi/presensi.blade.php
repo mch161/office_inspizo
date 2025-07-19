@@ -1,67 +1,80 @@
-{{-- resources/views/presensi/index.blade.php --}}
 @extends('adminlte::page')
 
 @section('title', 'Presensi Logs')
 
 @section('content_header')
-    <h1>Presensi Logs</h1>
+<h1>Presensi Logs</h1>
 @stop
 
 @section('content')
-            <table id="presensiTable" class="table table-bordered table-striped">
-                <thead class="table-primary">
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Filter Data</h3>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('presensi.index') }}" method="GET" class="form-inline">
+            <div class="form-group mb-2">
+                <label for="tanggal" class="mr-2">Pilih Tanggal:</label>
+                <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ $tanggal }}">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2 ml-2">Tampilkan</button>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Laporan Presensi untuk
+            {{ $tanggal ? 'Tanggal: '.\Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') : 'Semua Tanggal' }}</h3>
+    </div>
+    <div class="card-body">
+        <table id="rekapTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Karyawan</th>
+                    <th>Tanggal</th>
+                    <th>Jam Masuk</th>
+                    <th>Jam Keluar</th>
+                    <th>Terlambat</th>
+                    <th>Pulang Cepat</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($rekapData as $data)
                     <tr>
-                        <th width='5%'>ID</th>
-                        <th width="300px">Tanggal</th>
-                        <th width="100px">waktu</th>
-                        <th width="100px">Verifikasi</th>
-                        <th width="100px">Status</th>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $data->nama }}</td>
+                        <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
+                        <td>{{ $data->jam_masuk }}</td>
+                        <td>{{ $data->jam_keluar ?? '--:--:--' }}</td>
+                        <td>{{ $data->terlambat }}</td>
+                        <td>{{ $data->pulang_cepat }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach($logs as $log)
-                        <tr>
-                            <td>{{ $log->user_id }}</td>
-                            <td>{{ $log->timestamp->format('Y m d') }}</td>
-                            <td>{{ $log->timestamp->format('H:i:s') }}</td>
-                            <td>
-                                @if($log->verified)
-                                    <span class="badge bg-success">Yes</span>
-                                @else
-                                    <span class="badge bg-danger">No</span>
-                                @endif
-                            </td>
-                            <td>@if ( $log ->status == "0")
-                                Masuk
-                                @else
-                                Pulang
-                            @endif</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @stop
 
-{{-- This section is for the JavaScript to initialize the DataTable --}}
 @section('js')
-    <script>
-        $(function () {
-            $("#presensiTable").DataTable({
-                responsive: true,
-                lengthChange: false,
-                scrollX: true,
-                autoWidth: false,
-                order: [[1, "desc"], [2, "desc"]],
-                language: {
-                    lengthMenu: "Tampilkan _MENU_ entri",
-                    zeroRecords: "Tidak ada data yang ditemukan",
-                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                    infoEmpty: "Tidak ada data yang tersedia",
-                    infoFiltered: "(difilter dari _MAX_ total entri)",
-                    search: "Cari:",
-                    searchPlaceholder: "Cari data..."
-                }
-            });
-        });
-    </script>
+<script>
+    $('#rekapTable').DataTable({
+        responsive: true,
+        lengthChange: false,
+        autoWidth: false,
+        pageLength: 5,
+        scrollX: true,
+        language: {
+            lengthMenu: "Tampilkan _MENU_ entri",
+            zeroRecords: "Tidak ada data presensi yang ditemukan",
+            emptyTable: "Tidak ada data presensi untuk tanggal ini",
+            info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+            infoEmpty: "Tidak ada data presensi yang tersedia",
+            infoFiltered: "(difilter dari _MAX_ total entri)",
+            search: "Cari:",
+            searchPlaceholder: "Cari data..."
+        }
+    });
+</script>
 @stop

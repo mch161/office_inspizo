@@ -6,18 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('presensi', function (Blueprint $table) {
-        $table->id();
-        $table->integer('user_id');
-        $table->timestamp('timestamp');
-        $table->boolean('verified');
-        $table->integer('status');
-        $table->timestamps(); // Adds created_at and updated_at columns
+            $table->id();
+            $table->integer('kd_karyawan')->nullable();
+            $table->string('nama');
+            $table->date('tanggal');
+            $table->time('jam_masuk')->nullable();
+            $table->time('jam_keluar')->nullable();
+            $table->string('terlambat')->default('Tidak');
+            $table->string('pulang_cepat')->default('Tidak');
+            $table->timestamps();
+
+            $table->foreign('kd_karyawan')->references('kd_karyawan')->on('karyawan');
         });
     }
 
