@@ -12,8 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('presensi:fetch')->everyMinute();
-        $schedule->command('test:schedule')->everyMinute();
+        $schedule->command('presensi:fetch')->everyFifteenMinutes();
     }
 
     /**

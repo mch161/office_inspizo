@@ -319,6 +319,25 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
+            'text' => 'Pesanan & Agenda',
+            'icon' => 'fas fa-fw fa-user',
+            'can' => 'access-karyawan',
+            'submenu' => [
+                [
+                    'text' => 'Pesanan',
+                    'route' => 'pesanan.index',
+                    'icon' => 'fa fas fa-fingerprint',
+                    'can' => 'access-karyawan',
+                ],
+                [
+                    'text' => 'Agenda',
+                    'icon' => 'fa fas fa-envelope-open',
+                    'route' => '',
+                    'can' => 'access-karyawan'
+                ],
+            ]
+        ],
+        [
             'text' => 'Presensi',
             'icon' => 'fas fa-fw fa-user',
             'can' => 'access-karyawan',
