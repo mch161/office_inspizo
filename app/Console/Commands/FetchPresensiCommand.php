@@ -90,8 +90,12 @@ public function handle()
         foreach ($logsByUser as $fingerId => $logs) {
             $karyawan = $karyawanList[$fingerId] ?? null;
             
-            $jamMasuk = Carbon::parse($logs->min('timestamp'));
-            $jamKeluar = $logs->count() > 1 ? Carbon::parse($logs->max('timestamp')) : null;
+            $jamMasuk = Carbon::parse($logs->where('status', 0)->min('timestamp'));
+            $jamKeluar = $logs->where('status', 1)->max('timestamp') ? Carbon::parse($logs->where('status', 1)->max('timestamp')) : null;
+
+            if ($jamKeluar && $jamKeluar->isBefore($jamMasuk)) {
+                $jamKeluar = null;
+            }
 
             $jamMasukStandar = $date->copy()->setTime(8, 0);
             $jamKeluarStandar = $date->copy()->setTime($date->isSaturday() ? 16 : 17, 0);
