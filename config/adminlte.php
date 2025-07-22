@@ -343,13 +343,18 @@ return [
             'can' => 'access-karyawan',
             'submenu' => [
                 [
-                    'text' => 'Tabel Fingerprint',
+                    'text' => 'Fingerprint',
                     'route' => 'presensi.index',
                     'icon' => 'fa fas fa-fingerprint',
                     'can' => 'access-karyawan',
                 ],
                 [
-                    'text' => 'Tabel Izin',
+                    'text' => 'Form Izin',
+                    'route' => 'izin.form',
+                    'icon' => 'fas fa-fw fa-envelope'
+                ],
+                [
+                    'text' => 'Izin',
                     'icon' => 'fa fas fa-envelope-open',
                     'route' => 'izin.index',
                     'can' => 'access-karyawan'
@@ -369,25 +374,9 @@ return [
                 [
                     'text' => 'Jurnal Kita',
                     'route' => 'jurnal_kita',
-                    'icon' => 'fas fa-fw fa-book-open'
+                    'icon' => 'fas fa-fw fa-book-open',
+                    'can' => 'superadmin'
                 ]
-            ]
-        ],
-        [
-            'text' => 'Forms',
-            'icon' => 'fas fa-fw fa-newspaper',
-            'can' => 'access-karyawan',
-            'submenu' => [
-                [
-                    'text' => 'Form Izin',
-                    'route' => 'izin.form',
-                    'icon' => 'fas fa-fw fa-envelope'
-                ],
-                [
-                    'text' => 'Form Reimburse',
-                    'route' => 'reimburse.form',
-                    'icon' => 'fas fa-fw fa-box-open',
-                ],
             ]
         ],
         [
@@ -408,6 +397,7 @@ return [
             ]
         ],
         [
+
             'text' => 'Keuangan',
             'icon' => 'fas fa-fw fa-coins',
             'can' => 'access-karyawan',
@@ -419,7 +409,12 @@ return [
                     'can' => 'superadmin',
                 ],
                 [
-                    'text' => 'Tabel Reimburse',
+                    'text' => 'Form Reimburse',
+                    'route' => 'reimburse.form',
+                    'icon' => 'fas fa-fw fa-box-open',
+                ],
+                [
+                    'text' => 'Data Reimburse',
                     'route' => 'reimburse.index',
                     'icon' => 'fas fa-fw fa-money-check',
                     'can' => 'superadmin',
