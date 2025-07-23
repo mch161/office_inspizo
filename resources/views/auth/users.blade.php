@@ -152,7 +152,7 @@
                         data-id="{{ $u->kd_karyawan }}" data-nama="{{ $u->nama }}" data-username="{{ $u->username }}"
                         data-telp="{{ $u->telp }}" data-alamat="{{ $u->alamat }}" data-nip="{{ $u->nip }}"
                         data-nik="{{ $u->nik }}" data-email="{{ $u->email }}" data-role="{{ $u->role }}"
-                        data-finger="{{ $u->id_finger }}" data-password="{{ $u->password }}" data-status="{{ $u->status }}">
+                        data-finger="{{ $u->finger_id }}" data-password="{{ $u->password }}" data-status="{{ $u->status }}">
                         Edit
                     </button>
                 </td>

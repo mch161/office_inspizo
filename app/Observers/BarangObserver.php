@@ -13,17 +13,7 @@ class BarangObserver
      */
     public function created(Barang $barang): void
     {
-        if ($barang->stok > 0) {
-            Stok::create([
-                'kd_barang'   => $barang->kd_barang,
-                'kd_karyawan' => $barang->kd_karyawan,
-                'stok_masuk'  => $barang->stok,
-                'stok_keluar' => 0,
-                'klasifikasi' => 'Stok Awal',
-                'keterangan'  => 'Stok awal saat barang dibuat.',
-                'dibuat_oleh' => $barang->dibuat_oleh,
-            ]);
-        }
+        //
     }
 
     /**

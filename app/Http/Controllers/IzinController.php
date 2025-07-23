@@ -14,7 +14,7 @@ class IzinController extends Controller
      */
     public function index()
     {
-        if (Auth::guard('karyawan')->user()->role == 'karyawan') {
+        if (Auth::guard('karyawan')->user()->role !== 'superadmin') {
             $izin = Izin::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->get();
         } else {
             $izin = Izin::latest()->get();

@@ -23,8 +23,8 @@
 </div>
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Laporan Presensi untuk
-            {{ $tanggal ? 'Tanggal: '.\Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') : 'Semua Tanggal' }}</h3>
+        <h3 class="card-title">Laporan Presensi untuk Tanggal:
+            {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</h3>
     </div>
     <div class="card-body">
         <table id="rekapTable" class="table table-bordered table-striped">
