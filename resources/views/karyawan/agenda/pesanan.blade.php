@@ -38,7 +38,7 @@
 @section('content')
 {{-- This button triggers the "Add" modal --}}
 
-<x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
+<x-adminlte-button label="Tambahkan Pesanan" class="float-right mb-2 bg-blue" data-toggle="modal"
     data-target="#modalTambah" />
 
 <table id="PesananTable" class="table table-bordered table-striped table-hover">

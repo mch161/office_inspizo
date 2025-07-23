@@ -19,8 +19,7 @@ require __DIR__ . '/auth.php';
 
 Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('jurnal', App\Http\Controllers\JurnalController::class);
-    Route::get('jurnalku', [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
-    Route::get('jurnal_kita', [App\Http\Controllers\JurnalController::class, 'jurnal_kita'])->name('jurnal_kita');
+    Route::get('jurnalku', action: [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
     Route::resource('agenda', App\Http\Controllers\AgendaController::class);
     Route::resource('pesanan', App\Http\Controllers\PesananController::class);
     Route::resource('presensi', App\Http\Controllers\PresensiController::class);
@@ -38,6 +37,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
 
 Route::middleware(['can:superadmin'])->group(function () {
     Route::resource('users', App\Http\Controllers\Auth\UserController::class);
+    Route::get('jurnal_kita', [App\Http\Controllers\JurnalController::class, 'jurnal_kita'])->name('jurnal_kita');
 });
 
 Route::middleware(['can:access'])->group(function () {

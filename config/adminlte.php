@@ -343,15 +343,15 @@ return [
             'can' => 'access-karyawan',
             'submenu' => [
                 [
-                    'text' => 'Form Izin',
-                    'route' => 'izin.form',
-                    'icon' => 'fas fa-fw fa-envelope'
-                ],
-                [
                     'text' => 'Fingerprint',
                     'route' => 'presensi.index',
                     'icon' => 'fa fas fa-fingerprint',
                     'can' => 'access-karyawan',
+                ],
+                [
+                    'text' => 'Form Izin',
+                    'route' => 'izin.form',
+                    'icon' => 'fas fa-fw fa-envelope'
                 ],
                 [
                     'text' => 'Izin',
@@ -374,7 +374,8 @@ return [
                 [
                     'text' => 'Jurnal Kita',
                     'route' => 'jurnal_kita',
-                    'icon' => 'fas fa-fw fa-book-open'
+                    'icon' => 'fas fa-fw fa-book-open',
+                    'can' => 'superadmin'
                 ]
             ]
         ],
@@ -396,15 +397,11 @@ return [
             ]
         ],
         [
+
             'text' => 'Keuangan',
             'icon' => 'fas fa-fw fa-coins',
             'can' => 'access-karyawan',
             'submenu' => [
-                [
-                    'text' => 'Form Reimburse',
-                    'route' => 'reimburse.form',
-                    'icon' => 'fas fa-fw fa-box-open',
-                ],
                 [
                     'text' => 'Keuangan',
                     'route' => "keuangan.index",
@@ -412,7 +409,12 @@ return [
                     'can' => 'superadmin',
                 ],
                 [
-                    'text' => 'Reimburse',
+                    'text' => 'Form Reimburse',
+                    'route' => 'reimburse.form',
+                    'icon' => 'fas fa-fw fa-box-open',
+                ],
+                [
+                    'text' => 'Data Reimburse',
                     'route' => 'reimburse.index',
                     'icon' => 'fas fa-fw fa-money-check',
                     'can' => 'superadmin',
