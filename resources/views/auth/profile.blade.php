@@ -107,26 +107,26 @@
                     <div class="row">
                         <div class="col-md-4 form-group">
                             <label>Nama Lengkap</label>
-                            <input type="text" class="form-control" name="nama" value="{{ $user->nama ?? '-' }}"
+                            <input type="text" class="form-control" name="nama" value="{{ $user->nama  }}"
                                 readonly>
                         </div>
                         <div class="col-md-4 form-group">
                             <label>Username (Nama Panggilan)</label>
-                            <input type="text" class="form-control" name="username" value="{{ $user->username ?? '-' }}"
+                            <input type="text" class="form-control" name="username" value="{{ $user->username }}"
                                 readonly>
                         </div>
                         <div class="col-md-4 form-group">
                             <label>Alamat</label>
-                            <input type="text" class="form-control" name="alamat" value="{{ $user->alamat ?? '-' }}"
+                            <input type="text" class="form-control" name="alamat" value="{{ $user->alamat }}"
                                 readonly>
                         </div>
                         <div class="col-md-4 form-group">
                             <label>NIP</label>
-                            <input type="text" class="form-control" name="nip" value="{{ $user->nip ?? '-' }}" readonly>
+                            <input type="text" class="form-control" name="nip" value="{{ $user->nip }}" readonly>
                         </div>
                         <div class="col-md-4 form-group">
                             <label>NIK</label>
-                            <input type="text" class="form-control" name="nik" value="{{ $user->nik ?? '-' }}" readonly>
+                            <input type="text" class="form-control" name="nik" value="{{ $user->nik }}" readonly>
                         </div>
 
                     </div>
@@ -146,7 +146,7 @@
                     </div>
                     <div class="col-md-4 form-group">
                         <label>Nomor Telepon</label>
-                        <input type="text" class="form-control" name="telp" value="{{ $user->telp ?? '-' }}" readonly>
+                        <input type="text" class="form-control" name="telp" value="{{ $user->telp }}" readonly>
                     </div>
                 </div>
             </div>
