@@ -12,8 +12,8 @@ class JurnalController extends Controller
     public function jurnalku()
     {
 
-        $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->get();
-        
+        $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->orderBy('tangal', 'asc')->get();
+
         return view('karyawan.jurnal.jurnalku', [
             "jurnals" => $jurnals
         ]);

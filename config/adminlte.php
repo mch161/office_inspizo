@@ -319,6 +319,19 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
+            'text' => 'Pelanggan',
+            'icon' => 'fas fa-fw fa-user',
+            'can' => 'access-karyawan',
+            'submenu' => [
+                [
+                    'text' => 'Data Pelanggan',
+                    'route' => 'pelanggan.index',
+                    'icon' => 'fa fas fa-clipboard-list',
+                    'can' => 'access-karyawan',
+                ],
+            ]
+        ],
+        [
             'text' => 'Pesanan & Agenda',
             'icon' => 'fas fa-fw fa-user',
             'can' => 'access-karyawan',
@@ -332,7 +345,7 @@ return [
                 [
                     'text' => 'Agenda',
                     'icon' => 'fa fas fa-envelope-open',
-                    'route' => '',
+                    'route' => 'agenda.index',
                     'can' => 'access-karyawan'
                 ],
             ]
@@ -583,6 +596,21 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+                ],
+            ],
+        ],
+        'Fullcalendar' => [
+            'active' => true, // <-- MAKE SURE THIS IS TRUE
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/fullcalendar/main.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/fullcalendar/main.min.css',
                 ],
             ],
         ],

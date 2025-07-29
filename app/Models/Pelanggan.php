@@ -1,12 +1,16 @@
 <?php
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class Pelanggan extends Authenticatable
 {
-    protected $table = 'pelanggan';
+    use HasFactory, Notifiable;
 
+    protected $table = 'pelanggan';
     protected $primaryKey = 'kd_pelanggan';
 
     protected $fillable = [
@@ -16,8 +20,8 @@ class Pelanggan extends Authenticatable
         'telp_pelanggan',
         'nik',
         'username',
-        'password',
         'email',
+        'password',
         'role',
     ];
 
@@ -25,9 +29,4 @@ class Pelanggan extends Authenticatable
         'password',
         'remember_token',
     ];
-
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
 }
