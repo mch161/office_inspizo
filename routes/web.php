@@ -20,14 +20,14 @@ require __DIR__ . '/auth.php';
 Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('pelanggan', App\Http\Controllers\PelangganController::class);
     Route::resource('jurnal', App\Http\Controllers\JurnalController::class);
-    Route::get('jurnalku', action: [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
-    Route::resource('agenda', App\Http\Controllers\AgendaController::class);
+    Route::get('jurnalku', [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
     Route::get('pesanan', [App\Http\Controllers\PesananController::class, 'index'])->name('pesanan.index');
     Route::post('pesanan', [App\Http\Controllers\PesananController::class, 'store'])->name('pesanan.store');
     Route::get('pesanan/{pesanan}', [App\Http\Controllers\PesananController::class, 'show'])->name('pesanan.show');
+    Route::get('agenda/fetch', [App\Http\Controllers\AgendaController::class, 'fetch'])->name('fetch');
+    Route::resource('agenda', App\Http\Controllers\AgendaController::class);
     Route::get('agenda', [App\Http\Controllers\AgendaController::class, 'index'])->name('agenda.index');
     Route::post('agenda/ajax', [App\Http\Controllers\AgendaController::class, 'ajax'])->name('agenda.ajax');
-    // Tambahkan rute update dan delete di sini nanti jika diperlukan
     Route::resource('presensi', App\Http\Controllers\PresensiController::class);
     Route::resource('barang', App\Http\Controllers\BarangController::class);
     Route::put('barang/{id}/updateStok', [App\Http\Controllers\BarangController::class, 'updateStok'])->name('updateStok');

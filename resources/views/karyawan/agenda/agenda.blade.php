@@ -42,7 +42,7 @@ $(document).ready(function () {
         initialView: 'dayGridMonth',
         editable: true,
         selectable: true,
-        events: "{{ route('agenda.index') }}", // URL to fetch events
+        events: "{{ route('fetch') }}",
 
         // CREATE event by clicking on a date
         select: function (info) {
