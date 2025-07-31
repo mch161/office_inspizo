@@ -64,7 +64,22 @@ $(document).ready(function () {
                         type: "POST",
                         success: function (data) {
                             calendar.refetchEvents();
-                            Swal.fire('Success!', 'Event created successfully!', 'success');
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            })
+
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Event created successfully!'
+                            })
                         }
                     });
                 }
@@ -87,7 +102,22 @@ $(document).ready(function () {
                 },
                 type: "POST",
                 success: function (response) {
-                    Swal.fire('Success!', 'Event updated successfully!', 'success');
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Event updated successfully!'
+                    })
                 }
             });
         },
@@ -110,7 +140,21 @@ $(document).ready(function () {
                         data: { id: info.event.id, type: 'delete' },
                         success: function (response) {
                             info.event.remove();
-                            Swal.fire('Deleted!', 'Event has been deleted.', 'success');
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            });
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Event has been deleted.'
+                            });
                         }
                     });
                 }
