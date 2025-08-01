@@ -24,7 +24,7 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Laporan Presensi untuk Tanggal:
-            {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</h3>
+            {{ \Carbon\Carbon::parse($tanggal)->locale('id_ID')->translatedFormat('d F Y') }}</h3>
         <div class="card-tools">
             <a href="{{ route('presensi.fetch', ['tanggal' => $tanggal]) }}" class="btn btn-primary">
                 <i class="fas fa-sync"></i> Fetch
