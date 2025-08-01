@@ -25,6 +25,11 @@
     <div class="card-header">
         <h3 class="card-title">Laporan Presensi untuk Tanggal:
             {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</h3>
+        <div class="card-tools">
+            <a href="{{ route('presensi.fetch', ['tanggal' => $tanggal]) }}" class="btn btn-primary">
+                <i class="fas fa-sync"></i> Fetch
+            </a>
+        </div>
     </div>
     <div class="card-body">
         <table id="rekapTable" class="table table-bordered table-striped">
@@ -76,5 +81,39 @@
             searchPlaceholder: "Cari data..."
         }
     });
+    @if (session()->has('success'))
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+        Toast.fire({
+            icon: 'success',
+            text: '{{ session('success') }}',
+        })
+    @endif
+    @if (session()->has('error'))
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+        Toast.fire({
+            icon: 'error',
+            text: '{{ session('error') }}',
+        })
+    @endif
 </script>
 @stop

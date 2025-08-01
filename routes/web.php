@@ -28,6 +28,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('agenda', App\Http\Controllers\AgendaController::class);
     Route::get('agenda', [App\Http\Controllers\AgendaController::class, 'index'])->name('agenda.index');
     Route::post('agenda/ajax', [App\Http\Controllers\AgendaController::class, 'ajax'])->name('agenda.ajax');
+    Route::get('presensi/fetch', [App\Http\Controllers\PresensiController::class, 'fetch'])->name('presensi.fetch');
     Route::resource('presensi', App\Http\Controllers\PresensiController::class);
     Route::resource('barang', App\Http\Controllers\BarangController::class);
     Route::put('barang/{id}/updateStok', [App\Http\Controllers\BarangController::class, 'updateStok'])->name('updateStok');
