@@ -6,14 +6,13 @@
 @section('plugins.Select2', true)
 
 @section('content_header')
-<h1><i class="fas fa-shopping-cart"></i> Pesanan</h1>
+<h1><i class="fas fa-shopping-cart"></i> Daftar Permintaan</h1>
 @stop
 
 @section('content')
 <div class="card card-primary card-outline">
 
     <div class="card-header">
-        <x-adminlte-button label="Buat Pesanan" theme="primary" data-toggle="modal" data-target="#PesananModal" />
         <div class="card-body">
             <table id="pesananTable" class="table table-bordered table-striped">
                 <thead>
@@ -34,64 +33,26 @@
                             <td>{{ Str::limit($pesanan->deskripsi_pesanan, 50) }}</td>
                             <td>{{ $pesanan->tanggal}}</td>
                             <td class="text-center">
-                                @if ($pesanan->status == 1)
-                                    <span class="badge bg-success">Selesai</span>
-                                @elseif ($pesanan->status == 0 && $pesanan->progres == 1)
-                                    <span class="badge bg-info">Pesanan Dibuat</span>
-                                @elseif ($pesanan->status == 0 && $pesanan->progres == 2)
-                                    <span class="badge bg-warning">Pesanan Diterima</span>
-                                @elseif ($pesanan->status == 0 && $pesanan->progres == 3)
-                                    <span class="badge bg-secondary">Pesanan Diproses</span>
-                                @elseif ($pesanan->status == 2)
-                                    <span class="badge bg-danger">Batal</span>
-                                @endif
+                                <span class="badge badge-warning">Menunggu</span>
                             </td>
                             <td>
-                                <a href="{{ route('pesanan.detail', $pesanan->kd_pesanan)}}"
-                                    class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
+                                <form action="{{ route('pesanan.accept', $pesanan->kd_pesanan) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-sm accept-btn  "><i
+                                            class="fas fa-check"></i></button>
+                                </form>
                             </td>
-
-                        </tr>
                     @empty
                         <tr>
-                            <td><span>Tidak ada data</span></td>
+                            <td colspan="6" class="text-center"><span>Tidak ada data</span></td>
                         </tr>
-
                     @endforelse
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <x-adminlte-modal id="PesananModal" title="Buat Pesanan" theme="primary">
-        <form id="pesananForm" method="POST" action="{{ route('pesanan.store') }}">
-            @csrf
-            <x-adminlte-select name="kd_pelanggan" label="Pelanggan">
-                <x-slot name="prependSlot">
-                    <div class="input-group-text">
-                        <i class="fas fa-lg fa-user"></i>
-                    </div>
-                </x-slot>
-                <x-adminlte-options :options="array_column($pelanggan, 'nama_pelanggan', 'kd_pelanggan')"
-                    empty-option="Pilih Pelanggan..." />
-            </x-adminlte-select>
-            @php $config = ['format' => 'd/m/Y']; @endphp
-            <x-adminlte-input-date name="tanggal" value="{{ date('d/m/Y') }}" :config="$config"
-                placeholder="Pilih tanggal..." label="Tanggal Janji Temu" igroup-size="md" required>
-                <x-slot name="appendSlot">
-                    <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
-                </x-slot>
-            </x-adminlte-input-date>
-
-            <label>Deskripsi Pesanan</label>
-            <textarea name="deskripsi_pesanan" id="deskripsi_pesanan" class="form-control"></textarea>
-
-            <x-slot name="footerSlot">
-                <button type="submit" class="btn btn-primary" id="saveBtn" form="pesananForm">Buat Pesanan</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-            </x-slot>
-        </form>
-    </x-adminlte-modal>
-
 </div>
 </div>
 </div>

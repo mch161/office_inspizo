@@ -20,13 +20,20 @@ class PesananController extends Controller
      */
     public function index()
     {
-        $pesanan = Pesanan::get()->all();
+        $pesanan = Pesanan::where('progres', '>=', '2')->get();
         $pelanggan = Pelanggan::get()->all();
-        $barang = Barang::get()->all();
         return view('karyawan.agenda.pesanan', [
             "pesanan" => $pesanan,
             "pelanggan" => $pelanggan,
-            "barang" => $barang
+        ]);
+    }
+
+    public function permintaan()
+    {
+        $pesanan = Pesanan::where('progres', '1')->get();
+
+        return view('karyawan.agenda.permintaan', [
+            "pesanan" => $pesanan
         ]);
     }
     /**
@@ -42,10 +49,16 @@ class PesananController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate( [
-            'deskripsi_pesanan' => ['required', 'string', 'max:255'],
-            'tanggal' => ['required', 'string'],
+        $validator = Validator::make($request->all(), [
+            'deskripsi_pesanan' => 'required',
+            'tanggal' => 'required|date',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $appointmentDate = Carbon::createFromFormat('d/m/Y', $request->tanggal);
         if ($appointmentDate->isPast() && !$appointmentDate->isToday()) {
@@ -55,24 +68,25 @@ class PesananController extends Controller
         }
 
         $pesanan = Pesanan::create([
-            'kd_pelanggan' => Auth::guard('pelanggan')->user()->kd_pelanggan,
+            'kd_pelanggan' => $request->kd_pelanggan,
             'deskripsi_pesanan' => $request->deskripsi_pesanan,
             'tanggal' => $request->tanggal,
-            'dibuat_oleh' => Auth::guard('pelanggan')->user()->nama_pelanggan
+            'progres' => '2',
+            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
         ]);
 
         if ($pesanan) {
             PesananDetail::create([
-                'kd_pelanggan' => Auth::guard('pelanggan')->user()->kd_pelanggan,
+                'kd_pelanggan' => $request->kd_pelanggan,
                 'kd_pesanan' => $pesanan->kd_pesanan,
-                'dibuat_oleh' => Auth::guard('pelanggan')->user()->nama_pelanggan
+                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
             ]);
         }
 
         if ($pesanan) {
-            return redirect()->route('dashboard')->with('success', 'Pesanan berhasil dibuat.');
+            return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil dibuat.');
         }
-        return redirect()->route('ticket.create')->with('error', 'Pesanan gagal dibuat.');
+        return redirect()->route('pesanan.index')->with('error', 'Pesanan gagal dibuat.');
     }
 
 

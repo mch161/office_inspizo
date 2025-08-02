@@ -13,8 +13,12 @@
 @section('content')
     <div class="card card-primary card-outline">
         <div class="card-body">
-            {{-- The calendar will be rendered inside this div --}}
             <div id='calendar'></div>
+        </div>
+        <div class="card-footer">
+            <span><i class="fas fa-info-circle"></i> Klik pada tanggal untuk membuat agenda</span>
+            <div>Total Hari Minggu: <b><span id="total_hari_minggu"></span></b></div>
+            <div>Total Hari Kerja: <b><span id="total_hari_kerja"></span></b></di>
         </div>
     </div>
 @stop
@@ -22,8 +26,6 @@
 @section('js')
 <script>
 $(document).ready(function () {
-
-    // Setup CSRF token for all AJAX requests
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -31,9 +33,14 @@ $(document).ready(function () {
     });
 
     var calendarEl = document.getElementById('calendar');
-
-    // Initialize FullCalendar
     var calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'id',
+        buttonText: {
+            today:    'Hari Ini',
+            month:    'Bulan',
+            week:     'Minggu',
+            day:      'Hari'
+        },
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -44,14 +51,13 @@ $(document).ready(function () {
         selectable: true,
         events: "{{ route('fetch') }}",
 
-        // CREATE event by clicking on a date
         select: function (info) {
             Swal.fire({
-                title: 'Create New Event',
+                title: 'Buat Agenda',
                 input: 'text',
-                inputPlaceholder: 'Enter event title',
+                inputPlaceholder: 'Judul Agenda',
                 showCancelButton: true,
-                confirmButtonText: 'Save',
+                confirmButtonText: 'Simpan',
             }).then((result) => {
                 if (result.isConfirmed && result.value) {
                     var title = result.value;
@@ -78,7 +84,7 @@ $(document).ready(function () {
 
                             Toast.fire({
                                 icon: 'success',
-                                title: 'Event created successfully!'
+                                title: 'Agenda berhasil dibuat!'
                             })
                         }
                     });
@@ -86,7 +92,6 @@ $(document).ready(function () {
             });
         },
 
-        // UPDATE event by dragging and dropping
         eventDrop: function (info) {
             var start = info.event.start.toISOString().slice(0, 19).replace('T', ' ');
             var end = info.event.end ? info.event.end.toISOString().slice(0, 19).replace('T', ' ') : start;
@@ -116,22 +121,21 @@ $(document).ready(function () {
 
                     Toast.fire({
                         icon: 'success',
-                        title: 'Event updated successfully!'
+                        title: 'Agenda berhasil diperbarui!'
                     })
                 }
             });
         },
 
-        // DELETE event by clicking on it
         eventClick: function (info) {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to delete this event?",
+                title: 'Apakah anda yakin?',
+                text: "Data yang di ganti tidak dapat dikembalikan!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Ya, Hapus!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -153,7 +157,7 @@ $(document).ready(function () {
                             });
                             Toast.fire({
                                 icon: 'success',
-                                title: 'Event has been deleted.'
+                                title: 'Agenda berhasil dihapus.'
                             });
                         }
                     });

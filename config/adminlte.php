@@ -337,17 +337,23 @@ return [
             'can' => 'access-karyawan',
             'submenu' => [
                 [
+                    'text' => 'Agenda',
+                    'icon' => 'fa fas fa-envelope-open',
+                    'route' => 'agenda.index',
+                    'can' => 'access-karyawan'
+                ],
+                [
                     'text' => 'Pesanan',
                     'route' => 'pesanan.index',
                     'icon' => 'fa fas fa-clipboard-list',
                     'can' => 'access-karyawan',
                 ],
                 [
-                    'text' => 'Agenda',
-                    'icon' => 'fa fas fa-envelope-open',
-                    'route' => 'agenda.index',
-                    'can' => 'access-karyawan'
-                ],
+                    'text' => 'Permintaan',
+                    'route' => 'pesanan.permintaan',
+                    'icon' => 'fa fas fa-clipboard-list',
+                    'can' => 'access-karyawan',
+                ]
             ]
         ],
         [
@@ -600,7 +606,7 @@ return [
             ],
         ],
         'Fullcalendar' => [
-            'active' => true, // <-- MAKE SURE THIS IS TRUE
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
