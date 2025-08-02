@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agenda', function (Blueprint $table) {
-            $table->id("kd_agenda");
-            $table->string('title');
-            $table->dateTime('start');
-            $table->dateTime('end')->nullable();
-            $table->string('color')->nullable();
+        Schema::create('pesanan_progress', function (Blueprint $table) {
+            $table->id('kd_pesanan_progress');
+            $table->unsignedBigInteger('kd_pesanan')->nullable();
             $table->unsignedBigInteger('kd_karyawan')->nullable();
+            $table->text('keterangan')->nullable();
             $table->string('dibuat_oleh', 50);
             $table->timestamps();
 
-            $table->foreign('kd_karyawan')->references('kd_karyawan')->on('karyawan')->onDelete('set null');
+            $table->foreign('kd_pesanan')->references('kd_pesanan')->on('pesanan');
+            $table->foreign('kd_karyawan')->references('kd_karyawan')->on('karyawan');
         });
     }
 
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agenda');
+        Schema::dropIfExists('pesanan_progress');
     }
 };

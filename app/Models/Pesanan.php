@@ -19,6 +19,7 @@ class Pesanan extends Model
         'kd_pelanggan',
         'deskripsi_pesanan',
         'status',
+        'tanggal',
         'progres',
         'dibuat_oleh',
     ];

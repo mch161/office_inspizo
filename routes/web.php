@@ -23,7 +23,8 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('jurnalku', [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
     Route::get('pesanan', [App\Http\Controllers\PesananController::class, 'index'])->name('pesanan.index');
     Route::post('pesanan', [App\Http\Controllers\PesananController::class, 'store'])->name('pesanan.store');
-    Route::get('pesanan/{pesanan}', [App\Http\Controllers\PesananController::class, 'show'])->name('pesanan.show');
+    Route::post('pesanan/{pesanan}/accept', [App\Http\Controllers\PesananController::class, 'accept'])->name('pesanan.accept');
+    Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');
     Route::get('agenda/fetch', [App\Http\Controllers\AgendaController::class, 'fetch'])->name('fetch');
     Route::resource('agenda', App\Http\Controllers\AgendaController::class);
     Route::get('agenda', [App\Http\Controllers\AgendaController::class, 'index'])->name('agenda.index');

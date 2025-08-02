@@ -10,7 +10,7 @@ class Agenda extends Model
     use HasFactory;
 
     protected $table = 'agenda';
-    protected $primaryKey = 'kd_agenda';
+    protected $primaryKey = 'kd_agenda'; // This line is crucial
 
     protected $fillable = [
         'title',
