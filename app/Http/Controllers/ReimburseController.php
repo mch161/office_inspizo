@@ -41,7 +41,7 @@ class ReimburseController extends Controller
         $validatedData = $request->validate([
             'tanggal' => 'required|date',
             'jam' => 'required|string',
-            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'foto' => 'image|mimes:jpg,jpeg,png|max:2048',
             'keterangan' => 'required|string',
             'nominal' => 'required|numeric',
         ]);
