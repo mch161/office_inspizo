@@ -17,7 +17,7 @@ class AgendaController extends Controller
     {
         $data = Agenda::whereDate('start', '<=', $request->end)
             ->whereDate('end', '>=', $request->start)
-            ->get(['kd_agenda as id', 'title', 'start', 'end']);
+            ->get(['kd_agenda as id', 'title', 'color', 'start', 'end']);
 
         return response()->json($data);
     }
@@ -28,6 +28,7 @@ class AgendaController extends Controller
             case 'add':
                 $event = Agenda::create([
                     'title' => $request->title,
+                    'color' => $request->color,
                     'start' => $request->start,
                     'end' => $request->end,
                     'kd_karyawan' => Auth::guard('karyawan')->id(),
@@ -40,6 +41,7 @@ class AgendaController extends Controller
             case 'update':
                 $event = Agenda::find($request->id)->update([
                     'title' => $request->title,
+                    'color' => $request->color,
                     'start' => $request->start,
                     'end' => $request->end,
                 ]);

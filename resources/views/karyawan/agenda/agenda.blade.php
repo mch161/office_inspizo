@@ -51,17 +51,17 @@
             selectable: true,
             events: "{{ route('fetch') }}",
 
-            datesSet: function(info) {
+            datesSet: function (info) {
                 const viewDate = calendar.getDate();
                 const year = viewDate.getFullYear();
                 const month = viewDate.getMonth();
 
                 const firstDayOfMonth = new Date(year, month, 1);
                 const lastDayOfMonth = new Date(year, month + 1, 0);
-                
+
                 let sundays = 0;
                 let workdays = 0;
-                
+
                 let currentDate = new Date(firstDayOfMonth);
                 while (currentDate <= lastDayOfMonth) {
                     const day = currentDate.getDay();
@@ -72,7 +72,7 @@
                     }
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
-                
+
                 $('#total_hari_minggu').html('<span><i class="fas fa-calendar-times"></i> Total Hari Minggu: ' + sundays + '</span>');
                 $('#total_hari_kerja').html('<span><i class="fas fa-briefcase"></i> Total Hari Kerja: ' + workdays + '</span>');
             },
@@ -80,19 +80,34 @@
             select: function (info) {
                 Swal.fire({
                     title: 'Buat Agenda',
-                    input: 'text',
-                    inputPlaceholder: 'Judul Agenda',
+                    html: `
+                        <x-adminlte-input name="title" id="title" placeholder="Judul Agenda" />
+                        <x-adminlte-select name="color" id="color">
+                            <option class="d-none" value="" disabled selected>Pilih warna...</option>
+                            <option value="#dc3545">Merah</option>
+                            <option value="#007bff">Biru</option>
+                            <option value="#28a745">Hijau</option>
+                            <option value="#ffc107">Kuning</option>
+                        </x-adminlte-select>
+                        `,
                     showCancelButton: true,
                     confirmButtonText: 'Simpan',
                 }).then((result) => {
-                    if (result.isConfirmed && result.value) {
-                        var title = result.value;
+                    if (result.isConfirmed) {
+                        var title = $('#title').val();
+                        var color = $('#color').val();
                         var start = info.startStr;
                         var end = info.endStr;
 
                         $.ajax({
                             url: "{{ route('agenda.ajax') }}",
-                            data: { title: title, start: start, end: end, type: 'add' },
+                            data: {
+                                title: title,
+                                color: color,
+                                start: start,
+                                end: end,
+                                type: 'add'
+                            },
                             type: "POST",
                             success: function (data) {
                                 calendar.refetchEvents();
@@ -126,6 +141,7 @@
                     url: "{{ route('agenda.ajax') }}",
                     data: {
                         title: info.event.title,
+                        color: info.event.color,
                         start: start,
                         end: end,
                         id: info.event.id,
