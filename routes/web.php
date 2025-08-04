@@ -33,7 +33,6 @@ Route::middleware(['auth:karyawan'])->group(function () {
 
     ## Agenda
     Route::get('agenda/fetch', [App\Http\Controllers\AgendaController::class, 'fetch'])->name('fetch');
-    Route::resource('agenda', App\Http\Controllers\AgendaController::class);
     Route::get('agenda', [App\Http\Controllers\AgendaController::class, 'index'])->name('agenda.index');
     Route::post('agenda/ajax', [App\Http\Controllers\AgendaController::class, 'ajax'])->name('agenda.ajax');
 
