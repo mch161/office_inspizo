@@ -12,7 +12,8 @@ class JurnalController extends Controller
     public function jurnalku()
     {
 
-        $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->orderBy('tangal', 'asc')->get();
+        $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)
+                            ->orderBy('tanggal', 'desc')->get();
 
         return view('karyawan.jurnal.jurnalku', [
             "jurnals" => $jurnals
@@ -21,7 +22,7 @@ class JurnalController extends Controller
 
     public function jurnal_kita()
     {
-        $jurnals = Jurnal::all();
+        $jurnals = Jurnal::orderBy('tanggal', 'desc')->get();
         return view('karyawan.jurnal.jurnal_kita', [
             "jurnals" => $jurnals
         ]);
