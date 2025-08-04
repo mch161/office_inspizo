@@ -73,8 +73,8 @@
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
                 
-                $('#total_hari_minggu').html('<span><i class="fas fa-calendar-times"></i> Total Hari Minggu: <b>' + sundays + '</b></span>');
-                $('#total_hari_kerja').html('<span><i class="fas fa-briefcase"></i> Total Hari Kerja: <b>' + workdays + '</b></span>');
+                $('#total_hari_minggu').html('<span><i class="fas fa-calendar-times"></i> Total Hari Minggu: ' + sundays + '</span>');
+                $('#total_hari_kerja').html('<span><i class="fas fa-briefcase"></i> Total Hari Kerja: ' + workdays + '</span>');
             },
 
             select: function (info) {
