@@ -28,7 +28,7 @@
                 <tbody>
                     @forelse ($pesanan as $pesanan)
                         <tr>
-                            <td>{{ $pesanan->kd_pesanan }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $pesanan->pelanggan->nama_pelanggan ?? 'N/A' }}</td>
                             <td>{{ Str::limit($pesanan->deskripsi_pesanan, 50) }}</td>
                             <td>{{ $pesanan->tanggal}}</td>
