@@ -37,7 +37,6 @@ class ReimburseController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validate ALL the input first.
         $validatedData = $request->validate([
             'tanggal' => 'required|date',
             'jam' => 'required|string',
@@ -46,17 +45,18 @@ class ReimburseController extends Controller
             'nominal' => 'required|numeric',
         ]);
 
-        // 2. If validation passes, handle the file upload.
-        $imageName = time() . '.' . $request->foto->extension();
-        $request->foto->move(public_path('storage/images/reimburse'), $imageName);
-
-        // 3. Create and save the new Reimburse model.
         $reimburse = new Reimburse();
         $reimburse->kd_karyawan = Auth::guard('karyawan')->user()->kd_karyawan;
         $reimburse->tanggal = $validatedData['tanggal'];
         $reimburse->jam = $validatedData['jam'];
         $reimburse->nominal = $validatedData['nominal'];
-        $reimburse->foto = $imageName;
+
+        // Upload the file
+        if ($request->hasFile('foto')) {
+            $imageName = time() . '.' . $request->foto->extension();
+            $request->foto->move(public_path('storage/images/reimburse'), $imageName);
+            $reimburse->foto = $imageName;
+        }
         $reimburse->keterangan = $validatedData['keterangan'];
         $reimburse->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
         $reimburse->save();
@@ -83,26 +83,26 @@ class ReimburseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-public function update(Request $request, $id)
-{
-    // 1. Validate that the 'status' field is present and is either 0 or 1.
-    $request->validate([
-        'status' => 'required|in:0,1',
-    ]);
+    public function update(Request $request, $id)
+    {
+        // 1. Validate that the 'status' field is present and is either 0 or 1.
+        $request->validate([
+            'status' => 'required|in:0,1',
+        ]);
 
-    // 2. Find the existing record.
-    $reimburse = Reimburse::findOrFail($id);
+        // 2. Find the existing record.
+        $reimburse = Reimburse::findOrFail($id);
 
-    // 3. Update the status with the validated value.
-    $reimburse->status = $request->status;
-    
-    // 4. Save the change and check if it was successful.
-    if ($reimburse->save()) {
-        return redirect()->route('reimburse.index')->with('success', 'Status reimburse berhasil diupdate.');
-    } else {
-        return redirect()->route('reimburse.index')->with('error', 'Gagal mengupdate status reimburse.');
+        // 3. Update the status with the validated value.
+        $reimburse->status = $request->status;
+
+        // 4. Save the change and check if it was successful.
+        if ($reimburse->save()) {
+            return redirect()->route('reimburse.index')->with('success', 'Status reimburse berhasil diupdate.');
+        } else {
+            return redirect()->route('reimburse.index')->with('error', 'Gagal mengupdate status reimburse.');
+        }
     }
-}
 
     /**
      * Remove the specified resource from storage.

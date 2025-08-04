@@ -69,11 +69,15 @@
                         <td class="text-left">{{ $loop->iteration }}</td>
                         <td class="text-left">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
                         <td class="text-left">
-                            <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
-                                data-src="{{ asset('storage/images/reimburse/' . $item->foto) }}">
-                                <img class="reimburse-image" src="{{ asset('storage/images/reimburse/' . $item->foto) }}"
-                                    alt="Foto Reimburse">
-                            </a>
+                            @if ($item->foto)
+                                <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
+                                    data-src="{{ asset('storage/images/reimburse/' . $item->foto) }}">
+                                    <img class="reimburse-image" src="{{ asset('storage/images/reimburse/' . $item->foto) }}"
+                                        alt="Foto Reimburse">
+                                </a>
+                            @else
+                                <span class="text-muted">Tidak ada foto</span>
+                            @endif
                         </td>
                         <td class="keterangan-column text-left">{!! $item->keterangan !!}</td>
                         <td class="text-left">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
