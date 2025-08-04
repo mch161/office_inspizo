@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'reimburse')
+@section('title', 'Reimburse')
 
 @section('plugins.Sweetalert2', true)
 @section('plugins.Summernote', true)
