@@ -22,7 +22,7 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::where('progres', '>=', '2')->get();
         $pelanggan = Pelanggan::get()->all();
-        return view('karyawan.agenda.pesanan', [
+        return view('karyawan.pesanan.pesanan', [
             "pesanan" => $pesanan,
             "pelanggan" => $pelanggan,
         ]);
@@ -32,7 +32,7 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::where('progres', '1')->get();
 
-        return view('karyawan.agenda.permintaan', [
+        return view('karyawan.pesanan.permintaan', [
             "pesanan" => $pesanan
         ]);
     }
@@ -102,15 +102,15 @@ class PesananController extends Controller
     public function detail($pesanan)
     {
 
-        $p = Pesanan::find($pesanan);
-        $pesanan_detail = Pesanan::where('kd_pesanan', $p->kd_pesanan)->first();
+        $pesanan = Pesanan::find($pesanan);
+        $pesanan_detail = Pesanan::where('kd_pesanan', $pesanan->kd_pesanan)->first();
         $pesanan_barang = PesananBarang::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         $pesanan_jasa = PesananJasa::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         foreach ($pesanan_barang as $barang) {
             $barang->barang = Barang::find($barang->kd_barang);
         }
 
-        return view('pesanan.detail', compact('p', 'pesanan_barang', 'pesanan_jasa'));
+        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_barang', 'pesanan_jasa'));
     }
 
 
