@@ -93,6 +93,9 @@
                     showCancelButton: true,
                     confirmButtonText: 'Simpan',
                 }).then((result) => {
+                    if ($('#title').val() == '' || $('#color').val() == '') {
+                        return false;
+                    }
                     if (result.isConfirmed) {
                         var title = $('#title').val();
                         var color = $('#color').val();
@@ -141,7 +144,6 @@
                     url: "{{ route('agenda.ajax') }}",
                     data: {
                         title: info.event.title,
-                        color: info.event.color,
                         start: start,
                         end: end,
                         id: info.event.id,

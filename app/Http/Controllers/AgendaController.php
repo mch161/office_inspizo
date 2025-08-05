@@ -41,7 +41,6 @@ class AgendaController extends Controller
             case 'update':
                 $event = Agenda::find($request->id)->update([
                     'title' => $request->title,
-                    'color' => $request->color,
                     'start' => $request->start,
                     'end' => $request->end,
                 ]);
