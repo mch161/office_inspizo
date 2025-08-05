@@ -107,11 +107,9 @@ class PesananController extends Controller
         $pesanan_detail = Pesanan::where('kd_pesanan', $pesanan->kd_pesanan)->first();
         $pesanan_barang = PesananBarang::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         $pesanan_jasa = PesananJasa::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
-        foreach ($pesanan_barang as $barang) {
-            $barang->barang = Barang::find($barang->kd_barang);
-        }
+        $barang = Barang::get()->all();
 
-        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_barang', 'pesanan_jasa'));
+        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_barang','barang','pesanan_jasa'));
     }
 
     public function agenda(Request $request)
