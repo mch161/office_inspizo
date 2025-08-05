@@ -30,6 +30,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::post('pesanan', [App\Http\Controllers\PesananController::class, 'store'])->name('pesanan.store');
     Route::post('pesanan/{pesanan}/accept', [App\Http\Controllers\PesananController::class, 'accept'])->name('pesanan.accept');
     Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');
+    Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
 
     ## Agenda
     Route::get('agenda/fetch', [App\Http\Controllers\AgendaController::class, 'fetch'])->name('fetch');

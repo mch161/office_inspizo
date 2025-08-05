@@ -47,6 +47,11 @@
                                 @endif
                             </td>
                             <td>
+                                @if ($pesanan->status == 0 && $pesanan->progres == 2)
+                                    <button class="btn btn-sm btn-warning agenda-btn" data-toggle="modal"
+                                        data-target="#agendaModal" data-id="{{ $pesanan->kd_pesanan }}"
+                                        data-tanggal="{{ $pesanan->tanggal }}"><i class="fas fa-calendar"></i></button>
+                                @endif
                                 <a href="{{ route('pesanan.detail', $pesanan->kd_pesanan)}}"
                                     class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
                             </td>
@@ -56,7 +61,6 @@
                         <tr>
                             <td><span>Tidak ada data</span></td>
                         </tr>
-
                     @endforelse
                 </tbody>
             </table>
@@ -92,6 +96,34 @@
         </form>
     </x-adminlte-modal>
 
+    <x-adminlte-modal id="agendaModal" title="Agendakan Pesanan" theme="primary">
+        <form id="agendaForm" method="POST" action="{{ route('pesanan.agenda') }}">
+            @csrf
+            <input type="hidden" name="kd_pesanan" id="kd_pesanan">
+            <input class="form-control" type="text" name="title" id="title" placeholder="Nama Agenda" required>
+            
+            @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
+            <x-adminlte-input-date name="tanggal" id="tanggal-agenda" :config="$configDate"
+                placeholder="Pilih tanggal..." label="Tanggal Janji Temu" igroup-size="md" required>
+                <x-slot name="appendSlot">
+                    <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
+                </x-slot>
+            </x-adminlte-input-date>
+
+            @php $configTime = ['format' => 'HH:mm']; @endphp
+            <x-adminlte-input-date name="jam" id="jam-agenda" :config="$configTime" placeholder="Pilih jam..."
+                label="Jam Janji Temu" igroup-size="md" required>
+                <x-slot name="appendSlot">
+                    <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
+                </x-slot>
+            </x-adminlte-input-date>
+
+            <x-slot name="footerSlot">
+                <button type="submit" class="btn btn-primary" id="saveBtn" form="agendaForm">Simpan</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            </x-slot>
+        </form>
+    </x-adminlte-modal>
 </div>
 </div>
 </div>
@@ -102,25 +134,6 @@
     $(document).ready(function () {
         $.ajaxSetup({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
-        });
-
-        $('#pesananTable').on('click', '.accept-btn', function (e) {
-            e.preventDefault();
-            let form = $(this).closest('form');
-            Swal.fire({
-                title: 'Terima Pesanan',
-                text: "Data yang di ganti tidak dapat dikembalikan!",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#28a745',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Terima!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            })
         });
         @if (session()->has('success'))
             const Toast = Swal.mixin({
@@ -152,6 +165,13 @@
                 text: '{{ session('error') }}',
             })
         @endif
+
+        $('.agenda-btn').on('click', function () {
+            var tanggal = $(this).data('tanggal');
+            var kd_pesanan = $(this).data('id');
+            $('#tanggal-agenda').val(tanggal);
+            $('#kd_pesanan').val(kd_pesanan);
+        })
     });
 </script>
 @stop

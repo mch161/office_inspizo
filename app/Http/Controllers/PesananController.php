@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agenda;
 use App\Models\Barang;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
@@ -113,6 +114,41 @@ class PesananController extends Controller
         return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_barang', 'pesanan_jasa'));
     }
 
+    public function agenda(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'kd_pesanan' => 'required|exists:pesanan,kd_pesanan',
+            'title' => 'required|string',
+            'tanggal' => 'required|string',
+            'jam' => 'required|string',
+        ]);
+
+        $date = $request->tanggal . ' ' . $request->jam;
+
+        $startDateTime = Carbon::createFromFormat('d/m/Y H:i', $date);
+
+        $agendaExists = Agenda::where('start', $startDateTime)->exists();
+
+        if ($agendaExists){
+            return redirect()->back()->with('error', 'Agenda sudah ada.');
+        }
+
+        Agenda::create([
+            'kd_pesanan' => $request->kd_pesanan,
+            'title' => $request->title,
+            'start' => $startDateTime,
+            'end' => $startDateTime->addMinutes(60),
+            'color' => '#007bff',
+            'kd_karyawan' => Auth::guard('karyawan')->id(),
+            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+        ]);
+
+        Pesanan::find($request->kd_pesanan)->update([
+            'progres' => '3'
+        ]);
+
+        return redirect()->back()->with('success', 'Agenda berhasil dibuat.');
+    }
 
     /**
      * Display the specified resource.
