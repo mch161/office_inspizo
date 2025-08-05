@@ -47,13 +47,13 @@
                                 @endif
                             </td>
                             <td>
+                                <a href="{{ route('pesanan.detail', $pesanan->kd_pesanan)}}"
+                                    class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
                                 @if ($pesanan->status == 0 && $pesanan->progres == 2)
                                     <button class="btn btn-sm btn-warning agenda-btn" data-toggle="modal"
                                         data-target="#agendaModal" data-id="{{ $pesanan->kd_pesanan }}"
                                         data-tanggal="{{ $pesanan->tanggal }}"><i class="fas fa-calendar"></i></button>
                                 @endif
-                                <a href="{{ route('pesanan.detail', $pesanan->kd_pesanan)}}"
-                                    class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
                             </td>
 
                         </tr>
