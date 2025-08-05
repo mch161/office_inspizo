@@ -358,7 +358,7 @@ return [
         ],
         [
             'text' => 'Presensi',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-address-card',
             'can' => 'access-karyawan',
             'submenu' => [
                 [
