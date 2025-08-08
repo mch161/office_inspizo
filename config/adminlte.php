@@ -326,19 +326,19 @@ return [
                 [
                     'text' => 'Data Pelanggan',
                     'route' => 'pelanggan.index',
-                    'icon' => 'fa fas fa-clipboard-list',
+                    'icon' => 'fa fas fa-users',
                     'can' => 'access-karyawan',
                 ],
             ]
         ],
         [
             'text' => 'Pesanan & Agenda',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-calendar-alt',
             'can' => 'access-karyawan',
             'submenu' => [
                 [
                     'text' => 'Agenda',
-                    'icon' => 'fa fas fa-envelope-open',
+                    'icon' => 'fa fas fa-calendar-alt',
                     'route' => 'agenda.index',
                     'can' => 'access-karyawan'
                 ],

@@ -18,6 +18,7 @@ require __DIR__ . '/auth.php';
 
 
 Route::middleware(['auth:karyawan'])->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('pelanggan', App\Http\Controllers\PelangganController::class);
 
     ## Jurnal
@@ -61,13 +62,3 @@ Route::middleware(['can:superadmin'])->group(function () {
     Route::resource('users', App\Http\Controllers\Auth\UserController::class);
     Route::get('jurnal_kita', [App\Http\Controllers\JurnalController::class, 'jurnal_kita'])->name('jurnal_kita');
 });
-
-Route::middleware(['can:access'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-});
-
-
-
