@@ -220,8 +220,8 @@
         </div>
     </div>
 </form>
-<div class="barang-container">
-    @forelse ($barang as $b)
+@forelse ($barang as $b)
+    <div class="barang-container">
         <div class="barang-card">
             <div class="dropdown">
                 <button class="btn btn-link dropdown-toggle no-arrow" type="button" id="dropdownMenuButton"
@@ -262,20 +262,20 @@
                 Stok: {{ $b->stok }}
             </div>
         </div>
-    @empty
-        <div class="col-md">
-            @if (request('s'))
-                    <div class="text-muted text-center">
-                        <p>Tidak ada data barang yang sesuai dengan pencarian "{{ request('s') }}".</p>
-                    </div>
-                @else
-                    <div class="text-muted text-center">
-                        <p>Saat ini belum ada data barang yang tersedia di dalam sistem.</p>
-                    </div>
-                @endif
-        </div>
-    @endforelse
-</div>
+    </div>
+@empty
+    <div class="col-md">
+        @if (request('s'))
+                <div class="text-muted text-center">
+                    <p>Tidak ada data barang yang sesuai dengan pencarian "{{ request('s') }}".</p>
+                </div>
+            @else
+                <div class="text-muted text-center">
+                    <p>Saat ini belum ada data barang yang tersedia di dalam sistem.</p>
+                </div>
+            @endif
+    </div>
+@endforelse
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
