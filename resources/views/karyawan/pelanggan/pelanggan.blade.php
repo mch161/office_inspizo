@@ -53,7 +53,7 @@
                                 style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
+                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus"><i class="fas fa-trash"></i>Hapus</button>
                             </form>
                         </td>
                 @endforeach

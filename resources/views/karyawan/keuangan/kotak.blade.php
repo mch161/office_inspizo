@@ -63,12 +63,15 @@
                         <td>
                             <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
                                 data-id="{{ $k->kd_kotak }}" data-nama_kotak="{{ $k->nama }}">
+                                <i class="fas fa-edit"></i>
                                 Edit
                             </button>
                             <form action="{{ route('kotak.destroy', $k->kd_kotak) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
+                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">
+                                    <i class="fas fa-trash"></i>
+                                    Hapus</button>
                             </form>
                         </td>
                     </tr>
@@ -80,115 +83,115 @@
 @stop
 
 @section('js')
-<script>
-    $(document).ready(function () {
-        $('#KotakTable').DataTable({
-            scrollX: true,
-            paging: false,
-            scrollCollapse: true,
-            scrollY: '200px',
-            language: {
-                lengthMenu: "Tampilkan _MENU_ entri",
-                zeroRecords: "Tidak ada data yang ditemukan",
-                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                infoEmpty: "Tidak ada data yang tersedia",
-                infoFiltered: "(difilter dari _MAX_ total entri)",
-                search: "Cari:",
-                searchPlaceholder: "Cari data..."
-            }
-        });
-
-        $('.tombol-edit').on('click', function () {
-            const id = $(this).data('id');
-            const nama_kotak = $(this).data('nama_kotak');
-
-            $('#nama_kotak_edit').val(nama_kotak);
-
-            let form = $('#form-edit-kotak');
-            let updateUrl = "{{ url('kotak') }}/" + id;
-            form.attr('action', updateUrl);
-        });
-
-        @if ($errors->any() && session('invalid_kotak'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+    <script>
+        $(document).ready(function () {
+            $('#KotakTable').DataTable({
+                scrollX: true,
+                paging: false,
+                scrollCollapse: true,
+                scrollY: '200px',
+                language: {
+                    lengthMenu: "Tampilkan _MENU_ entri",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    infoEmpty: "Tidak ada data yang tersedia",
+                    infoFiltered: "(difilter dari _MAX_ total entri)",
+                    search: "Cari:",
+                    searchPlaceholder: "Cari data..."
                 }
             });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('invalid_kotak') }}',
-            })
-            const errorkotakId = "{{ session('error_kotak_id') }}";
 
-            if (errorkotakId) {
+            $('.tombol-edit').on('click', function () {
+                const id = $(this).data('id');
+                const nama_kotak = $(this).data('nama_kotak');
+
+                $('#nama_kotak_edit').val(nama_kotak);
+
                 let form = $('#form-edit-kotak');
-                let updateUrl = "{{ url('kotak') }}/" + errorkotakId;
+                let updateUrl = "{{ url('kotak') }}/" + id;
                 form.attr('action', updateUrl);
-            }
+            });
 
-            $('#modalEdit').modal('show');
-        @endif
+            @if ($errors->any() && session('invalid_kotak'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('invalid_kotak') }}',
+                })
+                const errorkotakId = "{{ session('error_kotak_id') }}";
 
-        $('#KotakTable').on('click', '.tombol-hapus', function (e) {
-            e.preventDefault();
-            let form = $(this).closest('form');
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
+                if (errorkotakId) {
+                    let form = $('#form-edit-kotak');
+                    let updateUrl = "{{ url('kotak') }}/" + errorkotakId;
+                    form.attr('action', updateUrl);
                 }
-            })
+
+                $('#modalEdit').modal('show');
+            @endif
+
+            $('#KotakTable').on('click', '.tombol-hapus', function (e) {
+                e.preventDefault();
+                let form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Yakin ingin menghapus?',
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                })
+            });
+
+            @if (session()->has('success'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                Toast.fire({
+                    icon: 'success',
+                    text: '{{ session('success') }}',
+                })
+            @endif
+                @if (session()->has('error'))
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'error',
+                        text: '{{ session('error') }}',
+                    })
+                @endif
         });
-
-        @if (session()->has('success'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-            Toast.fire({
-                icon: 'success',
-                text: '{{ session('success') }}',
-            })
-        @endif
-        @if (session()->has('error'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('error') }}',
-            })
-        @endif
-    });
-</script>
+    </script>
 @endsection

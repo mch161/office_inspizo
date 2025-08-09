@@ -42,6 +42,7 @@
                             <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
                                 data-id="{{ $jurnal->kd_jurnal }}" data-tanggal="{{ $jurnal->tanggal }}"
                                 data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
+                                <i class="fas fa-edit"></i>
                                 Edit
                             </button>
 
@@ -49,7 +50,9 @@
                                 style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
+                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">
+                                    <i class="fas fa-trash"></i>
+                                    Hapus</button>
                             </form>
 
                         </td>
@@ -205,7 +208,7 @@
 
                 $('#modalEdit').modal('show');
             @endif
-            });
+                    });
         $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
             e.preventDefault();
             let form = $(this).closest('form');

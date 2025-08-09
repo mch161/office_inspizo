@@ -64,13 +64,16 @@
                         <td>
                             <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
                                 data-id="{{ $k->kd_kategori }}" data-nama_kategori="{{ $k->nama }}">
+                                <i class="fas fa-edit"></i>
                                 Edit
                             </button>
                             <form action="{{ route('kategori.destroy', $k->kd_kategori) }}" method="POST"
                                 style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
+                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">
+                                    <i class="fas fa-trash"></i>
+                                    Hapus</button>
                             </form>
                         </td>
                     </tr>
