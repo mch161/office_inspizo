@@ -15,6 +15,50 @@
 
 @section('content')
 
+<div class="card">
+    <div class="card-body">
+        <x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
+            data-target="#modalTambah" />
+        <table id="JurnalTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th width="5%">No.</th>
+                    <th width="100px">Tanggal</th>
+                    <th width="100px">Jam</th>
+                    <th width="150px">Nama Karyawan</th>
+                    <th>Isi Jurnal</th>
+                    <th width="150px">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($jurnals as $jurnal)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $jurnal->tanggal }}</td>
+                        <td>{{ $jurnal->jam }}</td>
+                        <td>{{ $jurnal->dibuat_oleh }}</td>
+                        <td>{!! $jurnal->isi_jurnal !!}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
+                                data-id="{{ $jurnal->kd_jurnal }}" data-tanggal="{{ $jurnal->tanggal }}"
+                                data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
+                                Edit
+                            </button>
+
+                            <form action="{{ route('jurnal.destroy', $jurnal->kd_jurnal) }}" method="POST"
+                                style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
+                            </form>
+
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 <x-adminlte-modal id="modalTambah" title="Tambahkan Jurnal" theme="success" icon="fas fa-clipboard" size='lg'>
     <form action="{{ route('jurnal.store') }}" method="POST" id="jurnalForm">
         @csrf
@@ -78,104 +122,121 @@
 </x-adminlte-modal>
 
 
-<x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
-    data-target="#modalTambah" />
-
-<table id="JurnalTable" class="table table-bordered table-striped">
-    <thead>
-        <tr class="table-primary">
-            <th width="5%">No.</th>
-            <th width="100px">Tanggal</th>
-            <th width="100px">Jam</th>
-            <th width="150px">Nama Karyawan</th>
-            <th>Isi Jurnal</th>
-            <th width="150px">Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($jurnals as $jurnal)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $jurnal->tanggal }}</td>
-                <td>{{ $jurnal->jam }}</td>
-                <td>{{ $jurnal->dibuat_oleh }}</td>
-                <td>{!! $jurnal->isi_jurnal !!}</td>
-                <td>
-                    <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
-                        data-id="{{ $jurnal->kd_jurnal }}" data-tanggal="{{ $jurnal->tanggal }}"
-                        data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
-                        Edit
-                    </button>
-
-                    <form action="{{ route('jurnal.destroy', $jurnal->kd_jurnal) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm tombol-hapus">Hapus</button>
-                    </form>
-
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
 
 @stop
 
 @section('js')
-<script>
-    $(document).ready(function () {
-        $('#JurnalTable').DataTable({
-            scrollX: true,
-            scrollCollapse: true,
-            pageLength: 10,
-            lengthChange: false,
-            language: {
-                lengthMenu: "Tampilkan _MENU_ entri",
-                zeroRecords: "Tidak ada data yang ditemukan",
-                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                infoEmpty: "Tidak ada data yang tersedia",
-                infoFiltered: "(difilter dari _MAX_ total entri)",
-                search: "Cari:",
-                searchPlaceholder: "Cari data..."
-            }
+    <script>
+        $(document).ready(function () {
+            $('#JurnalTable').DataTable({
+                scrollX: true,
+                scrollCollapse: true,
+                pageLength: 10,
+                lengthChange: false,
+                language: {
+                    lengthMenu: "Tampilkan _MENU_ entri",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    infoEmpty: "Tidak ada data yang tersedia",
+                    infoFiltered: "(difilter dari _MAX_ total entri)",
+                    search: "Cari:",
+                    searchPlaceholder: "Cari data..."
+                }
+            });
+            var summernoteOptions = {
+                height: 250,
+                placeholder: 'Masukkan keterangan jurnal di sini...',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ]
+            };
+
+            $('#summernote_add').summernote(summernoteOptions);
+            $('#summernote_edit').summernote(summernoteOptions);
         });
-        var summernoteOptions = {
-            height: 250,
-            placeholder: 'Masukkan keterangan jurnal di sini...',
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'clear']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview', 'help']]
-            ]
-        };
+        $(document).ready(function () {
+            $('.tombol-edit').on('click', function () {
+                const id = $(this).data('id');
+                const tanggal = $(this).data('tanggal');
+                const jam = $(this).data('jam');
+                const isi_jurnal = $(this).data('isi_jurnal');
 
-        $('#summernote_add').summernote(summernoteOptions);
-        $('#summernote_edit').summernote(summernoteOptions);
-    });
-    $(document).ready(function () {
-        $('.tombol-edit').on('click', function () {
-            const id = $(this).data('id');
-            const tanggal = $(this).data('tanggal');
-            const jam = $(this).data('jam');
-            const isi_jurnal = $(this).data('isi_jurnal');
+                if (!"{{ $errors->any() && session('invalid_jurnal') }}") {
 
-            if (!"{{ $errors->any() && session('invalid_jurnal') }}") {
+                    $('#tanggal_edit').val(tanggal);
+                    $('#jam_edit').val(jam);
+                    $('#summernote_edit').summernote('code', isi_jurnal);
+                }
 
-                $('#tanggal_edit').val(tanggal);
-                $('#jam_edit').val(jam);
-                $('#summernote_edit').summernote('code', isi_jurnal);
-            }
+                let form = $('#form-edit-jurnal');
+                let updateUrl = "{{ url('jurnal') }}/" + id;
+                form.attr('action', updateUrl);
+            });
 
-            let form = $('#form-edit-jurnal');
-            let updateUrl = "{{ url('jurnal') }}/" + id;
-            form.attr('action', updateUrl);
+            @if ($errors->any() && session('invalid_jurnal'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('invalid_jurnal') }}',
+                })
+                const errorJurnalId = "{{ session('error_jurnal_id') }}";
+
+                if (errorJurnalId) {
+                    let form = $('#form-edit-jurnal');
+                    let updateUrl = "{{ url('jurnal') }}/" + errorJurnalId;
+                    form.attr('action', updateUrl);
+                }
+
+                $('#modalEdit').modal('show');
+            @endif
+            });
+        $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
+            e.preventDefault();
+            let form = $(this).closest('form');
+            Swal.fire({
+                title: 'Yakin ingin menghapus?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
         });
+        $(document).ready(function () {
+            const timeInput = $('#jam');
+            function updateRealTime() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
 
-        @if ($errors->any() && session('invalid_jurnal'))
+                timeInput.val(`${hours}:${minutes}`);
+            }
+            setInterval(updateRealTime, 1000);
+            updateRealTime();
+        });
+        @if (session()->has('success'))
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -188,83 +249,26 @@
                 }
             });
             Toast.fire({
-                icon: 'error',
-                text: '{{ session('invalid_jurnal') }}',
+                icon: 'success',
+                text: '{{ session('success') }}',
             })
-            const errorJurnalId = "{{ session('error_jurnal_id') }}";
-
-            if (errorJurnalId) {
-                let form = $('#form-edit-jurnal');
-                let updateUrl = "{{ url('jurnal') }}/" + errorJurnalId;
-                form.attr('action', updateUrl);
-            }
-
-            $('#modalEdit').modal('show');
         @endif
-    });
-    $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
-        e.preventDefault();
-        let form = $(this).closest('form');
-        Swal.fire({
-            title: 'Yakin ingin menghapus?',
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        })
-    });
-    $(document).ready(function () {
-        const timeInput = $('#jam');
-        function updateRealTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-
-            timeInput.val(`${hours}:${minutes}`);
-        }
-        setInterval(updateRealTime, 1000);
-        updateRealTime();
-    });
-    @if (session()->has('success'))
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-        Toast.fire({
-            icon: 'success',
-            text: '{{ session('success') }}',
-        })
-    @endif
-    @if (session()->has('error'))
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-        Toast.fire({
-            icon: 'error',
-            text: '{{ session('error') }}',
-        })
-    @endif
-</script>
+            @if (session()->has('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                })
+            @endif
+    </script>
 @endsection

@@ -15,7 +15,7 @@
 @endsection
 
 @section('content')
-<div class="card card-primary card-outline">
+<div class="card">
     <div class="card-body">
         <x-adminlte-modal id="modalMasuk" title="Tambahkan Histori Keuangan" theme="success" icon="fas fa-clipboard"
             size='lg'>
@@ -192,7 +192,7 @@
         </table>
     </div>
 </div>
-<div class="card card-primary card-outline">
+<div class="card">
     <div class="card-header">
         <h3 class="card-title">Total Keuangan</h3>
     </div>
