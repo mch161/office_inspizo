@@ -27,7 +27,8 @@
     <div class="card-header">
         <h3 class="card-title">Laporan Presensi untuk
             @if (isset($bulan) && isset($tahun))
-                {{ $karyawan->nama }} pada bulan {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id_ID')->translatedFormat('F Y') }} 
+                {{ $karyawan->nama }} pada bulan
+                {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id_ID')->translatedFormat('F Y') }}
             @else
                 {{ \Carbon\Carbon::parse($tanggal)->locale('id_ID')->translatedFormat('d F Y') }}
             @endif
@@ -38,10 +39,10 @@
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
             @else
-                <a href="{{ route('presensi.fetch', ['tanggal' => $tanggal]) }}" class="btn btn-primary">
+                <a href="{{ route('presensi.fetch', ['tanggal' => $tanggal]) }}" class="btn btn-primary" id="fetch-btn">
                     <i class="fas fa-sync"></i> Sinkronkan
                 </a>
-                <a href="{{ route('presensi.fetch', 'all') }}" class="btn btn-primary" >
+                <a href="{{ route('presensi.fetch', 'all') }}" class="btn btn-primary" id="fetch-all-btn">
                     <i class="fas fa-sync"></i> Sinkronkan Semua
                 </a>
             @endif
@@ -82,23 +83,24 @@
         <h3>Total Presensi: {{ count($rekapData) }}</h3>
         <form action="{{ route('presensi.view') }}" method="GET">
             <x-adminlte-select name="kd_karyawan" label="Pilih Karyawan" empty-option="Pilih Karyawan..." required>
-                <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()" empty-option="Pilih Karyawan..."/>
+                <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()"
+                    empty-option="Pilih Karyawan..." />
             </x-adminlte-select>
             <x-adminlte-select name="bulan" label="Pilih Bulan" required>
                 <x-adminlte-options :options="[
-                    '1' => 'Januari',
-                    '2' => 'Februari',
-                    '3' => 'Maret',
-                    '4' => 'April',
-                    '5' => 'Mei',
-                    '6' => 'Juni',
-                    '7' => 'Juli',
-                    '8' => 'Agustus',
-                    '9' => 'September',
-                    '10' => 'Oktober',
-                    '11' => 'November',
-                    '12' => 'Desember',
-                ]" empty-option="Pilih Bulan..."/>
+        '1' => 'Januari',
+        '2' => 'Februari',
+        '3' => 'Maret',
+        '4' => 'April',
+        '5' => 'Mei',
+        '6' => 'Juni',
+        '7' => 'Juli',
+        '8' => 'Agustus',
+        '9' => 'September',
+        '10' => 'Oktober',
+        '11' => 'November',
+        '12' => 'Desember',
+    ]" empty-option="Pilih Bulan..." />
             </x-adminlte-select>
             <x-adminlte-input name="tahun" label="Tahun" type="number" value="{{ date('Y') }}"></x-adminlte-input>
             <button type="submit" class="btn btn-primary">Tampilkan Presensi</button>
@@ -126,6 +128,16 @@
             searchPlaceholder: "Cari data..."
         }
     });
+    $('#fetch-btn, #fetch-all-btn').on('click', function (e) {
+        e.preventDefault();
+        Swal.fire({
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            showCancelButton: false,
+        });
+        Swal.showLoading();
+        window.location.href = $(this).attr('href');
+    });
     @if (session()->has('success'))
         const Toast = Swal.mixin({
             toast: true,
@@ -143,22 +155,22 @@
             text: '{{ session('success') }}',
         })
     @endif
-    @if (session()->has('error'))
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-        Toast.fire({
-            icon: 'error',
-            text: '{{ session('error') }}',
-        })
-    @endif
+        @if (session()->has('error'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'error',
+                text: '{{ session('error') }}',
+            })
+        @endif
 </script>
 @stop
