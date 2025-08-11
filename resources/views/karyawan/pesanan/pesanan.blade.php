@@ -78,8 +78,8 @@
                 <x-adminlte-options :options="array_column($pelanggan, 'nama_pelanggan', 'kd_pelanggan')"
                     empty-option="Pilih Pelanggan..." />
             </x-adminlte-select>
-            @php $config = ['format' => 'd/m/Y']; @endphp
-            <x-adminlte-input-date name="tanggal" value="{{ date('d/m/Y') }}" :config="$config"
+            @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
+            <x-adminlte-input-date name="tanggal" id="tanggal-agenda" :config="$configDate"
                 placeholder="Pilih tanggal..." label="Tanggal Janji Temu" igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
