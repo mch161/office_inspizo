@@ -100,6 +100,7 @@
         <form id="agendaForm" method="POST" action="{{ route('pesanan.agenda') }}">
             @csrf
             <input type="hidden" name="kd_pesanan" id="kd_pesanan">
+            <label for="title">Nama</label>
             <input class="form-control" type="text" name="title" id="title" placeholder="Nama Agenda" required>
             
             @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp

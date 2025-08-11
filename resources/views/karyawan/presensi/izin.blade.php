@@ -66,7 +66,9 @@
                 <tr>
                     <th width="5%" class="text-left">No</th>
                     <th class="text-left">Karyawan</th>
+                    <th class="text-left">Jenis</th>
                     <th class="text-left">Tanggal</th>
+                    <th class="text-left">Jam</th>
                     <th class="text-left">Keterangan</th>
                     <th class="text-left">Foto</th>
                     <th width="10%" class="text-left">Status</th>
@@ -82,7 +84,9 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->dibuat_oleh }}</td>
+                            <td>{{ $item->jenis }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
+                            <td>{{ $item->jam }}</td>
                             <td class="keterangan-column">{!! $item->keterangan !!}</td>
                             <td>
                                 @if($item->foto)

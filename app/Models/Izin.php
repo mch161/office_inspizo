@@ -23,7 +23,15 @@ class Izin extends Model
 
 
 
-    protected $fillable = [''];
+    protected $fillable = [
+        'kd_karyawan',
+        'jenis',
+        'tanggal',
+        'jam',
+        'foto',
+        'keterangan',
+        'dibuat_oleh',
+    ];
     /**
      * Define the relationship to the Karyawan model.
      * Assumes you have a Karyawan model.

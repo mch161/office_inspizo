@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Izin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class IzinController extends Controller
 {
@@ -37,32 +38,42 @@ class IzinController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validate all the input first.
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
+            'jenis' => 'required|string',
             'tanggal' => 'required|date',
-            'jam' => 'required|string',
+            'jam' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'keterangan' => 'required|string',
         ]);
 
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
         $imageName = null;
 
-        // 2. If validation passes and a file was uploaded, handle the file.
         if ($request->hasFile('foto')) {
             $imageName = time() . '.' . $request->file('foto')->extension();
             $request->file('foto')->move(public_path('storage/images/izin'), $imageName);
         }
 
-        // 3. Create and save the new Izin model using validated data.
-        $izin = new Izin();
-        $izin->kd_karyawan = Auth::guard('karyawan')->user()->kd_karyawan;
-        $izin->tanggal = $validatedData['tanggal'];
-        $izin->jam = $validatedData['jam'];
-        $izin->foto = $imageName; // Assign the image name (or null if no file)
-        $izin->keterangan = $validatedData['keterangan'];
-        $izin->status = '0'; // 0 = Menunggu (Pending)
-        $izin->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
+        if ($request->jenis === 'Izin Terlambat' || $request->jenis === 'Izin Keluar Kantor') {
+            $jam = $request->jam;
+        } else {
+            $jam = 'Full Day';
+        }
+        $izin = new Izin([
+            'kd_karyawan' => Auth::guard('karyawan')->user()->kd_karyawan,
+            'jenis' => $request->jenis,
+            'tanggal' => $request->tanggal,
+            'jam' => $jam,
+            'foto' => $imageName,
+            'keterangan' => $request->keterangan,
+            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+        ]);
+
         $izin->save();
+
 
         return redirect()->route('izin.index')->with('success', 'Pengajuan izin berhasil dibuat.');
     }
