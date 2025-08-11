@@ -69,7 +69,14 @@
                         <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
                         <td>{{ $data->jam_masuk }}</td>
                         <td>{{ $data->jam_keluar ?? '--:--:--' }}</td>
-                        <td>{{ $data->terlambat }}</td>
+                        <td>
+                            @if ($data->terlambat != "Tidak")
+                                <div class="badge badge-warning">{{ $data->terlambat }}</div>
+                                @else
+                                {{ $data->terlambat }}
+                            @endif
+                        </td>
+
                         <td>{{ $data->pulang_cepat }}</td>
                     </tr>
                 @endforeach
@@ -115,7 +122,7 @@
         responsive: true,
         lengthChange: false,
         autoWidth: false,
-        pageLength: 5,
+        pageLength: -1,
         scrollX: true,
         language: {
             lengthMenu: "Tampilkan _MENU_ entri",
