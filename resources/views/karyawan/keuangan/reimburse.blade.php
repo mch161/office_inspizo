@@ -10,47 +10,52 @@
 @section('plugins.Datatables', true)
 
 @section('css')
-{{-- Custom styles for a polished table appearance --}}
-<style>
-    .card {
-        border-radius: .5rem;
-        box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
-    }
+    {{-- Custom styles for a polished table appearance --}}
+    <style>
+        .card {
+            border-radius: .5rem;
+            box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+        }
 
-    #ReimburseTable th,
-    #ReimburseTable td {
-        vertical-align: middle !important;
-        text-align: center;
-    }
+        #ReimburseTable th,
+        #ReimburseTable td {
+            vertical-align: middle !important;
+            text-align: center;
+        }
 
-    #ReimburseTable .keterangan-column {
-        text-align: left;
-        max-width: 300px;
-        white-space: normal;
-    }
+        #ReimburseTable .keterangan-column {
+            text-align: left;
+            max-width: 300px;
+            white-space: normal;
+        }
 
-    .reimburse-image {
-        width: 150px;
-        height: auto;
-        border-radius: .5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
+        .reimburse-image {
+            width: 150px;
+            height: auto;
+            border-radius: .5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-    .reimburse-image:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
+        .reimburse-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
 
-    .btn-sm i {
-        margin-right: .25rem;
-    }
-</style>
+        .btn-sm i {
+            margin-right: .25rem;
+        }
+    </style>
 @endsection
 
 @section('content')
 <div class="card">
     <div class="card-body">
+        <div class="mb-3 float-right">
+            <a href="{{ route('reimburse.form') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Buat Pengajuan Reimburse
+            </a>
+        </div>
         <table id="ReimburseTable" class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
@@ -60,7 +65,9 @@
                     <th class="text-left">Keterangan</th>
                     <th class="text-left">Tanggal</th>
                     <th width="10%" class="text-left">Status</th>
-                    <th width="15%" class="text-left">Aksi</th>
+                    @if (Auth::user()->role == 'superadmin')
+                        <th width="15%" class="text-left">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -88,24 +95,26 @@
                                 <span class="badge badge-success">Selesai</span>
                             @endif
                         </td>
-                        <td class="text-left">
-                            <form class="action-form" action="{{ route('reimburse.update', $item->kd_reimburse) }}"
-                                method="POST">
-                                @csrf
-                                @method('PUT')
-                                @if ($item->status == '0')
-                                    <input type="hidden" name="status" value="1">
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-check"></i> Selesai
-                                    </button>
-                                @else
-                                    <input type="hidden" name="status" value="0">
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-times"></i> Batalkan
-                                    </button>
-                                @endif
-                            </form>
-                        </td>
+                        @if (Auth::user()->role == 'superadmin')
+                            <td class="text-left">
+                                <form class="action-form" action="{{ route('reimburse.update', $item->kd_reimburse) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    @if ($item->status == '0')
+                                        <input type="hidden" name="status" value="1">
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-check"></i> Selesai
+                                        </button>
+                                    @else
+                                        <input type="hidden" name="status" value="0">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-times"></i> Batalkan
+                                        </button>
+                                    @endif
+                                </form>
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>
@@ -189,19 +198,19 @@
                 text: '{{ session('success') }}',
             })
         @endif
-        @if (session()->has('error'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-            });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('error') }}',
-            })
-        @endif
+            @if (session()->has('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                })
+            @endif
     });
 </script>
 @stop

@@ -56,13 +56,11 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        @if (Auth::user()->role !== 'superadmin')
-            <div class="mb-3 float-right">
-                <a href="{{ route('izin.form') }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus"></i> Buat Pengajuan Izin
-                </a>
-            </div>
-        @endif
+        <div class="mb-3 float-right">
+            <a href="{{ route('izin.form') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Buat Pengajuan Izin
+            </a>
+        </div>
         <table id="IzinTable" class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>

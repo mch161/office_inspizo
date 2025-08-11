@@ -368,11 +368,6 @@ return [
                     'can' => 'access-karyawan',
                 ],
                 [
-                    'text' => 'Form Izin',
-                    'route' => 'izin.form',
-                    'icon' => 'fas fa-fw fa-envelope'
-                ],
-                [
                     'text' => 'Izin',
                     'icon' => 'fa fas fa-envelope-open',
                     'route' => 'izin.index',
@@ -428,15 +423,10 @@ return [
                     'can' => 'superadmin',
                 ],
                 [
-                    'text' => 'Form Reimburse',
-                    'route' => 'reimburse.form',
-                    'icon' => 'fas fa-fw fa-box-open',
-                ],
-                [
                     'text' => 'Data Reimburse',
                     'route' => 'reimburse.index',
                     'icon' => 'fas fa-fw fa-money-check',
-                    'can' => 'superadmin',
+                    'can' => 'access-karyawan',
                 ],
                 [
                     'text' => 'Kotak',
