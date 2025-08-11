@@ -4,27 +4,51 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Jurnal;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator; // <-- Tambahkan ini
+use Illuminate\Support\Facades\Validator;
 
 class JurnalController extends Controller
 {
-    public function jurnalku()
+    public function jurnalku(Request $request)
     {
+        $tanggal = null;
+        if ($request->has('tanggal') && $request->input('tanggal') != null) {
+            $tanggal = ($request->input('tanggal') ?? Carbon::now()->format('Y-m-d'));
 
-        $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)
-                            ->orderBy('tanggal', 'desc')->get();
+            $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)
+                ->whereDate('tanggal', $tanggal)
+                ->orderBy('nama', 'asc')
+                ->get();
+        } else {
+            $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)
+                ->orderBy('tanggal', 'desc')->get();
+        }
+
 
         return view('karyawan.jurnal.jurnalku', [
-            "jurnals" => $jurnals
+            "jurnals" => $jurnals,
+            "tanggal" => $tanggal
         ]);
     }
 
-    public function jurnal_kita()
+    public function jurnal_kita(Request $request)
     {
-        $jurnals = Jurnal::orderBy('tanggal', 'desc')->get();
+        $tanggal = null;
+        if ($request->has('tanggal') && $request->input('tanggal') != null) {
+            $tanggal = ($request->input('tanggal') ?? Carbon::now()->format('Y-m-d'));
+
+            $jurnals = Jurnal::whereDate('tanggal', $tanggal)
+                ->orderBy('nama', 'asc')
+                ->get();
+        } else {
+            $jurnals = Jurnal::orderBy('tanggal', 'desc')->get();
+        }
+
+
         return view('karyawan.jurnal.jurnal_kita', [
-            "jurnals" => $jurnals
+            "jurnals" => $jurnals,
+            "tanggal" => $tanggal
         ]);
     }
 

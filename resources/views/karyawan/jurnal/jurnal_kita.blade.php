@@ -12,6 +12,20 @@
 
 @section('content')
 <div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Filter Data</h3>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('jurnal_kita') }}" method="GET" class="form-inline">
+            <div class="form-group mb-2">
+                <label for="tanggal" class="mr-2">Pilih Tanggal:</label>
+                <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ $tanggal }}">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2 ml-2">Tampilkan</button>
+        </form>
+    </div>
+</div>
+<div class="card">
     <div class="card-body">
         <table id="JurnalTable" class="table table-bordered table-striped">
             <thead>
