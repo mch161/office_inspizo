@@ -30,8 +30,16 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('pesanan/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('pesanan.permintaan');
     Route::post('pesanan', [App\Http\Controllers\PesananController::class, 'store'])->name('pesanan.store');
     Route::post('pesanan/{pesanan}/accept', [App\Http\Controllers\PesananController::class, 'accept'])->name('pesanan.accept');
-    Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');
     Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
+    Route::post('pesanan/jasa', [App\Http\Controllers\PesananController::class, 'jasa'])->name('pesanan.jasa');
+
+    ## Pesanan Detail
+    Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');
+    Route::resource('pesanan/barang', App\Http\Controllers\PesananBarangController::class)->names([
+        'store' => 'pesanan.barang.store',
+        'destroy' => 'pesanan.barang.destroy',
+    ]);
+    Route::resource('pesanan/jasa', App\Http\Controllers\PesananJasaController::class);
 
     ## Agenda
     Route::get('agenda/fetch', [App\Http\Controllers\AgendaController::class, 'fetch'])->name('fetch');
@@ -46,6 +54,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('izin', App\Http\Controllers\IzinController::class);
 
     ## Barang
+    Route::get('barang/search', [App\Http\Controllers\BarangController::class, 'search'])->name('barang.search');
     Route::resource('barang', App\Http\Controllers\BarangController::class);
     Route::put('barang/{id}/updateStok', [App\Http\Controllers\BarangController::class, 'updateStok'])->name('updateStok');
     Route::resource('stok', App\Http\Controllers\StokController::class);

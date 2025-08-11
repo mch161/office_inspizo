@@ -25,6 +25,21 @@ class BarangController extends Controller
         return view('karyawan.barang.barang', compact('barang'));
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->input('q');
+        $barangs = Barang::where('nama_barang', 'LIKE', "%{$search}%")->get();
+        $response = [];
+        foreach ($barangs as $barang) {
+            $response[] = [
+                "id" => $barang->kd_barang,
+                "text" => $barang->nama_barang
+            ];
+        }
+
+        return response()->json($response);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

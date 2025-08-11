@@ -104,12 +104,12 @@ class PesananController extends Controller
     {
 
         $pesanan = Pesanan::find($pesanan);
-        $pesanan_detail = Pesanan::where('kd_pesanan', $pesanan->kd_pesanan)->first();
+        $pesanan_detail = PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->first();
         $pesanan_barang = PesananBarang::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         $pesanan_jasa = PesananJasa::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         $barang = Barang::get()->all();
 
-        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_barang','barang','pesanan_jasa'));
+        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_detail', 'pesanan_barang', 'barang', 'pesanan_jasa'));
     }
 
     public function agenda(Request $request)
@@ -127,7 +127,7 @@ class PesananController extends Controller
 
         $agendaExists = Agenda::where('start', $startDateTime)->exists();
 
-        if ($agendaExists){
+        if ($agendaExists) {
             return redirect()->back()->with('error', 'Agenda sudah ada.');
         }
 

@@ -2,6 +2,9 @@
 
 @section('title', 'Detail Pesanan')
 
+@section('plugins.Sweetalert2', true)
+@section('plugins.Select2', true)
+
 @section('css')
     <style>
         .ticket-progress ul {
@@ -75,27 +78,32 @@
 @endsection
 
 @section('content_header')
-    <h1><i class="fas fa-shopping-cart"></i> Detail Pesanan</h1>
+<h1><i class="fas fa-shopping-cart"></i> Detail Pesanan #{{ $pesanan->kd_pesanan }}</h1>
 @stop
 
 @section('content')
-    {{-- Barang modal --}}
     <x-adminlte-modal id="barangModal" title="Tambahkan barang" theme="primary">
-        <x-adminlte-select name="selBasic" onchange="document.querySelector('input[name=harga]').value = event.target.selectedOptions[0].dataset.harga">
+        <form id="barangForm" action="{{ route('pesanan.barang.store') }}">
+            <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
+            <x-adminlte-select2 name="kd_barang" label="Barang">
+                <option class="text-muted" value="" selected disabled>Cari barang...</option>
                 @foreach ($barang as $barang)
-                <x-adminlte-options :options="[$barang->kd_barang => $barang->nama_barang]" />
-            @endforeach
-        </x-adminlte-select>
-        <x-adminlte-input name="harga" label="Harga" value="{{ $barang->harga ?? '' }}" />
-        <x-adminlte-input name="jumlah" label="Jumlah" type="number" min="1" required />
-
+                    <option value="{{ $barang->kd_barang }}">{{ $barang->nama_barang }}</option>
+                @endforeach
+            </x-adminlte-select2>
+            <x-adminlte-input name="jumlah" type="number" label="Jumlah" placeholder="Jumlah" />
+            <x-slot name="footerSlot">
+                <x-adminlte-button theme="success" label="Simpan" type="submit" form="barangForm" />
+                <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+            </x-slot>
+        </form>
     </x-adminlte-modal>
     {{-- /barang modal --}}
     {{-- jasa modal --}}
     <x-adminlte-modal id="jasaModal" title="Tambahkan jasa" theme="primary">
-        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder"/>
-        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder"/>
-        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder"/>
+        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder" />
+        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder" />
+        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder" />
     </x-adminlte-modal>
     {{-- /jasa modal --}}
     <div class="row">
@@ -127,11 +135,20 @@
                             @foreach ($pesanan_barang as $barang)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $barang->barang->nama_barang }}</td>
-                                    <td>{{ $barang->barang->harga }}</td>
-                                    <td>{{ $barang->jumlah }}</td>
-                                    <td>{{ $barang->subtotal }}</td>
-                                    <td></td>
+                                    <td>{{ $barang->nama_barang }}</td>
+                                    <td>{{ number_format($barang->harga_jual ?? $barang->barang->harga, 2, ',', '.') }}</td>
+                                    <td>{{ number_format($barang->jumlah) }}</td>
+                                    <td>{{ number_format($barang->jumlah * ($barang->harga_jual ?? $barang->barang->harga), 2, ',', '.') }}</td>
+                                    <td>
+                                        <form action="{{ route('pesanan.barang.destroy', $barang->kd_pesanan_barang) }}"
+                                            method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm tombol-hapus">
+                                                <i class="fas fa-trash"></i>
+                                                Hapus</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -213,7 +230,7 @@
 
 @section('js')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#barangTable').DataTable({
                 scrollX: true,
                 paging: false,
@@ -227,6 +244,24 @@
                     infoEmpty: "Tidak ada data yang tersedia",
                     infoFiltered: "(difilter dari _MAX_ total entri)"
                 }
+            });
+            $('#barangTable').on('click', '.tombol-hapus', function (e) {
+                e.preventDefault();
+                let form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Yakin ingin menghapus?',
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                })
             });
             $('#jasaTable').DataTable({
                 scrollX: true,
@@ -243,5 +278,43 @@
                 }
             });
         });
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+        @if (session()->has('success'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                text: '{{ session('success') }}',
+            })
+        @endif
+            @if (session()->has('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    escapeMarkup: false,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                })
+            @endif
     </script>
 @endsection

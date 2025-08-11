@@ -13,6 +13,10 @@ class PesananBarang extends Model
     protected $fillable = [
         'kd_pesanan_detail',
         'kd_barang',
+        'nama_barang',
+        'hpp',
+        'laba',
+        'harga_jual',
         'jumlah',
         'subtotal',
     ];
