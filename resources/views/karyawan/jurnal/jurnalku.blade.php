@@ -19,7 +19,7 @@
         <h3 class="card-title">Filter Data</h3>
     </div>
     <div class="card-body">
-        <form action="{{ route('jurnal_kita') }}" method="GET" class="form-inline">
+        <form action="{{ route('jurnalku') }}" method="GET" class="form-inline">
             <div class="form-group mb-2">
                 <label for="tanggal" class="mr-2">Pilih Tanggal:</label>
                 <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ $tanggal }}">
