@@ -40,6 +40,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
         'destroy' => 'pesanan.barang.destroy',
     ]);
     Route::resource('pesanan/jasa', App\Http\Controllers\PesananJasaController::class);
+    Route::resource('pesanan/{pesanan}/progress', App\Http\Controllers\PesananProgressController::class);
 
     ## Agenda
     Route::get('agenda/fetch', [App\Http\Controllers\AgendaController::class, 'fetch'])->name('fetch');

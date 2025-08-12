@@ -106,6 +106,33 @@
         <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder" />
     </x-adminlte-modal>
     {{-- /jasa modal --}}
+
+    <!-- CARD -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3 class="card-title">Detail Pesanan</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p><strong>Kode Pesanan:</strong> {{ $pesanan->kd_pesanan }}</p>
+                            <p><strong>Nama Pelanggan:</strong> {{ $pesanan->pelanggan->nama_pelanggan }}</p>
+                            <p><strong>Alamat:</strong> {{ $pesanan->pelanggan->alamat }}</p>
+                            <p><strong>Telepon:</strong> {{ $pesanan->pelanggan->telepon }}</p>
+                        </div>
+                        <a class="btn btn-primary" href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i class="fas fa-chart-line"></i> Progress</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card mt-4">
