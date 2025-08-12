@@ -18,7 +18,7 @@ class JurnalController extends Controller
 
             $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)
                 ->whereDate('tanggal', $tanggal)
-                ->orderBy('nama', 'asc')
+                ->orderBy('dibuat_oleh', 'asc')
                 ->get();
         } else {
             $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)
@@ -39,7 +39,7 @@ class JurnalController extends Controller
             $tanggal = ($request->input('tanggal') ?? Carbon::now()->format('Y-m-d'));
 
             $jurnals = Jurnal::whereDate('tanggal', $tanggal)
-                ->orderBy('nama', 'asc')
+                ->orderBy('dibuat_oleh', 'asc')
                 ->get();
         } else {
             $jurnals = Jurnal::orderBy('tanggal', 'desc')->get();
