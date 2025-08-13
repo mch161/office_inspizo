@@ -74,6 +74,13 @@
             color: #666;
             padding: 5px 10px;
         }
+
+        .edit-mode-1,
+        .edit-mode-2 {
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            width: 100px;
+        }
     </style>
 @endsection
 
@@ -127,7 +134,9 @@
                             <p><strong>Alamat:</strong> {{ $pesanan->pelanggan->alamat }}</p>
                             <p><strong>Telepon:</strong> {{ $pesanan->pelanggan->telepon }}</p>
                         </div>
-                        <a class="btn btn-primary" href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i class="fas fa-chart-line"></i> Progress</a>
+                        <a class="btn btn-primary"
+                            href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
+                                class="fas fa-chart-line"></i> Progress</a>
                     </div>
                 </div>
             </div>
@@ -163,9 +172,25 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $barang->nama_barang }}</td>
-                                    <td>{{ number_format($barang->harga_jual ?? $barang->barang->harga, 2, ',', '.') }}</td>
-                                    <td>{{ number_format($barang->jumlah) }}</td>
-                                    <td>{{ number_format($barang->jumlah * ($barang->harga_jual ?? $barang->barang->harga), 2, ',', '.') }}</td>
+                                    <form class="update-form"
+                                        action="{{ route('pesanan.barang.update', $barang->kd_pesanan_barang) }}" method="post">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="kd_barang" value="{{ $barang->kd_barang }}">
+                                        <td class="harga-jual-edit">
+                                            <span
+                                                class="display-mode-1">{{ number_format($barang->harga_jual ?? $barang->barang->harga, 2, ',', '.') }}</span>
+                                            <input type="number" class="edit-mode-1 d-none" name="harga_jual"
+                                                value="{{ $barang->harga_jual ?? $barang->barang->harga }}">
+                                        </td>
+                                        <td class="jumlah-edit">
+                                            <span class="display-mode-2">{{ number_format($barang->jumlah) }}</span>
+                                            <input type="number" class="edit-mode-2 d-none" name="jumlah"
+                                                value="{{ $barang->jumlah }}">
+                                        </td>
+                                    </form>
+                                    <td>{{ number_format($barang->jumlah * ($barang->harga_jual ?? $barang->barang->harga), 2, ',', '.') }}
+                                    </td>
                                     <td>
                                         <form action="{{ route('pesanan.barang.destroy', $barang->kd_pesanan_barang) }}"
                                             method="POST" style="display:inline;">
@@ -289,6 +314,58 @@
                         form.submit();
                     }
                 })
+            });
+        });
+        $(document).ready(function () {
+            function saveOrRevertChanges(element) {
+                const editingRow = $(element).closest('tr');
+                if (!editingRow.length) return;
+
+                const newHarga = editingRow.find('input.edit-mode-1').val();
+                const newJumlah = editingRow.find('input.edit-mode-2').val();
+
+                const oldHargaFormatted = editingRow.find('span.display-mode-1').text();
+                const oldJumlahFormatted = editingRow.find('span.display-mode-2').text();
+
+                const oldHarga = oldHargaFormatted.split(',')[0].replace(/\./g, '');
+                const oldJumlah = oldJumlahFormatted.replace(/\./g, '');
+
+                const hasChanged = newHarga !== oldHarga || newJumlah !== oldJumlah;
+
+                editingRow.find('.is-editing').removeClass('is-editing');
+                editingRow.find('.display-mode-1, .display-mode-2').removeClass('d-none');
+                editingRow.find('.edit-mode-1, .edit-mode-2').addClass('d-none');
+
+                if (hasChanged) {
+                    editingRow.find('form.update-form').submit();
+                }
+            }
+
+            $('#barangTable').on('keyup', '.edit-mode-1, .edit-mode-2', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    saveOrRevertChanges(this);
+                }
+            });
+
+            $(document).on('click', function (e) {
+                const editingCell = $('td.is-editing');
+                if (editingCell.length && !$(e.target).closest('td.is-editing').length) {
+                    saveOrRevertChanges(editingCell);
+                }
+            });
+
+            $('#barangTable').on('click', '.harga-jual-edit, .jumlah-edit', function (e) {
+                const cell = $(this);
+                if (cell.hasClass('is-editing')) return;
+
+                const otherEditingCell = $('td.is-editing');
+                if (otherEditingCell.length) {
+                    saveOrRevertChanges(otherEditingCell);
+                }
+
+                cell.addClass('is-editing');
+                cell.find('span').addClass('d-none');
+                cell.find('input').removeClass('d-none').focus();
             });
             $('#jasaTable').DataTable({
                 scrollX: true,

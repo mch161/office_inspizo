@@ -38,15 +38,29 @@ class PesananBarangController extends Controller
             'kd_pesanan_detail' => $request->kd_pesanan_detail,
             'kd_barang' => $request->kd_barang,
             'nama_barang' => $barang->nama_barang,
-            'hpp' => $barang->harga,
-            'jumlah' => $request->jumlah
+            'hpp' => $barang->hpp,
+            'laba' => $barang->harga_jual - $barang->hpp,
+            'harga_jual' => $barang->harga_jual,
+            'jumlah' => $request->jumlah,
+            'subtotal' => $barang->harga_jual * $request->jumlah
         ]);
 
         return redirect()->back()->with('success', 'Barang berhasil ditambahkan.');
     }
-    public function store(Request $request)
+
+    public function update(Request $request, $id)
     {
-        //
+        $barang_stok = Barang::find($request->kd_barang);
+        if ($request->jumlah > $barang_stok->stok) {
+            return redirect()->back()->with('error', 'Stok barang tidak cukup. Stok tersedia: ' . $barang_stok->stok);
+        }
+        $barang = PesananBarang::find($id);
+        $barang->laba = $request->harga_jual - $barang->hpp;
+        $barang->harga_jual = $request->harga_jual;
+        $barang->jumlah = $request->jumlah;
+        $barang->subtotal = $request->harga_jual * $request->jumlah;
+        $barang->save();
+        return redirect()->back()->with('success', 'Barang berhasil diperbarui.');
     }
 
     public function destroy($id)

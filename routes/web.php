@@ -38,6 +38,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('pesanan/barang', App\Http\Controllers\PesananBarangController::class)->names([
         'store' => 'pesanan.barang.store',
         'destroy' => 'pesanan.barang.destroy',
+        'update' => 'pesanan.barang.update',
     ]);
     Route::resource('pesanan/jasa', App\Http\Controllers\PesananJasaController::class);
     Route::resource('pesanan/{pesanan}/progress', App\Http\Controllers\PesananProgressController::class);
