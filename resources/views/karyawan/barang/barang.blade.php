@@ -115,6 +115,10 @@
                 placeholder="Masukkan Nama Barang" required>
         </div>
         <div class="form-group">
+            <label for="hpp">HPP</label>
+            <input type="number" class="form-control" id="hpp" name="hpp" min="0" placeholder="10000" required>
+        </div>
+        <div class="form-group">
             <label for="harga">Harga</label>
             <input type="number" class="form-control" id="harga" name="harga" min="0" placeholder="10000" required>
         </div>
@@ -146,6 +150,10 @@
         <div class="form-group">
             <label for="edit_nama_barang">Nama Barang</label>
             <input type="text" class="form-control" id="edit_nama_barang" name="nama_barang" required>
+        </div>
+        <div class="form-group">
+            <label for="edit_hpp">HPP</label>
+            <input type="number" class="form-control" id="edit_hpp" name="hpp" required>
         </div>
         <div class="form-group">
             <label for="edit_harga">Harga</label>
@@ -230,7 +238,9 @@
                 </button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item edit-btn" href="#" data-toggle="modal" data-target="#modalEdit"
-                        data-id="{{ $b->id }}" data-nama="{{ $b->nama_barang }}" data-harga="{{ $b->harga }}"
+                        data-id="{{ $b->id }}" data-nama="{{ $b->nama_barang }}"
+                        data-hpp="{{ $b->hpp }}"
+                        data-harga="{{ $b->harga_jual }}"
                         data-foto="{{ asset('storage/images/barang/' . $b->foto) }}"
                         data-url="{{ route('barang.update', $b->kd_barang) }}">
                         <i class="fas fa-edit fa-fw mr-2 text-info"></i>Edit
@@ -256,7 +266,7 @@
             </a>
             <div class="info-box-content">
                 <span class="info-box-text">{{ $b->nama_barang }}</span>
-                <span class="info-box-number">{{ 'Rp' . number_format($b->harga, 2, ',', '.') }}</span>
+                <span class="info-box-number">{{ 'Rp' . number_format($b->harga_jual, 2, ',', '.') }}</span>
             </div>
             <div class="stok-info">
                 Stok: {{ $b->stok }}
@@ -314,11 +324,13 @@
             e.preventDefault();
             
             const nama = $(this).data('nama');
+            const hpp = $(this).data('hpp');
             const harga = $(this).data('harga');
             const fotoUrl = $(this).data('foto');
             const updateUrl = $(this).data('url');
 
             $('#edit_nama_barang').val(nama);
+            $('#edit_hpp').val(hpp);
             $('#edit_harga').val(harga);
             $('#current_foto_preview').attr('src', fotoUrl);
             $('#editBarangForm').attr('action', updateUrl);

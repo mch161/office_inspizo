@@ -55,6 +55,7 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama_barang' => 'required|string',
+            'hpp' => 'required|numeric',
             'harga' => 'required|numeric',
             'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'stok' => 'nullable|numeric|min:0',
@@ -66,7 +67,8 @@ class BarangController extends Controller
         $barang = new Barang();
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
-        $barang->harga = $request->harga;
+        $barang->hpp = $request->hpp;
+        $barang->harga_jual = $request->harga;
         $barang->stok = 0;
         $barang->foto = $imageName;
         $barang->dibuat_oleh = Auth::user()->nama;
@@ -114,6 +116,7 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama_barang' => 'required|string',
+            'hpp' => 'required|numeric',
             'harga' => 'required|numeric',
             'foto' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -127,7 +130,8 @@ class BarangController extends Controller
 
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
-        $barang->harga = $request->harga;
+        $barang->hpp = $request->hpp;
+        $barang->harga_jual = $request->harga;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
 
