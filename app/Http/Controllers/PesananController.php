@@ -148,6 +148,16 @@ class PesananController extends Controller
         return redirect()->back()->with('success', 'Agenda berhasil dibuat.');
     }
 
+    public function complete($pesanan)
+    {
+        $p = Pesanan::find($pesanan);
+        $p->status = '1';
+        $p->progres = '4';
+        $p->save();
+
+        return redirect()->route('pesanan.index')->with('success', 'Pesanan terselesaikan.');
+    }
+
     /**
      * Display the specified resource.
      */

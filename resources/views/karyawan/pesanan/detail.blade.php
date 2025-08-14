@@ -143,9 +143,16 @@
                             <p><strong>Alamat:</strong> {{ $pesanan->pelanggan->alamat }}</p>
                             <p><strong>Telepon:</strong> {{ $pesanan->pelanggan->telepon }}</p>
                         </div>
-                        <a class="btn btn-primary"
+                        <a class="btn btn-primary mr-3"
                             href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
                                 class="fas fa-chart-line"></i> Progress</a>
+                        @if ($pesanan->status == '0')
+                            <form action="{{ route('pesanan.complete', ['pesanan' => $pesanan->kd_pesanan]) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Selesaikan</button>
+                            </form>
+                        @endif
+
                     </div>
                 </div>
             </div>

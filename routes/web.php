@@ -31,7 +31,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::post('pesanan', [App\Http\Controllers\PesananController::class, 'store'])->name('pesanan.store');
     Route::post('pesanan/{pesanan}/accept', [App\Http\Controllers\PesananController::class, 'accept'])->name('pesanan.accept');
     Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
-    Route::post('pesanan/jasa', [App\Http\Controllers\PesananController::class, 'jasa'])->name('pesanan.jasa');
+    Route::post('pesanan/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('pesanan.complete');
 
     ## Pesanan Detail
     Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');
