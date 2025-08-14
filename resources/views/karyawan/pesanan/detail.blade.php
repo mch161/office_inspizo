@@ -108,9 +108,16 @@
     {{-- /barang modal --}}
     {{-- jasa modal --}}
     <x-adminlte-modal id="jasaModal" title="Tambahkan jasa" theme="primary">
-        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder" />
-        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder" />
-        <x-adminlte-input name="iLabel" label="Nama jasa" placeholder="placeholder" />
+        <form action="{{ route('jasa.store') }}" id="jasaForm">
+            <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
+            <x-adminlte-input type="text" name="nama_jasa" label="Nama jasa" placeholder="Nama Jasa" />
+            <x-adminlte-input type="number" name="harga_jasa" label="Harga jasa" placeholder="Harga" />
+            <x-adminlte-input type="number" name="jumlah" label="Jumlah" placeholder="Jumlah" />
+            <x-slot name="footerSlot">
+                <x-adminlte-button theme="success" label="Simpan" type="submit" form="jasaForm" />
+                <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+            </x-slot>
+        </form>
     </x-adminlte-modal>
     {{-- /jasa modal --}}
 
@@ -234,6 +241,7 @@
                                     <th>Harga</th>
                                     <th>Jumlah</th>
                                     <th>Subtotal</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -241,9 +249,27 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $jasa->nama_jasa }}</td>
-                                        <td>{{ $jasa->harga_jasa }}</td>
-                                        <td>{{ $jasa->jumlah }}</td>
+                                        <td class="harga-jasa-edit">
+                                            <span
+                                                class="display-mode-3">{{ number_format($jasa->harga_jasa, 2, ',', '.') }}</span>
+                                            <input type="number" class="edit-mode-3 d-none" name="harga_jasa"
+                                                value="{{ $jasa->harga_jasa }}">
+                                        </td>
+                                        <td>
+                                            <span class="display-mode-4">{{ number_format($jasa->jumlah) }}</span>
+                                            <input type="number" class="edit-mode-4 d-none" name="jumlah" value="{{ $jasa->jumlah }}">
+                                        </td>
                                         <td>{{ number_format($jasa->subtotal, 2, ',', '.') }}</td>
+                                        <td>
+                                            <form action="{{ route('jasa.destroy', $jasa->kd_pesanan_jasa) }}" method="POST"
+                                                style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">
+                                                    <i class="fas fa-trash"></i>
+                                                    Hapus</button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -297,7 +323,7 @@
                     infoFiltered: "(difilter dari _MAX_ total entri)"
                 }
             });
-            $('#barangTable').on('click', '.tombol-hapus', function (e) {
+            $('#barangTable, #jasaTable').on('click', '.tombol-hapus', function (e) {
                 e.preventDefault();
                 let form = $(this).closest('form');
                 Swal.fire({
