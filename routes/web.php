@@ -54,6 +54,8 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('presensi', App\Http\Controllers\PresensiController::class);
     Route::get('forms/izin', [App\Http\Controllers\IzinController::class, 'izinForm'])->name('izin.form');
     Route::resource('izin', App\Http\Controllers\IzinController::class);
+    Route::put('lembur/approve', [App\Http\Controllers\LemburController::class, 'approve'])->name('lembur.approve');
+    Route::resource('lembur', App\Http\Controllers\LemburController::class);
 
     ## Barang
     Route::get('barang/search', [App\Http\Controllers\BarangController::class, 'search'])->name('barang.search');

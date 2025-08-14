@@ -373,6 +373,12 @@ return [
                     'route' => 'izin.index',
                     'can' => 'access-karyawan'
                 ],
+                [
+                    'text' => 'Lembur',
+                    'route' => 'lembur.index',
+                    'icon' => 'fa fas fa-clipboard-list',
+                    'can' => 'access-karyawan',
+                ]
             ]
         ],
         [
