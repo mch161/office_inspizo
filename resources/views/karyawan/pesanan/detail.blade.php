@@ -76,7 +76,9 @@
         }
 
         .edit-mode-1,
-        .edit-mode-2 {
+        .edit-mode-2,
+        .edit-mode-3,
+        .edit-mode-4 {
             border: 1px solid #ced4da;
             border-radius: .25rem;
             width: 100px;
@@ -179,7 +181,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $barang->nama_barang }}</td>
-                                    <form class="update-form"
+                                    <form class="update-form-barang"
                                         action="{{ route('pesanan.barang.update', $barang->kd_pesanan_barang) }}" method="post">
                                         @csrf
                                         @method('PUT')
@@ -249,16 +251,23 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $jasa->nama_jasa }}</td>
-                                        <td class="harga-jasa-edit">
-                                            <span
-                                                class="display-mode-3">{{ number_format($jasa->harga_jasa, 2, ',', '.') }}</span>
-                                            <input type="number" class="edit-mode-3 d-none" name="harga_jasa"
-                                                value="{{ $jasa->harga_jasa }}">
-                                        </td>
-                                        <td>
-                                            <span class="display-mode-4">{{ number_format($jasa->jumlah) }}</span>
-                                            <input type="number" class="edit-mode-4 d-none" name="jumlah" value="{{ $jasa->jumlah }}">
-                                        </td>
+                                        <form class="update-form-jasa"
+                                            action="{{ route('jasa.update', $jasa->kd_pesanan_jasa) }}" method="post">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="kd_jasa" value="{{ $jasa->kd_jasa }}">
+                                            <td class="harga-jasa-edit">
+                                                <span
+                                                    class="display-mode-3">{{ number_format($jasa->harga_jasa, 2, ',', '.') }}</span>
+                                                <input type="number" class="edit-mode-3 d-none" name="harga_jasa"
+                                                    value="{{ $jasa->harga_jasa }}">
+                                            </td>
+                                            <td class="jumlah-jasa-edit">
+                                                <span class="display-mode-4">{{ number_format($jasa->jumlah) }}</span>
+                                                <input type="number" class="edit-mode-4 d-none" name="jumlah"
+                                                    value="{{ $jasa->jumlah }}">
+                                            </td>
+                                        </form>
                                         <td>{{ number_format($jasa->subtotal, 2, ',', '.') }}</td>
                                         <td>
                                             <form action="{{ route('jasa.destroy', $jasa->kd_pesanan_jasa) }}" method="POST"
@@ -349,25 +358,42 @@
 
                 const newHarga = editingRow.find('input.edit-mode-1').val();
                 const newJumlah = editingRow.find('input.edit-mode-2').val();
+                const newHargaJasa = editingRow.find('input.edit-mode-3').val();
+                const newJumlahJasa = editingRow.find('input.edit-mode-4').val();
 
                 const oldHargaFormatted = editingRow.find('span.display-mode-1').text();
                 const oldJumlahFormatted = editingRow.find('span.display-mode-2').text();
+                const oldHargaJasaFormatted = editingRow.find('span.display-mode-3').text();
+                const oldJumlahJasaFormatted = editingRow.find('span.display-mode-4').text();
 
                 const oldHarga = oldHargaFormatted.split(',')[0].replace(/\./g, '');
                 const oldJumlah = oldJumlahFormatted.replace(/\./g, '');
+                const oldHargaJasa = oldHargaJasaFormatted.split(',')[0].replace(/\./g, '');
+                const oldJumlahJasa = oldJumlahJasaFormatted.replace(/\./g, '');
 
-                const hasChanged = newHarga !== oldHarga || newJumlah !== oldJumlah;
+                const hasChangedBarang = newHarga !== oldHarga || newJumlah !== oldJumlah;
+                const hasChangedJasa = newHargaJasa !== oldHargaJasa || newJumlahJasa !== oldJumlahJasa;
 
                 editingRow.find('.is-editing').removeClass('is-editing');
-                editingRow.find('.display-mode-1, .display-mode-2').removeClass('d-none');
-                editingRow.find('.edit-mode-1, .edit-mode-2').addClass('d-none');
+                editingRow.find('.display-mode-1, .display-mode-2, .display-mode-3, .display-mode-4').removeClass('d-none');
+                editingRow.find('.edit-mode-1, .edit-mode-2, .edit-mode-3, .edit-mode-4').addClass('d-none');
 
-                if (hasChanged) {
-                    editingRow.find('form.update-form').submit();
+                if (hasChangedBarang) {
+                    editingRow.find('form.update-form-barang').submit();
+                }
+
+                if (hasChangedJasa) {
+                    editingRow.find('form.update-form-jasa').submit();
                 }
             }
 
             $('#barangTable').on('keyup', '.edit-mode-1, .edit-mode-2', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    saveOrRevertChanges(this);
+                }
+            });
+
+            $('#jasaTable').on('keyup', '.edit-mode-3, .edit-mode-4', function (e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                     saveOrRevertChanges(this);
                 }
@@ -393,6 +419,21 @@
                 cell.find('span').addClass('d-none');
                 cell.find('input').removeClass('d-none').focus();
             });
+
+            $('#jasaTable').on('click', '.harga-jasa-edit, .jumlah-jasa-edit', function (e) {
+                const cell = $(this);
+                if (cell.hasClass('is-editing')) return;
+
+                const otherEditingCell = $('td.is-editing');
+                if (otherEditingCell.length) {
+                    saveOrRevertChanges(otherEditingCell);
+                }
+
+                cell.addClass('is-editing');
+                cell.find('span').addClass('d-none');
+                cell.find('input').removeClass('d-none').focus();
+            });
+
             $('#jasaTable').DataTable({
                 scrollX: true,
                 paging: false,

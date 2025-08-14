@@ -32,6 +32,17 @@ class PesananJasaController extends Controller
 
         return redirect()->back()->with('success', 'Jasa berhasil ditambahkan');
     }
+
+    public function update(Request $request, $id)
+    {
+        $pesanan = PesananJasa::find($id);
+        $pesanan->update([
+            'harga_jasa' => $request->harga_jasa,
+            'jumlah' => $request->jumlah,
+            'subtotal' => $request->harga_jasa * $request->jumlah
+        ]);
+        return redirect()->back()->with('success', 'Jasa berhasil diubah.');
+    }
     public function destroy($id)
     {
         PesananJasa::find($id)->delete();
