@@ -378,6 +378,12 @@ return [
                     'route' => 'lembur.index',
                     'icon' => 'fa fas fa-clipboard-list',
                     'can' => 'access-karyawan',
+                ],
+                [
+                    'text' => 'Hari Libur',
+                    'route' => 'libur.index',
+                    'icon' => 'fa fas fa-calendar-alt',
+                    'can' => 'access-karyawan',
                 ]
             ]
         ],

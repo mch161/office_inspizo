@@ -56,6 +56,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('izin', App\Http\Controllers\IzinController::class);
     Route::put('lembur/approve', [App\Http\Controllers\LemburController::class, 'approve'])->name('lembur.approve');
     Route::resource('lembur', App\Http\Controllers\LemburController::class);
+    Route::resource('libur', App\Http\Controllers\LiburController::class);
 
     ## Barang
     Route::get('barang/search', [App\Http\Controllers\BarangController::class, 'search'])->name('barang.search');
