@@ -42,6 +42,7 @@ class IzinController extends Controller
             'jenis' => 'required|string',
             'tanggal' => 'required|date',
             'jam' => 'nullable|string',
+            'jam2' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'keterangan' => 'required|string',
         ]);
@@ -57,8 +58,12 @@ class IzinController extends Controller
             $request->file('foto')->move(public_path('storage/images/izin'), $imageName);
         }
 
+        if ($request->jenis === 'Izin Terlambat'){
+            $request->jam = '08:00';
+        }
+
         if ($request->jenis === 'Izin Terlambat' || $request->jenis === 'Izin Keluar Kantor') {
-            $jam = $request->jam;
+            $jam = $request->jam . ' - ' . $request->jam2;
         } else {
             $jam = 'Full Day';
         }

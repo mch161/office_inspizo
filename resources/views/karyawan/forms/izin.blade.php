@@ -2,7 +2,6 @@
 
 @section('title', 'Form Pengajuan Izin')
 
-{{-- Include SweetAlert2 and Summernote plugins --}}
 @section('plugins.Sweetalert2', true)
 @section('plugins.Summernote', true)
 
@@ -44,7 +43,18 @@
                     $config = ['format' => 'HH:mm'];
                 @endphp
                 <x-adminlte-input-date name="jam" id="jam" value="{{ old('jam', date('H:i')) }}" :config="$config"
-                    placeholder="Pilih jam..." label="Jam" igroup-size="md" required>
+                    placeholder="Pilih jam..." label="Dari Jam" igroup-size="md" required>
+                    <x-slot name="appendSlot">
+                        <div class="input-group-text bg-gray"><i class="fas fa-clock"></i></div>
+                    </x-slot>
+                </x-adminlte-input-date>
+            </div>
+            <div id="timeInput2">
+                @php
+                    $config = ['format' => 'HH:mm'];
+                @endphp
+                <x-adminlte-input-date name="jam2" id="jam2" :config="$config"
+                    placeholder="Pilih jam..." label="Sampai Jam" igroup-size="md" required>
                     <x-slot name="appendSlot">
                         <div class="input-group-text bg-gray"><i class="fas fa-clock"></i></div>
                     </x-slot>
@@ -84,13 +94,15 @@
         }
         $(document).ready(function () {
             $('#timeInput').hide();
+            $('#timeInput2').hide();
             $('#jenis').change(function () {
                 $('#timeInput').hide();
                 if ($(this).val() === 'Izin Terlambat') {
-                    $('#timeInput').show();
+                    $('#timeInput2').show();
                 }
                 if ($(this).val() === 'Izin Keluar Kantor') {
                     $('#timeInput').show();
+                    $('#timeInput2').show();
                 }
             })
             @if (session()->has('success'))
