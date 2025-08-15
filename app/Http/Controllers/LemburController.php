@@ -38,7 +38,7 @@ class LemburController extends Controller
 
         PresensiLembur::create([
             'kd_karyawan' => auth()->user()->id,
-            'tanggal' => $request->tanggal,
+            'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
             'jumlah_jam' => $jumlah_jam,
