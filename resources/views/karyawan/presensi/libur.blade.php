@@ -49,7 +49,7 @@
                 @foreach ($liburs as $libur)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $libur->tanggal }}</td>
+                        <td>{{ \Carbon\Carbon::parse($libur->tanggal)->format('d-m-Y') }}</td>
                         <td>{{ $libur->jenis_libur }}</td>
                         <td>{{ $libur->keterangan }}</td>
                         <td>

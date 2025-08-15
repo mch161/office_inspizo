@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PresensiLibur;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,7 +28,7 @@ class LiburController extends Controller
         }
 
         PresensiLibur::create([
-            'tanggal' => $request->tanggal,
+            'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
             'jenis_libur' => $request->jenis_libur,
             'keterangan' => $request->keterangan,
         ]);
