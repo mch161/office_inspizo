@@ -51,8 +51,8 @@
     </div>
     <div class="card-body">
         <div class="mb-3 float-right">
-            <x-adminlte-button label="Form Lembur" icon="fas fa-clipboard" class="float-right mb-2 bg-blue" data-toggle="modal"
-                data-target="#FormModal" />
+            <x-adminlte-button label="Form Lembur" icon="fas fa-clipboard" class="float-right mb-2 bg-blue"
+                data-toggle="modal" data-target="#FormModal" />
         </div>
         <table id="LemburTable" class="table table-bordered table-striped">
             <thead>
@@ -83,7 +83,7 @@
                         </td>
                         <td>
                             @if ($lembur->verifikasi == '0' && Auth::user()->role == 'superadmin')
-                                <form action="{{ route('lembur.approve') }}" method="POST">
+                                <form action="{{ route('lembur.approve') }}" method="POST" style="display: inline">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="kd_lembur" value="{{ $lembur->kd_lembur }}">
@@ -91,7 +91,8 @@
                                 </form>
                             @endif
                             @if ($lembur->verifikasi == '0' && $lembur->dibuat_oleh == auth()->user()->nama)
-                                <form action="{{ route('lembur.destroy', $lembur->kd_lembur) }}" method="POST">
+                                <form action="{{ route('lembur.destroy', $lembur->kd_lembur) }}" method="POST"
+                                    style="display: inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
