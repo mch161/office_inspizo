@@ -26,6 +26,7 @@
                 <option value="Nasional">Nasional</option>
                 <option value="Cuti Bersama">Cuti Bersama</option>
                 <option value="Internal">Internal</option>
+                <option value="Minggu">Minggu</option>
             </x-adminlte-select>
             <x-adminlte-input name="keterangan" label="Keterangan" placeholder="Masukkan keterangan..."
                 igroup-size="md" />
