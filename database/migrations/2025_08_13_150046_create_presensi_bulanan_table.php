@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('jumlah_tanggal');
             $table->string('jumlah_libur');
             $table->string('jumlah_hari_kerja_normal');
-            $table->string('jumlah hari_sakit');
+            $table->string('jumlah_hari_sakit');
             $table->string('jumlah_hari_izin');
             $table->string('jumlah_fingerprint');
             $table->string('jumlah_alpha');
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('jumlah_jam_izin');
             $table->string('jumlah_hari_lembur');
             $table->string('jumlah_jam_lembur');
-            $table->string('verfikasi');
+            $table->string('verifikasi');
             $table->timestamps();
         });
     }

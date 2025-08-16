@@ -1,0 +1,192 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Izin;
+use App\Models\Karyawan;
+use App\Models\Presensi;
+use App\Models\PresensiBulanan;
+use App\Models\PresensiLembur;
+use App\Models\PresensiLibur;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+
+class PresensiBulananController extends Controller
+{
+    public function index(Request $request)
+    {
+        $bulan = $request->input('bulan');
+        $tahun = $request->input('tahun');
+        $kd_karyawan = $request->input('kd_karyawan');
+        $karyawan = Karyawan::where('kd_karyawan', $kd_karyawan)->first();
+
+        $rekapBulanan = PresensiBulanan::where('kd_karyawan', $kd_karyawan)
+            ->where('tahun', $tahun)
+            ->where('bulan', $bulan)
+            ->first();
+
+        $rekapData = null;
+        if (!$rekapBulanan) {
+            $this->create($request);
+            $rekapBulanan = PresensiBulanan::where('kd_karyawan', $kd_karyawan)
+                ->where('tahun', $tahun)
+                ->where('bulan', $bulan)
+                ->first();
+
+            $rekapData = Presensi::whereYear('tanggal', $tahun)
+                ->whereMonth('tanggal', $bulan)
+                ->where('kd_karyawan', $kd_karyawan)
+                ->orderBy('tanggal', 'asc')
+                ->get();
+        }
+
+        if ($rekapBulanan) {
+            $rekapData = Presensi::whereYear('tanggal', $tahun)
+                ->whereMonth('tanggal', $bulan)
+                ->where('kd_karyawan', $kd_karyawan)
+                ->orderBy('tanggal', 'asc')
+                ->get();
+        }
+        return view('karyawan.presensi.bulanan', compact(
+            'rekapBulanan',
+            'rekapData',
+            'bulan',
+            'tahun',
+            'kd_karyawan',
+            'karyawan'
+        ));
+    }
+
+    public function check(Request $request)
+    {
+        $jumlah_tanggal = Carbon::createFromDate($request->tahun, $request->bulan, 1)->daysInMonth;
+
+        $jumlah_libur = PresensiLibur::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->count() ?? 0;
+        $jumlah_hari_kerja_normal = $jumlah_tanggal - $jumlah_libur;
+
+        $jumlah_hari_sakit = Izin::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->where('kd_karyawan', $request->kd_karyawan)
+            ->where('jenis', 'Izin Sakit')
+            ->where('status', '1')
+            ->count() ?? 0;
+
+        $jumlah_hari_izin = Izin::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->where('kd_karyawan', $request->kd_karyawan)
+            ->where('jenis', '!=', 'Izin Sakit')
+            ->where('status', '1')
+            ->count() ?? 0;
+
+        $jumlah_fingerprint = Presensi::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->where('kd_karyawan', $request->kd_karyawan)
+            ->count() ?? 0;
+
+        $jumlah_alpha = $jumlah_hari_kerja_normal - ($jumlah_fingerprint + $jumlah_hari_sakit + $jumlah_hari_izin);
+
+        $jumlah_terlambat = Presensi::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->where('kd_karyawan', $request->kd_karyawan)
+            ->where('Terlambat', '!=', 'Tidak')
+            ->count() ?? 0;
+
+        $total_menit_izin = Izin::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->where('kd_karyawan', $request->kd_karyawan)
+            ->where('jenis', '!=', 'Izin Sakit')
+            ->where('status', '1')
+            ->get()
+            ->sum(function ($izin) {
+                $times = explode(' - ', $izin->jam);
+                if (count($times) !== 2 || strtolower($times[0]) === 'Full Day') {
+                    $date = Carbon::createFromFormat('Y-m-d', $izin->tanggal);
+                    if ($date->isSaturday()) {
+                        $waktu_mulai = Carbon::createFromFormat('H:i', '08:00');
+                        $waktu_selesai = Carbon::createFromFormat('H:i', '16:00');
+                    } else {
+                        $waktu_mulai = Carbon::createFromFormat('H:i', '08:00');
+                        $waktu_selesai = Carbon::createFromFormat('H:i', '17:00');
+                    }
+                } else {
+                    $waktu_mulai = Carbon::createFromFormat('H:i', trim($times[0]));
+                    $waktu_selesai = Carbon::createFromFormat('H:i', trim($times[1]));
+                }
+                return $waktu_mulai->diffInMinutes($waktu_selesai);
+            });
+
+        $jam = floor($total_menit_izin / 60);
+        $menit = $total_menit_izin % 60;
+
+        $jumlah_jam_izin = sprintf('%02d:%02d', $jam, $menit);
+
+        $jumlah_hari_lembur = PresensiLembur::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->where('kd_karyawan', $request->kd_karyawan)
+            ->where('verifikasi', '1')
+            ->count() ?? 0;
+
+        $jumlah_menit_lembur = PresensiLembur::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->where('kd_karyawan', $request->kd_karyawan)
+            ->where('verifikasi', '1')
+            ->get()
+            ->sum(function ($lembur) {
+                $mulai = Carbon::parse($lembur->jam_mulai);
+                $selesai = Carbon::parse($lembur->jam_selesai);
+                return $mulai->diffInMinutes($selesai);
+            });
+
+        $jam = floor($jumlah_menit_lembur / 60);
+        $menit = $jumlah_menit_lembur % 60;
+
+        $jumlah_jam_lembur = sprintf('%02d:%02d', $jam, $menit);
+
+        return [
+            'jumlah_tanggal' => $jumlah_tanggal,
+            'jumlah_libur' => $jumlah_libur,
+            'jumlah_hari_kerja_normal' => $jumlah_hari_kerja_normal,
+            'jumlah_hari_sakit' => $jumlah_hari_sakit,
+            'jumlah_hari_izin' => $jumlah_hari_izin,
+            'jumlah_fingerprint' => $jumlah_fingerprint,
+            'jumlah_alpha' => $jumlah_alpha,
+            'jumlah_terlambat' => $jumlah_terlambat,
+            'jumlah_jam_izin' => $jumlah_jam_izin,
+            'jumlah_hari_lembur' => $jumlah_hari_lembur,
+            'jumlah_jam_lembur' => $jumlah_jam_lembur,
+        ];
+    }
+
+    public function create(Request $request)
+    {
+        $data = $this->check($request);
+        $data['kd_karyawan'] = $request->kd_karyawan;
+        $data['bulan'] = $request->bulan;
+        $data['tahun'] = $request->tahun;
+        $data['verifikasi'] = '0';
+        PresensiBulanan::create($data);
+
+    }
+
+    public function update(Request $request)
+    {
+        $data = $this->check($request);
+        $data['kd_presensi_bulanan'] = $request->kd_presensi_bulanan;
+        $data['bulan'] = $request->bulan;
+        $data['tahun'] = $request->tahun;
+        PresensiBulanan::where('kd_presensi_bulanan', $request->kd_presensi_bulanan)->update($data);
+
+        return redirect()->back()->with('success', 'Rekap Bulanan berhasil diperbarui.');
+    }
+
+    public function verify(Request $request)
+    {
+        $rekapBulanan = PresensiBulanan::find($request->kd_presensi_bulanan);
+        $rekapBulanan->verifikasi = '1';
+        $rekapBulanan->save();
+
+        return redirect()->back()->with('success', 'Rekap Bulanan berhasil diverifikasi.');
+    }
+}
