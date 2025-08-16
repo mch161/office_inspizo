@@ -34,7 +34,7 @@
             @php
                 $config = ['format' => 'DD-MM-YYYY'];
             @endphp
-            <x-adminlte-input-date name="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" :config="$config"
+            <x-adminlte-input-date name="tanggal" value="{{ old('tanggal', date('d-m-Y')) }}" :config="$config"
                 placeholder="Pilih tanggal..." label="Tanggal Izin" igroup-size="md">
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-gray"><i class="fas fa-calendar-day"></i></div>
