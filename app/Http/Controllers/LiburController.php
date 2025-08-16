@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Validator;
 
 class LiburController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $liburs = PresensiLibur::where('jenis_libur', '!=', 'Minggu')->get();
-        return view('karyawan.presensi.libur', compact('liburs'));
+        $tanggal = $request->input('tanggal') ?? Carbon::now()->format('Y-m');
+        $liburs = PresensiLibur::whereMonth('tanggal', Carbon::parse($tanggal)->month)
+            ->whereYear('tanggal', Carbon::parse($tanggal)->year)
+            ->get();
+        return view('karyawan.presensi.libur', compact('liburs', 'tanggal'));
     }
 
     public function store(Request $request)

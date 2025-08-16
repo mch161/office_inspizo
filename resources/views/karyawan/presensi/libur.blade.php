@@ -34,11 +34,24 @@
     </div>
 </div>
 <div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Filter Data</h3>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('libur.index') }}" method="GET" class="form-inline">
+            <div class="form-group mb-2">
+                <label for="tanggal" class="mr-2">Pilih Bulan:</label>
+                <input type="month" name="tanggal" id="tanggal" class="form-control" value="{{ $tanggal }}">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2 ml-2">Tampilkan</button>
+        </form>
+    </div>
+</div>
+<div class="card">
     <div class="card-body">
         <table id="LiburTable" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>No</th>
                     <th>Tanggal</th>
                     <th>Jenis Libur</th>
                     <th>Keterangan</th>
@@ -48,7 +61,6 @@
             <tbody>
                 @foreach ($liburs as $libur)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
                         <td>{{ \Carbon\Carbon::parse($libur->tanggal)->format('d-m-Y') }}</td>
                         <td>{{ $libur->jenis_libur }}</td>
                         <td>{{ $libur->keterangan }}</td>
