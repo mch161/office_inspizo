@@ -85,7 +85,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->dibuat_oleh }}</td>
                             <td>{{ $item->jenis }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->translatedFormat('d F Y') }}</td>
                             <td>{{ $item->jam }}</td>
                             <td class="keterangan-column">{!! $item->keterangan !!}</td>
                             <td>
@@ -132,7 +132,7 @@
                                         <form class="delete-form" action="{{ route('izin.destroy', $item) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <button type="submit" class="btn btn-sm btn-danger">
                                                 <i class="fas fa-trash"></i> Hapus
                                             </button>
                                         </form>
