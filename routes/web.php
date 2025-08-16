@@ -73,6 +73,9 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('kategori', App\Http\Controllers\KategoriKeuanganController::class);
     Route::resource('reimburse', App\Http\Controllers\ReimburseController::class);
     Route::get('forms/reimburse', [App\Http\Controllers\ReimburseController::class, 'reimburseForm'])->name('reimburse.form');
+
+    ## PDF
+    Route::get('/download-card', [App\Http\Controllers\PDFController::class, 'card'])->name('downloadCard');
 });
 
 Route::middleware(['can:superadmin'])->group(function () {

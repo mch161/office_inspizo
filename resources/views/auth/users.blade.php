@@ -153,8 +153,12 @@
                         data-telp="{{ $u->telp }}" data-alamat="{{ $u->alamat }}" data-nip="{{ $u->nip }}"
                         data-nik="{{ $u->nik }}" data-email="{{ $u->email }}" data-role="{{ $u->role }}"
                         data-finger="{{ $u->finger_id }}" data-password="{{ $u->password }}" data-status="{{ $u->status }}">
-                        Edit
+                        <i class="fas fa-edit   "></i>
                     </button>
+                    <form action="{{ route('downloadCard') }}" method="GET" style="display: inline">
+                        <input type="hidden" name="id" value="{{ $u->kd_karyawan }}">
+                        <button class="btn btn-info btn-sm" type="submit"><i class="fas fa-id-card"></i></button>
+                    </form>
                 </td>
             </tr>
         @endforeach
