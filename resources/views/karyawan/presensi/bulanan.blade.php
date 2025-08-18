@@ -8,19 +8,43 @@
 
 @section('content')
 <div class="card">
+    <div class="card-body">
+        <form action="{{ route('presensi.bulanan') }}" method="GET">
+            @if (Auth::guard('karyawan')->user()->role == 'superadmin')
+                <x-adminlte-select name="kd_karyawan" label="Pilih Karyawan" empty-option="Pilih Karyawan..." required>
+                    <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()"
+                        empty-option="Pilih Karyawan..." />
+                </x-adminlte-select>
+            @else
+                <input type="hidden" name="kd_karyawan" value="{{ Auth::guard('karyawan')->user()->kd_karyawan }}">
+            @endif
+            <x-adminlte-select name="bulan" label="Pilih Bulan" required>
+                <x-adminlte-options :options="[
+        '1' => 'Januari',
+        '2' => 'Februari',
+        '3' => 'Maret',
+        '4' => 'April',
+        '5' => 'Mei',
+        '6' => 'Juni',
+        '7' => 'Juli',
+        '8' => 'Agustus',
+        '9' => 'September',
+        '10' => 'Oktober',
+        '11' => 'November',
+        '12' => 'Desember',
+    ]" empty-option="Pilih Bulan..." />
+            </x-adminlte-select>
+            <x-adminlte-input name="tahun" label="Tahun" type="number" value="{{ date('Y') }}"></x-adminlte-input>
+            <button type="submit" class="btn btn-primary">Tampilkan Presensi</button>
+        </form>
+    </div>
+</div>
+<div class="card">
     <div class="card-header">
         <div>
             <h3 class="card-title">Data Presensi Bulanan {{ $karyawan->nama }} Pada
                 {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id_ID')->translatedFormat('F Y') }}
             </h3>
-            <div class="card-tools">
-                <div class="float-right">
-                    <a href="{{ route('presensi.index') }}" class="btn btn-primary">
-                        <i class="fas fa-arrow-left"></i> Kembali
-                    </a>
-                </div>
-
-            </div>
         </div>
     </div>
     <div class="card-body">
@@ -61,7 +85,7 @@
             <div class="col-md-12 mb-3">
                 Jumlah Jam Lembur: {{ $rekapBulanan->jumlah_jam_lembur }}
             </div>
-            @if ($rekapBulanan->verifikasi == 0)
+            @if ($rekapBulanan->verifikasi == 0 && Auth::guard('karyawan')->user()->role == 'superadmin')
                 <form id="refresh" action="{{ route('presensi.bulanan.update') }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -71,22 +95,20 @@
                     <input type="hidden" name="tahun" value="{{ $tahun }}">
                     <div class="col-md-12">
                         <button form="refresh" type="submit" class="btn btn-primary">
-                            <i class="fas fa-sync"></i> Refresh
+                            <i class="fas fa-sync"></i> Auto Sync
                         </button>
                     </div>
                 </form>
-                @if (Auth::user()->role == 'superadmin')
-                    <form id="verify" action="{{ route('presensi.bulanan.verify') }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekapBulanan->kd_presensi_bulanan }}">
-                        <div class="col-md-12">
-                            <button form="verify" type="submit" class="btn btn-primary">
-                                <i class="fas fa-check"></i> Verifikasi
-                            </button>
-                        </div>
-                    </form>
-                @endif
+                <form id="verify" action="{{ route('presensi.bulanan.verify') }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekapBulanan->kd_presensi_bulanan }}">
+                    <div class="col-md-12">
+                        <button form="verify" type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Verifikasi
+                        </button>
+                    </div>
+                </form>
             @endif
         </div>
     </div>
@@ -155,5 +177,39 @@
             }
         });
     });
+    @if (session()->has('success'))
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+        Toast.fire({
+            icon: 'success',
+            text: '{{ session('success') }}',
+        })
+    @endif
+        @if (session()->has('error'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'error',
+                text: '{{ session('error') }}',
+            })
+        @endif
 </script>
 @stop

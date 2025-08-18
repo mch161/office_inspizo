@@ -16,13 +16,21 @@ class PresensiBulananController extends Controller
 {
     public function index(Request $request)
     {
-        $bulan = $request->input('bulan');
-        $tahun = $request->input('tahun');
-        $kd_karyawan = $request->input('kd_karyawan');
+        $bulan = $request->input('bulan') ?? date('m');
+        $tahun = $request->input('tahun') ?? date('Y');
+        $kd_karyawan = $request->input('kd_karyawan') ?? Auth::guard('karyawan')->user()->kd_karyawan;
         $karyawan = Karyawan::where('kd_karyawan', $kd_karyawan)->first();
-        
-        if (Auth::guard('karyawan')->user()->kd_karyawan != $kd_karyawan) {
-            return abort(403);
+
+        if ($bulan > 12 || $bulan < 1) {
+            return redirect()->route('presensi.bulanan')->with('error', 'Mohon pilih bulan yang valid');
+        }
+
+        if ($bulan > Carbon::now()->month && $tahun >= Carbon::now()->year) {
+            return redirect()->route('presensi.bulanan')->with('error', 'Bulan tidak boleh melebihi bulan sekarang');
+        }
+
+        if ($tahun > Carbon::now()->year) {
+            return redirect()->route('presensi.bulanan')->with('error', 'Tahun tidak boleh melebihi tahun sekarang');
         }
 
         $rekapBulanan = PresensiBulanan::where('kd_karyawan', $kd_karyawan)
@@ -32,6 +40,9 @@ class PresensiBulananController extends Controller
 
         $rekapData = null;
         if (!$rekapBulanan) {
+            $request['kd_karyawan'] = $kd_karyawan;
+            $request['bulan'] = $bulan;
+            $request['tahun'] = $tahun;
             $this->create($request);
             $rekapBulanan = PresensiBulanan::where('kd_karyawan', $kd_karyawan)
                 ->where('tahun', $tahun)
@@ -52,13 +63,16 @@ class PresensiBulananController extends Controller
                 ->orderBy('tanggal', 'asc')
                 ->get();
         }
+
+        $karyawans = Karyawan::all();
         return view('karyawan.presensi.bulanan', compact(
             'rekapBulanan',
             'rekapData',
             'bulan',
             'tahun',
             'kd_karyawan',
-            'karyawan'
+            'karyawan',
+            'karyawans'
         ));
     }
 

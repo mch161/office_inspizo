@@ -67,9 +67,9 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
-
         <div class="card card-primary card-outline">
             <div class="card-body box-profile">
+                <a class="btn btn-primary float-right" href="{{ route('downloadCard') }}">Download Card</a>
                 <div class="text-center">
                     <form id="profile-pic-form" enctype="multipart/form-data" class="d-none">
                         <input type="file" name="foto" id="foto-upload">
@@ -103,7 +103,6 @@
             </div>
             <div class="card-body">
                 <form id="profile-form">
-
                     <div class="row">
                         <div class="col-md-4 form-group">
                             <label>Nama Lengkap</label>
