@@ -180,7 +180,7 @@
 
             <x-adminlte-select2 name="kode" label="Kode" :config="$config" id="kode">
                 <option value="" disabled selected>Pilih Kode Barang</option>
-                @foreach ($barang->unique('kode') as $data)
+                @foreach ($barang->unique('kode')->sortBy('kode') as $data)
                     <option value="{{ $data->kode }}">{{ $data->kode }}</option>
                 @endforeach
             </x-adminlte-select2>
@@ -232,7 +232,7 @@
 
             <x-adminlte-select2 name="edit_kode" label="Kode" :config="$config2" id="kode2">
                 <option value="" disabled selected>Pilih Kode Barang"></option>
-                @foreach ($barang->unique('kode') as $data)
+                @foreach ($barang->unique('kode')->sortBy('kode') as $data)
                     <option value="{{ $data->kode }}">{{ $data->kode }}</option>
                 @endforeach
             </x-adminlte-select2>
@@ -306,8 +306,7 @@
     <hr>
     <form action="{{ route('barang.index') }}" method="GET" class="mb-4">
         <div class="input-group">
-            <input type="text" name="s" class="form-control" placeholder="Cari nama barang..."
-                value="{{ request('s') }}">
+            <input type="text" name="s" class="form-control" placeholder="Cari nama barang..." value="{{ request('s') }}">
             <div class="input-group-append">
                 <button class="btn btn-primary" type="submit">Cari</button>
             </div>
@@ -315,7 +314,7 @@
     </form>
     <div class="mb-4 text-center">
         <button class="btn btn-outline-primary btn-filter active" data-filter="all">Semua</button>
-        @foreach($barang->pluck('kode')->unique() as $kode)
+        @foreach($barang->unique('kode')->sortBy('kode')->pluck('kode') as $kode)
             <button class="btn btn-outline-primary btn-filter" data-filter="{{ $kode }}">{{ $kode }}</button>
         @endforeach
     </div>
@@ -391,25 +390,17 @@
 @section('js')
     <script>
         $(document).ready(function () {
-            // ... kode JS Anda yang lain ...
-
-            // Logika untuk Tombol Filter Kode
             $('.btn-filter').on('click', function () {
-                // Hapus kelas 'active' dari semua tombol dan tambahkan ke yang diklik
                 $('.btn-filter').removeClass('active');
                 $(this).addClass('active');
 
-                // Ambil nilai filter dari atribut data-filter
                 const filterValue = $(this).data('filter');
 
-                // Jika filter adalah 'semua', tampilkan semua kartu
                 if (filterValue === 'all') {
-                    $('.barang-card').fadeIn('fast');
+                    $('.barang-card').fadeIn();
                 } else {
-                    // Sembunyikan semua kartu terlebih dahulu
                     $('.barang-card').fadeOut('fast');
-                    // Tampilkan hanya kartu yang cocok dengan filter
-                    $('.barang-card[data-kode="' + filterValue + '"]').fadeIn('fast');
+                    $('.barang-card[data-kode="' + filterValue + '"]').fadeIn();
                 }
             });
         });
