@@ -14,6 +14,7 @@ class Barang extends Model
         'kd_kategori',
         'kd_karyawan',
         'nama_barang',
+        'kode',
         'stok',
         'hpp',
         'harga_jual',

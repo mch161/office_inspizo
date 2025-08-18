@@ -67,6 +67,7 @@ class BarangController extends Controller
         $barang = new Barang();
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
+        $barang->kode = $request->kode;
         $barang->hpp = $request->hpp;
         $barang->harga_jual = $request->harga;
         $barang->stok = 0;
@@ -130,6 +131,7 @@ class BarangController extends Controller
 
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
+        $barang->kode = $request->edit_kode;
         $barang->hpp = $request->hpp;
         $barang->harga_jual = $request->harga;
         $barang->dibuat_oleh = Auth::user()->nama;
