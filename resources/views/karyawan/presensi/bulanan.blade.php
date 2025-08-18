@@ -75,18 +75,19 @@
                         </button>
                     </div>
                 </form>
-                <form id="verify" action="{{ route('presensi.bulanan.verify') }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekapBulanan->kd_presensi_bulanan }}">
-                    <div class="col-md-12">
-                        <button form="verify" type="submit" class="btn btn-primary">
-                            <i class="fas fa-check"></i> Verifikasi
-                        </button>
-                    </div>
-                </form>
+                @if (Auth::user()->role == 'superadmin')
+                    <form id="verify" action="{{ route('presensi.bulanan.verify') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekapBulanan->kd_presensi_bulanan }}">
+                        <div class="col-md-12">
+                            <button form="verify" type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Verifikasi
+                            </button>
+                        </div>
+                    </form>
+                @endif
             @endif
-
         </div>
     </div>
 </div>
@@ -124,7 +125,6 @@
                                 {{ $data->terlambat }}
                             @endif
                         </td>
-
                         <td>{{ $data->pulang_cepat }}</td>
                     </tr>
                 @endforeach

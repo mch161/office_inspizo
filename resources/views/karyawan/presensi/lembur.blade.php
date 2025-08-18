@@ -95,7 +95,7 @@
                                     style="display: inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                    <button type="submit" class="btn btn-danger tombol-hapus"><i class="fas fa-trash"></i></button>
                                 </form>
                             @endif
                         </td>
@@ -126,6 +126,23 @@
                 searchPlaceholder: "Cari data..."
             }
         });
+        $('.tombol-hapus').on('click', function (e) {
+            e.preventDefault();
+            let form = $(this).parents('form');
+            Swal.fire({
+                title: 'Apakah anda yakin?',
+                text: "Data akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        })
         @if (session()->has('success'))
             const Toast = Swal.mixin({
                 toast: true,

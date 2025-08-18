@@ -11,7 +11,13 @@ class LemburController extends Controller
 {
     public function index()
     {
-        $lemburs = PresensiLembur::all();
+        if (auth()->user()->role == 'superadmin') {
+            $lemburs = PresensiLembur::all();
+        }
+        else {
+            $lemburs = PresensiLembur::where('kd_karyawan', auth()->user()->id)->get();
+        }
+
         return view('karyawan.presensi.lembur', compact('lemburs'));
     }
 

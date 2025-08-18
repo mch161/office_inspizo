@@ -10,6 +10,7 @@ use App\Models\PresensiLembur;
 use App\Models\PresensiLibur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PresensiBulananController extends Controller
 {
@@ -19,6 +20,10 @@ class PresensiBulananController extends Controller
         $tahun = $request->input('tahun');
         $kd_karyawan = $request->input('kd_karyawan');
         $karyawan = Karyawan::where('kd_karyawan', $kd_karyawan)->first();
+        
+        if (Auth::guard('karyawan')->user()->kd_karyawan != $kd_karyawan) {
+            return abort(403);
+        }
 
         $rekapBulanan = PresensiBulanan::where('kd_karyawan', $kd_karyawan)
             ->where('tahun', $tahun)

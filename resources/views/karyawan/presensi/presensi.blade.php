@@ -73,36 +73,65 @@
         </table>
     </div>
 </div>
-
+@if (Auth::guard('karyawan')->user()->role == 'superadmin')
+    <div class="card">
+        <div class="card-body">
+            <h3>Total Presensi: {{ count($rekapData) }}</h3>
+            <form action="{{ route('presensi.bulanan') }}" method="GET">
+                <x-adminlte-select name="kd_karyawan" label="Pilih Karyawan" empty-option="Pilih Karyawan..." required>
+                    <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()"
+                        empty-option="Pilih Karyawan..." />
+                </x-adminlte-select>
+                <x-adminlte-select name="bulan" label="Pilih Bulan" required>
+                    <x-adminlte-options :options="[
+                '1' => 'Januari',
+                '2' => 'Februari',
+                '3' => 'Maret',
+                '4' => 'April',
+                '5' => 'Mei',
+                '6' => 'Juni',
+                '7' => 'Juli',
+                '8' => 'Agustus',
+                '9' => 'September',
+                '10' => 'Oktober',
+                '11' => 'November',
+                '12' => 'Desember',
+            ]" empty-option="Pilih Bulan..." />
+                </x-adminlte-select>
+                <x-adminlte-input name="tahun" label="Tahun" type="number" value="{{ date('Y') }}"></x-adminlte-input>
+                <button type="submit" class="btn btn-primary">Tampilkan Presensi</button>
+            </form>
+        </div>
+    </div>
+@endif
+@if (Auth::guard('karyawan')->user()->role !== 'superadmin')
 <div class="card">
     <div class="card-body">
         <h3>Total Presensi: {{ count($rekapData) }}</h3>
         <form action="{{ route('presensi.bulanan') }}" method="GET">
-            <x-adminlte-select name="kd_karyawan" label="Pilih Karyawan" empty-option="Pilih Karyawan..." required>
-                <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()"
-                    empty-option="Pilih Karyawan..." />
-            </x-adminlte-select>
+            <input type="hidden" name="kd_karyawan" value="{{ Auth::guard('karyawan')->user()->kd_karyawan }}">
             <x-adminlte-select name="bulan" label="Pilih Bulan" required>
                 <x-adminlte-options :options="[
-        '1' => 'Januari',
-        '2' => 'Februari',
-        '3' => 'Maret',
-        '4' => 'April',
-        '5' => 'Mei',
-        '6' => 'Juni',
-        '7' => 'Juli',
-        '8' => 'Agustus',
-        '9' => 'September',
-        '10' => 'Oktober',
-        '11' => 'November',
-        '12' => 'Desember',
-    ]" empty-option="Pilih Bulan..." />
+                    '1' => 'Januari',
+                    '2' => 'Februari',
+                    '3' => 'Maret',
+                    '4' => 'April', 
+                    '5' => 'Mei',
+                    '6' => 'Juni',
+                    '7' => 'Juli',
+                    '8' => 'Agustus',
+                    '9' => 'September',
+                    '10' => 'Oktober',
+                    '11' => 'November',
+                    '12' => 'Desember',
+                ]" empty-option="Pilih Bulan..." />
             </x-adminlte-select>
             <x-adminlte-input name="tahun" label="Tahun" type="number" value="{{ date('Y') }}"></x-adminlte-input>
             <button type="submit" class="btn btn-primary">Tampilkan Presensi</button>
         </form>
     </div>
 </div>
+@endif
 @stop
 
 @section('js')
