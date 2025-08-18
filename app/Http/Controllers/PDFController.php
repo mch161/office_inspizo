@@ -15,8 +15,14 @@ class PDFController extends Controller
 
 
         $pdf = Pdf::loadView('pdf.card', $data)
-                    ->setPaper('a4', 'landscape');
+            ->setPaper('a4', 'landscape');
 
-        return $pdf->download('card '.$data['kd_karyawan'].'.pdf');
+        return $pdf->download('card ' . $data['kd_karyawan'] . '.pdf');
+    }
+
+    public function index(Request $request)
+    {
+        $data = Karyawan::find($request->id ?? Auth::guard('karyawan')->id())->toArray();
+        return view('pdf.card', $data);
     }
 }

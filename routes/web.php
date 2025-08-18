@@ -76,6 +76,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
 
     ## PDF
     Route::get('/download-card', [App\Http\Controllers\PDFController::class, 'card'])->name('downloadCard');
+    Route::get('/view-card', [App\Http\Controllers\PDFController::class, 'index'])->name('viewCard');
 });
 
 Route::middleware(['can:superadmin'])->group(function () {
