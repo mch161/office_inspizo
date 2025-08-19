@@ -11,6 +11,7 @@ use App\Models\PresensiLibur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class PresensiBulananController extends Controller
 {
@@ -189,7 +190,7 @@ class PresensiBulananController extends Controller
 
     }
 
-    public function update(Request $request)
+    public function sync(Request $request)
     {
         $data = $this->check($request);
         $data['kd_presensi_bulanan'] = $request->kd_presensi_bulanan;
@@ -197,7 +198,7 @@ class PresensiBulananController extends Controller
         $data['tahun'] = $request->tahun;
         PresensiBulanan::where('kd_presensi_bulanan', $request->kd_presensi_bulanan)->update($data);
 
-        return redirect()->back()->with('success', 'Rekap Bulanan berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Rekap Bulanan berhasil diupdate.');
     }
 
     public function verify(Request $request)
@@ -207,5 +208,42 @@ class PresensiBulananController extends Controller
         $rekapBulanan->save();
 
         return redirect()->back()->with('success', 'Rekap Bulanan berhasil diverifikasi.');
+    }
+
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'jumlah_tanggal' => 'required|numeric',
+            'jumlah_libur' => 'required|numeric',
+            'jumlah_hari_kerja_normal' => 'required|numeric',
+            'jumlah_hari_sakit' => 'required|numeric',
+            'jumlah_hari_izin' => 'required|numeric',
+            'jumlah_fingerprint' => 'required|numeric',
+            'jumlah_alpha' => 'required|numeric',
+            'jumlah_terlambat' => 'required|numeric',
+            'jumlah_jam_izin' => 'required|date_format:H:i',
+            'jumlah_hari_lembur' => 'required|numeric',
+            'jumlah_jam_lembur' => 'required|date_format:H:i',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors()->first());
+        }
+
+        $rekapBulanan = PresensiBulanan::find($request->kd_presensi_bulanan);
+        $rekapBulanan->jumlah_tanggal = $request->jumlah_tanggal;
+        $rekapBulanan->jumlah_libur = $request->jumlah_libur;
+        $rekapBulanan->jumlah_hari_kerja_normal = $request->jumlah_hari_kerja_normal;
+        $rekapBulanan->jumlah_hari_sakit = $request->jumlah_hari_sakit;
+        $rekapBulanan->jumlah_hari_izin = $request->jumlah_hari_izin;
+        $rekapBulanan->jumlah_fingerprint = $request->jumlah_fingerprint;
+        $rekapBulanan->jumlah_alpha = $request->jumlah_alpha;
+        $rekapBulanan->jumlah_terlambat = $request->jumlah_terlambat;
+        $rekapBulanan->jumlah_jam_izin = $request->jumlah_jam_izin;
+        $rekapBulanan->jumlah_hari_lembur = $request->jumlah_hari_lembur;
+        $rekapBulanan->jumlah_jam_lembur = $request->jumlah_jam_lembur;
+        $rekapBulanan->save();
+
+        return redirect()->back()->with('success', 'Rekap Bulanan berhasil diupdate.');
     }
 }

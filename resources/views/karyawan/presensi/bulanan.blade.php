@@ -6,6 +6,29 @@
 <h1>Presensi Bulanan</h1>
 @stop
 
+@section('css')
+    <style>
+        .editable {
+            border-radius: .25rem;
+            border: 1px solid #ced4da;
+        }
+
+        .editable:focus {
+            border-color: #80bdff;
+            outline: 0;
+        }
+
+        .editable[readonly] {
+            background-color: transparent;
+            border: 0;
+            box-shadow: none;
+            padding-left: 0;
+            height: 20px;
+            color: currentColor;
+        }
+    </style>
+@endsection
+
 @section('content')
 <div class="card">
     <div class="card-body">
@@ -45,6 +68,13 @@
             <h3 class="card-title">Data Presensi Bulanan {{ $karyawan->nama }} Pada
                 {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id_ID')->translatedFormat('F Y') }}
             </h3>
+            <div class="card-tools float-right">
+                <button type="button" id="tombol-edit" class="btn btn-sm btn-warning">Edit</button>
+                <button type="submit" form="edit-form" id="tombol-simpan" class="btn btn-sm btn-success"
+                    style="display: none;">Simpan</button>
+                <button type="button" id="tombol-batal" class="btn btn-sm btn-secondary"
+                    style="display: none;">Batal</button>
+            </div>
         </div>
     </div>
     <div class="card-body">
@@ -52,41 +82,57 @@
             <div class="col-md-12">
                 Verifikasi: {{ $rekapBulanan->verifikasi == 1 ? 'Sudah' : 'Belum' }}
             </div>
-            <div class="col-md-12">
-                Jumlah Tanggal: {{ $rekapBulanan->jumlah_tanggal }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Hari Libur: {{ $rekapBulanan->jumlah_libur }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Hari Kerja: {{ $rekapBulanan->jumlah_hari_kerja_normal }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Hari Sakit: {{ $rekapBulanan->jumlah_hari_sakit }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Hari Izin: {{ $rekapBulanan->jumlah_hari_izin }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Fingerprint: {{ $rekapBulanan->jumlah_fingerprint }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Alpha: {{ $rekapBulanan->jumlah_alpha }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Terlambat: {{ $rekapBulanan->jumlah_terlambat }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Jam Izin: {{ $rekapBulanan->jumlah_jam_izin }}
-            </div>
-            <div class="col-md-12">
-                Jumlah Hari Lembur: {{ $rekapBulanan->jumlah_hari_lembur }}
-            </div>
-            <div class="col-md-12 mb-3">
-                Jumlah Jam Lembur: {{ $rekapBulanan->jumlah_jam_lembur }}
-            </div>
+            <form action="{{ route('presensi.bulanan.update') }}" method="POST" id="edit-form" class="form-inline">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekapBulanan->kd_presensi_bulanan }}">
+                <div class="col-md-12">
+                    Jumlah Tanggal: <input type="number" class="editable" name="jumlah_tanggal"
+                        value="{{ $rekapBulanan->jumlah_tanggal }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Hari Libur: <input type="number" class="editable" name="jumlah_libur"
+                        value="{{ $rekapBulanan->jumlah_libur }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Hari Kerja: <input type="number" class="editable" name="jumlah_hari_kerja_normal"
+                        value="{{ $rekapBulanan->jumlah_hari_kerja_normal }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Hari Sakit: <input type="number" class="editable" name="jumlah_hari_sakit"
+                        value="{{ $rekapBulanan->jumlah_hari_sakit }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Hari Izin: <input type="number" class="editable" name="jumlah_hari_izin"
+                        value="{{ $rekapBulanan->jumlah_hari_izin }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Fingerprint: <input type="number" class="editable" name="jumlah_fingerprint"
+                        value="{{ $rekapBulanan->jumlah_fingerprint }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Alpha: <input type="number" class="editable" name="jumlah_alpha"
+                        value="{{ $rekapBulanan->jumlah_alpha }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Terlambat: <input type="number" class="editable" name="jumlah_terlambat"
+                        value="{{ $rekapBulanan->jumlah_terlambat }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Jam Izin: <input type="time" class="editable" name="jumlah_jam_izin"
+                        value="{{ $rekapBulanan->jumlah_jam_izin }}" readonly>
+                </div>
+                <div class="col-md-12">
+                    Jumlah Hari Lembur: <input type="number" class="editable" name="jumlah_hari_lembur"
+                        value="{{ $rekapBulanan->jumlah_hari_lembur }}" readonly>
+                </div>
+                <div class="col-md-12 mb-3">
+                    Jumlah Jam Lembur: <input type="time" class="editable" name="jumlah_jam_lembur"
+                        value="{{ $rekapBulanan->jumlah_jam_lembur }}" readonly>
+                </div>
+            </form>
             @if ($rekapBulanan->verifikasi == 0 && Auth::guard('karyawan')->user()->role == 'superadmin')
-                <form id="refresh" action="{{ route('presensi.bulanan.update') }}" method="POST">
+                <form id="refresh" action="{{ route('presensi.bulanan.sync') }}" method="POST">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekapBulanan->kd_presensi_bulanan }}">
@@ -177,6 +223,33 @@
             }
         });
     });
+    const formInputs = $('#edit-form input');
+
+    $('#tombol-edit').on('click', function () {
+        toggleEditMode(true);
+    });
+
+    $('#tombol-batal').on('click', function () {
+        toggleEditMode(false);
+    });
+
+    // $('#profile-form').on('submit', function (e) {
+    //     e.preventDefault();
+    //     saveProfileData();
+    // });
+
+    function toggleEditMode(enable) {
+        if (enable) {
+            formInputs.removeAttr('readonly');
+            $('#tombol-edit').hide();
+            $('#tombol-simpan, #tombol-batal').show();
+        } else {
+            formInputs.attr('readonly', true);
+            $('#tombol-edit').show();
+            $('#tombol-simpan, #tombol-batal').hide();
+        }
+    }
+
     @if (session()->has('success'))
         const Toast = Swal.mixin({
             toast: true,
