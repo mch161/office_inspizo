@@ -50,6 +50,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
 
     ## Presensi
     Route::get('presensi/fetch', [App\Http\Controllers\PresensiController::class, 'fetch'])->name('presensi.fetch');
+    Route::get('presensi/view', [App\Http\Controllers\PresensiController::class, 'view'])->name('presensi.view');
     Route::get('presensi/bulanan', [App\Http\Controllers\PresensiBulananController::class, 'index'])->name('presensi.bulanan');
     Route::post('presensi/bulanan/create', [App\Http\Controllers\PresensiBulananController::class, 'create'])->name('presensi.bulanan.create');
     Route::post('presensi/bulanan/sync', [App\Http\Controllers\PresensiBulananController::class, 'sync'])->name('presensi.bulanan.sync');

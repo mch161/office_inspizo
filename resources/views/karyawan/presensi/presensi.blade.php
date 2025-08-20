@@ -25,16 +25,27 @@
 @endif
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Laporan Presensi untuk tanggal
-            {{ \Carbon\Carbon::parse($tanggal)->locale('id_ID')->translatedFormat('d F Y') }}
+        <h3 class="card-title">Laporan Presensi untuk
+            @if (isset($bulan) && isset($tahun))
+                {{ $karyawan->nama }} pada bulan
+                {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id_ID')->translatedFormat('F Y') }}
+            @else
+                {{ \Carbon\Carbon::parse($tanggal)->locale('id_ID')->translatedFormat('d F Y') }}
+            @endif
         </h3>
         <div class="card-tools">
-            <a href="{{ route('presensi.fetch', ['tanggal' => $tanggal]) }}" class="btn btn-primary" id="fetch-btn">
-                <i class="fas fa-sync"></i> Sinkronkan
-            </a>
-            <a href="{{ route('presensi.fetch', 'all') }}" class="btn btn-primary" id="fetch-all-btn">
-                <i class="fas fa-sync"></i> Sinkronkan Semua
-            </a>
+            @if (isset($bulan) && isset($kd_karyawan))
+                <a href="{{ route('presensi.index') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+            @else
+                <a href="{{ route('presensi.fetch', ['tanggal' => $tanggal]) }}" class="btn btn-primary" id="fetch-btn">
+                    <i class="fas fa-sync"></i> Sinkronkan
+                </a>
+                <a href="{{ route('presensi.fetch', 'all') }}" class="btn btn-primary" id="fetch-all-btn">
+                    <i class="fas fa-sync"></i> Sinkronkan Semua
+                </a>
+            @endif
         </div>
     </div>
     <div class="card-body">
@@ -61,15 +72,46 @@
                         <td>
                             @if ($data->terlambat != "Tidak")
                                 <div class="badge badge-warning">{{ $data->terlambat }}</div>
-                            @else
+                                @else
                                 {{ $data->terlambat }}
                             @endif
                         </td>
+
                         <td>{{ $data->pulang_cepat }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h3>Total Presensi: {{ count($rekapData) }}</h3>
+        <form action="{{ route('presensi.view') }}" method="GET">
+            <x-adminlte-select name="kd_karyawan" label="Pilih Karyawan" empty-option="Pilih Karyawan..." required>
+                <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()"
+                    empty-option="Pilih Karyawan..." />
+            </x-adminlte-select>
+            <x-adminlte-select name="bulan" label="Pilih Bulan" required>
+                <x-adminlte-options :options="[
+        '1' => 'Januari',
+        '2' => 'Februari',
+        '3' => 'Maret',
+        '4' => 'April',
+        '5' => 'Mei',
+        '6' => 'Juni',
+        '7' => 'Juli',
+        '8' => 'Agustus',
+        '9' => 'September',
+        '10' => 'Oktober',
+        '11' => 'November',
+        '12' => 'Desember',
+    ]" empty-option="Pilih Bulan..." />
+            </x-adminlte-select>
+            <x-adminlte-input name="tahun" label="Tahun" type="number" value="{{ date('Y') }}"></x-adminlte-input>
+            <button type="submit" class="btn btn-primary">Tampilkan Presensi</button>
+        </form>
     </div>
 </div>
 @stop
