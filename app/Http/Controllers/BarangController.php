@@ -70,9 +70,13 @@ class BarangController extends Controller
             $image = $request->foto;
             $imageName = time() . '.' . $request->foto->extension();
 
-            $path = public_path('storage/images/barang');
-            $img = Image::read($image->path());
-            $img->scale(width: 480)->save($path . '/' . $imageName);
+            if ($image->extension() == 'jpg' || $image->extension() == 'jpeg') {
+                $request->foto->move(public_path('storage/images/barang'), $imageName);
+            } else {
+                $path = public_path('storage/images/barang');
+                $img = Image::read($image->path());
+                $img->scale(width: 480)->save($path . '/' . $imageName);
+            }
         } else {
             $imageName = null;
         }
@@ -147,11 +151,15 @@ class BarangController extends Controller
             $image = $request->foto;
             $imageName = time() . '.' . $request->foto->extension();
 
-            $path = public_path('storage/images/barang');
-            $img = Image::read($image->path());
-            $img->scale(width: 480)->save($path . '/' . $imageName);
+            if ($image->extension() == 'jpg' || $image->extension() == 'jpeg') {
+                $request->foto->move(public_path('storage/images/barang'), $imageName);
+            } else {
+                $path = public_path('storage/images/barang');
+                $img = Image::read($image->path());
+                $img->scale(width: 480)->save($path . '/' . $imageName);
+            }
         } else {
-            $imageName = $barang->foto;
+            $imageName = null;
         }
 
         $barang->kd_karyawan = Auth::id();
