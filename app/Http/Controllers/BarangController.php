@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Laravel\Facades\Image;
+
 
 class BarangController extends Controller
 {
@@ -17,8 +19,7 @@ class BarangController extends Controller
 
         if ($search) {
             $barang = Barang::where('status', 1)->where('nama_barang', 'like', '%' . $search . '%')->get();
-        }
-        else {
+        } else {
             $barang = Barang::where('status', 1)->get();
         }
 
@@ -57,7 +58,7 @@ class BarangController extends Controller
             'nama_barang' => 'required|string',
             'hpp' => 'nullable|numeric',
             'harga' => 'nullable|numeric',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif',
             'stok' => 'nullable|numeric|min:0',
         ]));
 
@@ -65,9 +66,15 @@ class BarangController extends Controller
             return redirect()->back()->with('error', $validate->errors()->first())->withInput();
         }
 
-        $imageName = $request->foto ? time() . '.' . $request->foto->extension() : null;
         if ($request->foto) {
-            $request->foto->move(public_path('storage/images/barang'), $imageName);
+            $image = $request->foto;
+            $imageName = time() . '.' . $request->foto->extension();
+
+            $path = public_path('storage/images/barang');
+            $img = Image::read($image->path());
+            $img->scale(width: 480)->save($path . '/' . $imageName);
+        } else {
+            $imageName = null;
         }
 
         $barang = new Barang();
@@ -136,11 +143,15 @@ class BarangController extends Controller
                 ->with('error', $validate->errors()->first());
         }
 
-        if ($request->hasFile('foto')) {
-            File::delete(public_path('storage/images/barang/' . $barang->foto));
+        if ($request->foto) {
+            $image = $request->foto;
             $imageName = time() . '.' . $request->foto->extension();
-            $request->foto->move(public_path('storage/images/barang'), $imageName);
-            $barang->foto = $imageName;
+
+            $path = public_path('storage/images/barang');
+            $img = Image::read($image->path());
+            $img->scale(width: 480)->save($path . '/' . $imageName);
+        } else {
+            $imageName = $barang->foto;
         }
 
         $barang->kd_karyawan = Auth::id();
@@ -151,6 +162,7 @@ class BarangController extends Controller
         $barang->kode = $request->edit_kode;
         $barang->hpp = $request->hpp;
         $barang->harga_jual = $request->harga;
+        $barang->foto = $imageName;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
 
