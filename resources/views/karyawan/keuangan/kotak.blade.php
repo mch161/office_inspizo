@@ -13,25 +13,18 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <div class="d-flex justify-content-end">
-            <x-adminlte-button label="Tambahkan Kotak" class="mb-2 bg-blue" data-toggle="modal"
-                data-target="#modalTambah" />
-        </div>
-
-        <x-adminlte-modal id="modalTambah" title="Tambahkan Kotak" theme="success" icon="fas fa-box" size='lg'>
-            <form action="{{ route('kotak.store') }}" method="POST" id="kotakForm" enctype="multipart/form-data">
-                @csrf
-                <div class="form-group">
-                    <label for="nama_kotak">Nama Kotak</label>
-                    <input type="text" class="form-control" id="nama_kotak" name="nama" required>
-                </div>
-                <x-slot name="footerSlot">
-                    <x-adminlte-button theme="success" label="Simpan" type="submit" form="kotakForm" />
-                    <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
-                </x-slot>
-            </form>
-        </x-adminlte-modal>
-
+        <form action="{{ route('kotak.store') }}" method="POST" id="kotakForm" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group">
+                <label for="nama_kotak">Nama Kotak</label>
+                <input type="text" class="form-control" id="nama_kotak" name="nama" required>
+            </div>
+            <x-adminlte-button theme="primary" icon="fas fa-plus" label="Tambahkan" type="submit" form="kotakForm" />
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
         <x-adminlte-modal id="modalEdit" title="Edit Kotak" theme="primary" icon="fas fa-edit" size='lg'>
             <form method="POST" id="form-edit-kotak" enctype="multipart/form-data">
                 @csrf
@@ -52,6 +45,8 @@
                 <tr>
                     <th width="5%">No</th>
                     <th>Nama Kotak</th>
+                    <th>Pemasukan</th>
+                    <th>Pengeluaran</th>
                     <th width="150px" rigth>Aksi</th>
                 </tr>
             </thead>
@@ -60,6 +55,8 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $k->nama }}</td>
+                        <td>Rp {{ number_format($keuangan->where('kd_kotak', $k->kd_kotak)->sum('masuk'), 0, ',', '.') }}</td>
+                        <td>Rp {{ number_format($keuangan->where('kd_kotak', $k->kd_kotak)->sum('keluar'), 0, ',', '.') }}</td>
                         <td>
                             <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
                                 data-id="{{ $k->kd_kotak }}" data-nama_kotak="{{ $k->nama }}">
@@ -192,6 +189,6 @@
                         text: '{{ session('error') }}',
                     })
                 @endif
-        });
+                });
     </script>
 @endsection

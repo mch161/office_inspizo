@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Keuangan;
 use App\Models\Keuangan_Kategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,10 +14,9 @@ class KategoriKeuanganController extends Controller
      */
     public function index()
     {
+        $keuangan = Keuangan::get();
         $kategori = Keuangan_Kategori::with('karyawan')->get();
-        return view('karyawan.keuangan.kategori', [
-            "kategori" => $kategori,
-        ]);
+        return view('karyawan.keuangan.kategori', compact('kategori', 'keuangan'));
     }
 
     /**

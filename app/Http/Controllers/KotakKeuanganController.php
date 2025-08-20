@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Keuangan;
 use App\Models\Keuangan_Kotak;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,10 +14,9 @@ class KotakKeuanganController extends Controller
      */
     public function index()
     {
+        $keuangan = Keuangan::get();
         $kotak = Keuangan_Kotak::with('karyawan')->get();
-        return view('karyawan.keuangan.kotak', [
-            "kotak" => $kotak
-        ]);
+        return view('karyawan.keuangan.kotak', compact('kotak', 'keuangan'));
     }
 
     /**
