@@ -164,49 +164,72 @@
     <x-adminlte-modal id="modalTambah" title="Tambahkan Barang" theme="success" icon="fas fa-box" size='lg'>
         <form action="{{ route('barang.store') }}" method="POST" id="barangForm" enctype="multipart/form-data">
             @csrf
-            <div class="form-group">
-                <label for="nama_barang">Nama Barang</label>
-                <input type="text" class="form-control" id="nama_barang" name="nama_barang"
-                    placeholder="Masukkan Nama Barang" required>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="nama_barang">Nama Barang</label>
+                    <input type="text" class="form-control" id="nama_barang" name="nama_barang"
+                        placeholder="Masukkan Nama Barang" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Dijual">Dijual?</label>
+                    <select name="dijual" id="dijual" class="form-control">
+                        <option value="1">Ya</option>
+                        <option value="0">Tidak</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="klasifikasi">Klasifikasi</label>
+                    <select name="klasifikasi" id="klasifikasi" class="form-control">
+                        <option value="Baru">Baru</option>
+                        <option value="Second">Second</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Barcode">Barcode</label>
+                    <input type="text" class="form-control" id="barcode" name="barcode" placeholder="Masukkan Barcode">
+                </div>
+                <div class="col-md-12">
+                    @php
+                        $config = [
+                            "placeholder" => "Cari atau ketik kode barang baru...",
+                            "allowClear" => true,
+                            "tags" => true,
+                            "dropdownParent" => "#modalTambah",
+                        ];
+                    @endphp
+                    <x-adminlte-select2 name="kode" label="Kode" :config="$config" id="kode">
+                        <option value="" disabled selected>Pilih Kode Barang</option>
+                        @foreach ($barang->unique('kode')->sortBy('kode') as $data)
+                            <option value="{{ $data->kode }}">{{ $data->kode }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="hpp">HPP</label>
+                    <input type="number" class="form-control" id="hpp" name="hpp" min="0" placeholder="10000">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="harga">Harga</label>
+                    <input type="number" class="form-control" id="harga" name="harga" min="0" placeholder="10000">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="stok">Stok</label>
+                    <input type="number" class="form-control" id="stok" name="stok" min="0" placeholder="0">
+                </div>
+                <div class="mb-3">
+                    @error('image')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <img id="preview" src="" alt="Image preview"
+                        style="max-width: 20%; display: block; padding: 5px;display:none;">
+                </div>
+                <div class="form-group col-md-12">
+                    <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name
+                        onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
+                </div>
             </div>
-            @php
-                $config = [
-                    "placeholder" => "Cari atau ketik kode barang baru...",
-                    "allowClear" => true,
-                    "tags" => true,
-                    "dropdownParent" => "#modalTambah",
-                ];
-            @endphp
-
-            <x-adminlte-select2 name="kode" label="Kode" :config="$config" id="kode">
-                <option value="" disabled selected>Pilih Kode Barang</option>
-                @foreach ($barang->unique('kode')->sortBy('kode') as $data)
-                    <option value="{{ $data->kode }}">{{ $data->kode }}</option>
-                @endforeach
-            </x-adminlte-select2>
-            <div class="form-group">
-                <label for="hpp">HPP</label>
-                <input type="number" class="form-control" id="hpp" name="hpp" min="0" placeholder="10000" required>
-            </div>
-            <div class="form-group">
-                <label for="harga">Harga</label>
-                <input type="number" class="form-control" id="harga" name="harga" min="0" placeholder="10000" required>
-            </div>
-            <div class="form-group">
-                <label for="stok">Stok</label>
-                <input type="number" class="form-control" id="stok" name="stok" min="0" placeholder="0">
-            </div>
-            <div class="mb-3">
-                @error('image')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="mb-3">
-                <img id="preview" src="" alt="Image preview"
-                    style="max-width: 20%; display: block; padding: 5px;display:none;">
-            </div>
-            <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name
-                onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
             <x-slot name="footerSlot">
                 <x-adminlte-button theme="success" label="Simpan" type="submit" form="barangForm" />
                 <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
@@ -217,51 +240,72 @@
         <form method="POST" id="editBarangForm" enctype="multipart/form-data">
             @csrf
             @method('PUT')
-            <div class="form-group">
-                <label for="edit_nama_barang">Nama Barang</label>
-                <input type="text" class="form-control" id="edit_nama_barang" name="nama_barang" required>
-            </div>
-            @php
-                $config2 = [
-                    "placeholder" => "Cari atau ketik kode barang baru...",
-                    "allowClear" => true,
-                    "tags" => true,
-                    "dropdownParent" => "#modalEdit",
-                ];
-            @endphp
-
-            <x-adminlte-select2 name="edit_kode" label="Kode" :config="$config2" id="kode2">
-                <option value="" disabled selected>Pilih Kode Barang"></option>
-                @foreach ($barang->unique('kode')->sortBy('kode') as $data)
-                    <option value="{{ $data->kode }}">{{ $data->kode }}</option>
-                @endforeach
-            </x-adminlte-select2>
-            <div class="form-group">
-                <label for="edit_hpp">HPP</label>
-                <input type="number" class="form-control" id="edit_hpp" name="hpp" required>
-            </div>
-            <div class="form-group">
-                <label for="edit_harga">Harga</label>
-                <input type="number" class="form-control" id="edit_harga" name="harga" required>
-            </div>
-            <div class="form-group">
-                <label>Foto Saat Ini</label>
-                <div>
-                    <img id="current_foto_preview" src="" alt="Foto Saat Ini"
-                        style="max-width: 200px; max-height: 200px; margin-bottom: 10px;">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="edit_nama_barang">Nama Barang</label>
+                    <input type="text" class="form-control" id="edit_nama_barang" name="nama_barang" required>
                 </div>
-                <div class="mb-3">
-                    @error('image')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                <div class="form-group col-md-6">
+                    <label for="edit_dijual">Dijual?</label>
+                    <select name="dijual" id="edit_dijual" class="form-control">
+                        <option value="1">Ya</option>
+                        <option value="0">Tidak</option>
+                    </select>
                 </div>
-                <div class="mb-3">
-                    <img id="preview_edit" src="" alt="Image preview"
-                        style="max-width: 20%; display: block; padding: 5px;display:none;">
+                <div class="form-group col-md-6">
+                    <label for="edit_klasifikasi">Klasifikasi</label>
+                    <select name="klasifikasi" id="edit_klasifikasi" class="form-control">
+                        <option value="Baru">Baru</option>
+                        <option value="Second">Second</option>
+                    </select>
                 </div>
-                <x-adminlte-input-file name="foto" id="edit_foto"
-                    label="Upload Foto Baru (Kosongkan jika tidak ingin ganti)" placeholder="Pilih file"
-                    onchange="document.getElementById('preview_edit').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview_edit').style.display = 'block';" />
+                <div class="form-group col-md-6">
+                    <label for="edit_barcode">Barcode</label>
+                    <input type="text" class="form-control" id="edit_barcode" name="barcode">
+                </div>
+                <div class="col-md-12">
+                    @php
+                        $config2 = [
+                            "placeholder" => "Cari atau ketik kode barang baru...",
+                            "allowClear" => true,
+                            "tags" => true,
+                            "dropdownParent" => "#modalEdit",
+                        ];
+                    @endphp
+                    <x-adminlte-select2 name="edit_kode" label="Kode" :config="$config2" id="kode2">
+                        <option value="" disabled selected>Pilih Kode Barang"></option>
+                        @foreach ($barang->unique('kode')->sortBy('kode') as $data)
+                            <option value="{{ $data->kode }}">{{ $data->kode }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="edit_hpp">HPP</label>
+                    <input type="number" class="form-control" id="edit_hpp" name="hpp">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="edit_harga">Harga</label>
+                    <input type="number" class="form-control" id="edit_harga" name="harga">
+                </div>
+                <div class="form-group">
+                    <label>Foto Saat Ini</label>
+                    <div>
+                        <img id="current_foto_preview" src="" alt="Foto Saat Ini"
+                            style="max-width: 200px; max-height: 200px; margin-bottom: 10px;">
+                    </div>
+                    <div class="mb-3">
+                        @error('image')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <img id="preview_edit" src="" alt="Image preview"
+                            style="max-width: 20%; display: block; padding: 5px;display:none;">
+                    </div>
+                    <x-adminlte-input-file name="foto" id="edit_foto"
+                        label="Upload Foto Baru (Kosongkan jika tidak ingin ganti)" placeholder="Pilih file"
+                        onchange="document.getElementById('preview_edit').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview_edit').style.display = 'block';" />
+                </div>
             </div>
             <x-slot name="footerSlot">
                 <x-adminlte-button theme="success" label="Simpan Perubahan" type="submit" form="editBarangForm" />
@@ -329,7 +373,8 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item edit-btn" href="#" data-toggle="modal" data-target="#modalEdit"
                             data-id="{{ $b->id }}" data-kode="{{ $b->kode }}" data-nama="{{ $b->nama_barang }}"
-                            data-hpp="{{ $b->hpp }}" data-harga="{{ $b->harga_jual }}"
+                            data-dijual="{{ $b->dijual }}" data-klasifikasi="{{ $b->klasifikasi }}"
+                            data-barcode="{{ $b->barcode }}" data-hpp="{{ $b->hpp }}" data-harga="{{ $b->harga_jual }}"
                             data-foto="{{ asset('storage/images/barang/' . $b->foto) }}"
                             data-url="{{ route('barang.update', $b->kd_barang) }}">
                             <i class="fas fa-edit fa-fw mr-2 text-info"></i>Edit
@@ -349,10 +394,16 @@
                         </form>
                     </div>
                 </div>
-                <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
-                    data-src="{{ asset('storage/images/barang/' . $b->foto) }}">
-                    <img class="barang-img" src="{{ asset('storage/images/barang/' . $b->foto) }}" alt="Foto Barang">
-                </a>
+                @if ($b->foto)
+                    <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
+                        data-src="{{ asset('storage/images/barang/' . $b->foto) }}">
+                        <img class="barang-img" src="{{ asset('storage/images/barang/' . $b->foto) }}" alt="Foto Barang">
+                    </a>
+                @else
+                    <div class="d-flex justify-content-center align-items-center" style="height: 150px;">
+                        <span class="text-muted">Tidak ada foto</span>
+                    </div>
+                @endif
                 <div class="info-box-content">
                     <span class="info-box-text">{{ $b->nama_barang }} ({{ $b->kode }})</span>
                     <span class="info-box-number">Rp{{ number_format($b->harga_jual, 2, ',', '.') }}</span>
@@ -430,7 +481,11 @@
             $('.barang-container').on('click', '.edit-btn', function (e) {
                 e.preventDefault();
 
+                const id = $(this).data('id');
                 const nama = $(this).data('nama');
+                const dijual = $(this).data('dijual');
+                const klasifikasi = $(this).data('klasifikasi');
+                const barcode = $(this).data('barcode');
                 const kode = $(this).data('kode');
                 const hpp = $(this).data('hpp');
                 const harga = $(this).data('harga');
@@ -439,9 +494,14 @@
 
                 $('#edit_nama_barang').val(nama);
 
+                $('#edit_dijual').val(dijual);
+                $('#edit_dijual').trigger('change');
+                $('#edit_klasifikasi').val(klasifikasi);
+                $('#edit_klasifikasi').trigger('change');
                 $('#kode2').val(kode);
                 $('#kode2').trigger('change');
 
+                $('#edit_barcode').val(barcode);
                 $('#edit_hpp').val(hpp);
                 $('#edit_harga').val(harga);
                 $('#current_foto_preview').attr('src', fotoUrl);

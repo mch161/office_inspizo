@@ -7,6 +7,7 @@ use App\Models\Stok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
 {
@@ -14,13 +15,7 @@ class BarangController extends Controller
     {
         $search = $request->input('s');
 
-        $query = Barang::query();
-
-        if ($search) {
-            $query->where('nama_barang', 'like', '%' . $search . '%');
-        }
-
-        $barang = $query->get();
+        $barang = Barang::where('status', 1)->get();
 
         return view('karyawan.barang.barang', compact('barang'));
     }
@@ -53,20 +48,29 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validate = Validator::make($request->all(), ([
             'nama_barang' => 'required|string',
-            'hpp' => 'required|numeric',
-            'harga' => 'required|numeric',
-            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'hpp' => 'nullable|numeric',
+            'harga' => 'nullable|numeric',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'stok' => 'nullable|numeric|min:0',
-        ]);
+        ]));
 
-        $imageName = time() . '.' . $request->foto->extension();
-        $request->foto->move(public_path('storage/images/barang'), $imageName);
+        if ($validate->fails()) {
+            return redirect()->back()->with('error', $validate->errors()->first())->withInput();
+        }
+
+        $imageName = $request->foto ? time() . '.' . $request->foto->extension() : null;
+        if ($request->foto) {
+            $request->foto->move(public_path('storage/images/barang'), $imageName);
+        }
 
         $barang = new Barang();
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
+        $barang->dijual = $request->dijual;
+        $barang->klasifikasi = $request->klasifikasi;
+        $barang->barcode = $request->barcode;
         $barang->kode = $request->kode;
         $barang->hpp = $request->hpp;
         $barang->harga_jual = $request->harga;
@@ -78,7 +82,7 @@ class BarangController extends Controller
         $stok = new Stok();
         $stok->kd_barang = $barang->kd_barang;
         $stok->kd_karyawan = Auth::id();
-        $stok->stok_masuk = $request->stok;
+        $stok->stok_masuk = $request->stok ?? 1;
         $stok->stok_keluar = 0;
         $stok->klasifikasi = 'Stok Awal';
         $stok->keterangan = 'Stok awal saat barang dibuat.';
@@ -115,12 +119,17 @@ class BarangController extends Controller
      */
     public function update(Request $request, Barang $barang)
     {
-        $request->validate([
+        $validate = Validator::make($request->all(), ([
             'nama_barang' => 'required|string',
-            'hpp' => 'required|numeric',
-            'harga' => 'required|numeric',
-            'foto' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+            'hpp' => 'nullable|numeric',
+            'harga' => 'nullable|numeric',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]));
+
+        if ($validate->fails()) {
+            return redirect()->route('barang.index')
+                ->with('error', $validate->errors()->first());
+        }
 
         if ($request->hasFile('foto')) {
             File::delete(public_path('storage/images/barang/' . $barang->foto));
@@ -131,11 +140,15 @@ class BarangController extends Controller
 
         $barang->kd_karyawan = Auth::id();
         $barang->nama_barang = $request->nama_barang;
+        $barang->dijual = $request->dijual;
+        $barang->klasifikasi = $request->klasifikasi;
+        $barang->barcode = $request->barcode;
         $barang->kode = $request->edit_kode;
         $barang->hpp = $request->hpp;
         $barang->harga_jual = $request->harga;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
+
 
         if ($barang) {
             return redirect()->route('barang.index')
@@ -176,10 +189,11 @@ class BarangController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Barang $barang)
+    public function destroy($id)
     {
-        $barang->delete();
-        File::delete(public_path('storage/images/barang/' . $barang->foto));
+        $barang = Barang::findOrFail($id);
+        $barang->status = 0;
+        $barang->save();
 
         if ($barang) {
             return redirect()->route('barang.index')
