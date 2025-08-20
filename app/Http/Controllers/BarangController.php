@@ -15,7 +15,12 @@ class BarangController extends Controller
     {
         $search = $request->input('s');
 
-        $barang = Barang::where('status', 1)->get();
+        if ($search) {
+            $barang = Barang::where('status', 1)->where('nama_barang', 'like', '%' . $search . '%')->get();
+        }
+        else {
+            $barang = Barang::where('status', 1)->get();
+        }
 
         return view('karyawan.barang.barang', compact('barang'));
     }
