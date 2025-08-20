@@ -104,7 +104,7 @@
             <input class="form-control" type="text" name="title" id="title" placeholder="Nama Agenda" required>
             
             @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
-            <x-adminlte-input-date name="tanggal" id="tanggal-agenda" :config="$configDate"
+            <x-adminlte-input-date name="tanggal" id="tanggal-agenda2" :config="$configDate"
                 placeholder="Pilih tanggal..." label="Tanggal Janji Temu" igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
