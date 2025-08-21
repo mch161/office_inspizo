@@ -17,6 +17,8 @@ class Reimburse extends Model
         'foto',
         'keterangan',
         'status',
+        'bukti_transfer',
+        'dibuat_oleh'
     ];
 
     public function karyawan()
