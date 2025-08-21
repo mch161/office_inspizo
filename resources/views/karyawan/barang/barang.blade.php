@@ -204,15 +204,15 @@
                         @endforeach
                     </x-adminlte-select2>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4" id="hpp-form">
                     <label for="hpp">HPP</label>
                     <input type="number" class="form-control" id="hpp" name="hpp" min="0" placeholder="10000">
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4" id="harga-form">
                     <label for="harga">Harga</label>
                     <input type="number" class="form-control" id="harga" name="harga" min="0" placeholder="10000">
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4" id="stok-form">
                     <label for="stok">Stok</label>
                     <input type="number" class="form-control" id="stok" name="stok" min="0" placeholder="0">
                 </div>
@@ -279,11 +279,11 @@
                         @endforeach
                     </x-adminlte-select2>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-6" id="edit-hpp-form">
                     <label for="edit_hpp">HPP</label>
                     <input type="number" class="form-control" id="edit_hpp" name="hpp">
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-6" id="edit-harga-form">
                     <label for="edit_harga">Harga</label>
                     <input type="number" class="form-control" id="edit_harga" name="harga">
                 </div>
@@ -356,15 +356,24 @@
             </div>
         </div>
     </form>
-    <div class="mb-4 text-center">
-        <button class="btn btn-outline-primary btn-filter active" data-filter="all">Semua</button>
-        @foreach($barang->unique('kode')->sortBy('kode')->pluck('kode') as $kode)
-            <button class="btn btn-outline-primary btn-filter" data-filter="{{ $kode }}">{{ $kode }}</button>
-        @endforeach
+    <div class="row">
+        <div class="mb-2 text-center col-md-8">
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1 active" data-filter="all">Semua</button>
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1"
+                data-filter="">  -  </button>
+            @foreach($barang->whereNotNull('kode')->unique('kode')->sortBy('kode')->pluck('kode') as $kode)
+                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1" data-filter="{{ $kode }}">{{ $kode }}</button>
+            @endforeach
+        </div>
+        <div class="mb-2 text-center col-md-4">
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2 active" data-filter="all">Semua</button>
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="1">Dijual</button>
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="0">Tidak Dijual</button>
+        </div>
     </div>
     <div class="barang-container">
         @forelse ($barang as $b)
-            <div class="barang-card" data-kode="{{ $b->kode }}">
+            <div class="barang-card" data-kode="{{ $b->kode }}" data-dijual="{{ $b->dijual }}">
                 <div class="dropdown">
                     <button class="btn btn-link dropdown-toggle no-arrow" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" style="color: #6c757d;">
@@ -405,8 +414,17 @@
                     </div>
                 @endif
                 <div class="info-box-content">
-                    <span class="info-box-text">{{ $b->nama_barang }} ({{ $b->kode }})</span>
-                    <span class="info-box-number">Rp{{ number_format($b->harga_jual, 2, ',', '.') }}</span>
+                    <span class="info-box-text">{{ $b->nama_barang }}
+                        (
+                        @if ($b->kode == null)
+                            -
+                        @else
+                            {{ $b->kode }}
+                        @endif)
+                    </span>
+                    @if ($b->dijual == 1)
+                        <span class="info-box-number">Rp{{ number_format($b->harga_jual, 2, ',', '.') }}</span>
+                    @endif
                 </div>
                 <div class="stok-info">
                     Stok: {{ $b->stok }}
@@ -441,8 +459,8 @@
 @section('js')
     <script>
         $(document).ready(function () {
-            $('.btn-filter').on('click', function () {
-                $('.btn-filter').removeClass('active');
+            $('.btn-filter-group1').on('click', function () {
+                $('.btn-filter-group1').removeClass('active');
                 $(this).addClass('active');
 
                 const filterValue = $(this).data('filter');
@@ -454,7 +472,43 @@
                     $('.barang-card[data-kode="' + filterValue + '"]').fadeIn();
                 }
             });
+
+            $('.btn-filter-group2').on('click', function () {
+                $('.btn-filter-group2').removeClass('active');
+                $(this).addClass('active');
+
+                const filterValue = $(this).data('filter');
+
+                if (filterValue === 'all') {
+                    $('.barang-card').fadeIn();
+                } else {
+                    $('.barang-card').fadeOut('fast');
+                    $('.barang-card[data-dijual="' + filterValue + '"]').fadeIn();
+                }
+            });
         });
+        $(document).ready(function () {
+            $('#dijual').on('change', function () {
+                if ($(this).val() === '1') {
+                    $('#harga-form').show();
+                    $('#hpp-form').show();
+                    $('#stok-form').removeClass('col-md-12').addClass('col-md-4');
+                } else {
+                    $('#harga-form').hide();
+                    $('#hpp-form').hide();
+                    $('#stok-form').removeClass('col-md-4').addClass('col-md-12');
+                }
+            });
+            $('#edit_dijual').on('change', function () {
+                if ($(this).val() === '1') {
+                    $('#edit-harga-form').show();
+                    $('#edit-hpp-form').show();
+                } else {
+                    $('#edit-harga-form').hide();
+                    $('#edit-hpp-form').hide();
+                }
+            })
+        })
         $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
         });
