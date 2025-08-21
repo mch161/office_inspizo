@@ -62,9 +62,11 @@
                     <th width="5%" class="text-left">ID</th>
                     <th class="text-left">Nominal</th>
                     <th class="text-left">Foto</th>
+                    <th class="text-left">Karyawan</th>
                     <th class="text-left">Keterangan</th>
                     <th class="text-left">Tanggal</th>
                     <th width="10%" class="text-left">Status</th>
+                    <th class="text-left">Bukti Transfer</th>
                     @if (Auth::user()->role == 'superadmin')
                         <th width="15%" class="text-left">Aksi</th>
                     @endif
@@ -86,6 +88,7 @@
                                 <span class="text-muted">Tidak ada foto</span>
                             @endif
                         </td>
+                        <td class="text-left">{{ App\Models\Karyawan::find($item->kd_karyawan)->nama }}</td>
                         <td class="keterangan-column text-left">{!! $item->keterangan !!}</td>
                         <td class="text-left">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
                         <td class="text-left">
@@ -95,24 +98,31 @@
                                 <span class="badge badge-success">Selesai</span>
                             @endif
                         </td>
+                        <td>
+                            @if ($item->bukti_transfer)
+                                <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
+                                    data-src="{{ asset('storage/images/reimburse/' . $item->bukti_transfer) }}">
+                                    <img class="reimburse-image"
+                                        src="{{ asset('storage/images/reimburse/' . $item->bukti_transfer) }}"
+                                        alt="Foto Bukti Transfer">
+                                </a>
+                            @else
+                                <span class="text-muted">Tidak ada foto</span>
+                            @endif
+                        </td>
                         @if (Auth::user()->role == 'superadmin')
                             <td class="text-left">
-                                <form class="action-form" action="{{ route('reimburse.update', $item->kd_reimburse) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    @if ($item->status == '0')
-                                        <input type="hidden" name="status" value="1">
-                                        <button type="submit" class="btn btn-sm btn-success">
-                                            <i class="fas fa-check"></i> Selesai
-                                        </button>
-                                    @else
-                                        <input type="hidden" name="status" value="0">
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-times"></i> Batalkan
-                                        </button>
-                                    @endif
-                                </form>
+                                @if ($item->status == '0')
+                                    <button class="btn btn-success btn-sm tombol-selesaikan" data-toggle="modal"
+                                        data-target="#selesaikanModal" data-id="{{ $item->kd_reimburse }}">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                @else
+                                    <button class="btn btn-warning btn-sm tombol-selesaikan" data-toggle="modal"
+                                        data-target="#selesaikanModal" data-id="{{ $item->kd_reimburse }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                @endif
                             </td>
                         @endif
                     </tr>
@@ -132,6 +142,27 @@
         </div>
     </div>
 </div>
+
+<x-adminlte-modal id="selesaikanModal" title="Bukti Transfer" theme="primary" icon="fas fa-edit" size='lg'>
+    <form method="POST" id="form-selesaikan" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="id" id="id" value="">
+        <input type="hidden" name="status" value="1">
+        <div class="mb-3">
+            <img id="preview" src="" alt="Image preview"
+                style="max-width: 20%; display: block; padding: 5px;display:none;">
+        </div>
+        <div class="form-group">
+            <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name
+                onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
+        </div>
+        <x-slot name="footerSlot">
+            <x-adminlte-button theme="primary" label="Simpan Perubahan" type="submit" form="form-selesaikan" />
+            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+        </x-slot>
+    </form>
+</x-adminlte-modal>
 @stop
 
 @section('js')
@@ -154,25 +185,37 @@
             }
         });
 
+        $(document).ready(function () {
+            console.log('JavaScript code is being executed');
+            $('#ReimburseTable').on('click', '.tombol-selesaikan', function () {
+                console.log('Button was clicked');
+                const kd_reimburse = $(this).data('id');
+
+                let form = $('#form-selesaikan');
+                let updateUrl = "{{ route('reimburse.update', ':id') }}";
+                updateUrl = updateUrl.replace(':id', kd_reimburse);
+                console.log(updateUrl); // Add this line
+                form.attr('action', updateUrl);
+            });
+        });
+
         $('.image-popup').on('click', function (e) {
             e.preventDefault();
             const imageUrl = $(this).data('src');
             $('#modalImage').attr('src', imageUrl);
         });
 
-        $('.action-form').on('submit', function (e) {
+        $('#ReimburseTable').on('click', '.tombol-hapus', function (e) {
             e.preventDefault();
-            let form = this;
-            let isCompleting = $(this).find('input[name="status"]').val() == '1';
-
+            let form = $(this).closest('form');
             Swal.fire({
-                title: 'Anda yakin?',
-                text: isCompleting ? "Tandai reimburse ini sebagai selesai?" : "Batalkan status selesai reimburse ini?",
-                icon: isCompleting ? 'question' : 'warning',
+                title: 'Yakin ingin menghapus?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                cancelButtonColor: '#007bff',
-                confirmButtonText: 'Ya, lanjutkan!',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {

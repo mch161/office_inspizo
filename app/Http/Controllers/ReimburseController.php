@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Reimburse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ReimburseController extends Controller
 {
@@ -14,9 +17,7 @@ class ReimburseController extends Controller
     public function index()
     {
         $reimburse = Reimburse::all();
-        return view('karyawan.keuangan.reimburse', [
-            "reimburse" => $reimburse
-        ]);
+        return view('karyawan.keuangan.reimburse', compact('reimburse'));
     }
 
     public function reimburseForm()
@@ -37,31 +38,42 @@ class ReimburseController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $validate = Validator::make($request->all(), ([
             'tanggal' => 'required|date',
             'jam' => 'required|string',
             'foto' => 'image|mimes:jpg,jpeg,png|max:2048',
             'keterangan' => 'required|string',
             'nominal' => 'required|numeric',
+        ]));
+
+        if ($validate->fails()) {
+            return redirect()->back()->with('error', $validate->errors()->first())->withInput();
+        }
+
+        if ($request->hasFile('foto')) {
+            $image = $request->file('foto');
+            $imageName = time() . '.' . $request->foto->extension();
+            $img = Image::read($image->path());
+            $img->scale(width: 480)->save(public_path('storage/images/reimburse') . '/' . $imageName);
+        } else {
+            $imageName = null;
+        }
+
+        $reimburse = new Reimburse([
+            'kd_karyawan' => Auth::guard('karyawan')->user()->kd_karyawan,
+            'tanggal' => $request->tanggal,
+            'jam' => $request->jam,
+            'nominal' => $request->nominal,
+            'foto' => $imageName,
+            'keterangan' => $request->keterangan,
+            'status' => 0
         ]);
 
-        $reimburse = new Reimburse();
-        $reimburse->kd_karyawan = Auth::guard('karyawan')->user()->kd_karyawan;
-        $reimburse->tanggal = $validatedData['tanggal'];
-        $reimburse->jam = $validatedData['jam'];
-        $reimburse->nominal = $validatedData['nominal'];
-
-        // Upload the file
-        if ($request->hasFile('foto')) {
-            $imageName = time() . '.' . $request->foto->extension();
-            $request->foto->move(public_path('storage/images/reimburse'), $imageName);
-            $reimburse->foto = $imageName;
+        if ($reimburse->save()) {
+            return redirect()->route('reimburse.index')->with('success', 'Reimburse berhasil ditambahkan.');
+        } else {
+            return redirect()->route('reimburse.index')->with('error', 'Gagal menambahkan reimburse.');
         }
-        $reimburse->keterangan = $validatedData['keterangan'];
-        $reimburse->dibuat_oleh = Auth::guard('karyawan')->user()->nama;
-        $reimburse->save();
-
-        return redirect()->route('reimburse.form')->with('success', 'Reimburse berhasil dibuat.');
     }
 
     /**
@@ -85,18 +97,30 @@ class ReimburseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // 1. Validate that the 'status' field is present and is either 0 or 1.
         $request->validate([
             'status' => 'required|in:0,1',
         ]);
 
-        // 2. Find the existing record.
-        $reimburse = Reimburse::findOrFail($id);
+        if ($request->hasFile('foto')) {
+            $image = $request->file('foto');
+            $imageName = time() . '.' . $request->foto->extension();
 
-        // 3. Update the status with the validated value.
+            $reimburse = Reimburse::findOrFail($id);
+            if (Storage::disk('public')->exists('images/reimburse/' . $reimburse->bukti_transfer)) {
+                Storage::disk('public')->delete('images/reimburse/' . $reimburse->bukti_transfer);
+            }
+
+            $img = Image::read($image->path());
+            $img->scale(width: 480)->save(public_path('storage/images/reimburse') . '/' . $imageName);
+        }
+
+        $reimburse = Reimburse::findOrFail($id);
         $reimburse->status = $request->status;
 
-        // 4. Save the change and check if it was successful.
+        if ($request->hasFile('foto')) {
+            $reimburse->bukti_transfer = $imageName;
+        }
+
         if ($reimburse->save()) {
             return redirect()->route('reimburse.index')->with('success', 'Status reimburse berhasil diupdate.');
         } else {
