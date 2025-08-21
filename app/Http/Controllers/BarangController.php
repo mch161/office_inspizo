@@ -7,6 +7,7 @@ use App\Models\Stok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Laravel\Facades\Image;
 
@@ -146,6 +147,10 @@ class BarangController extends Controller
         if ($request->foto) {
             $image = $request->foto;
             $imageName = time() . '.' . $request->foto->extension();
+
+            if (Storage::disk('public')->exists('images/barang/' . $barang->foto)) {
+                Storage::disk('public')->delete('images/barang/' . $barang->foto);
+            }
 
             $path = public_path('storage/images/barang');
             $img = Image::read($image->path());
