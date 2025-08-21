@@ -16,7 +16,12 @@ class ReimburseController extends Controller
      */
     public function index()
     {
-        $reimburse = Reimburse::all();
+        if (Auth::guard('karyawan')->user()->role == 'superadmin') {
+            $reimburse = Reimburse::all();
+        } else {
+            $reimburse = Reimburse::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->get();
+        }
+
         return view('karyawan.keuangan.reimburse', compact('reimburse'));
     }
 
@@ -66,7 +71,8 @@ class ReimburseController extends Controller
             'nominal' => $request->nominal,
             'foto' => $imageName,
             'keterangan' => $request->keterangan,
-            'status' => 0
+            'status' => 0,
+            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
         ]);
 
         if ($reimburse->save()) {
