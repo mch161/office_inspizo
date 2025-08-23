@@ -17,62 +17,31 @@ class PresensiBulananController extends Controller
 {
     public function index(Request $request)
     {
-        $bulan = $request->input('bulan') ?? date('m');
-        $tahun = $request->input('tahun') ?? date('Y');
-        $kd_karyawan = $request->input('kd_karyawan') ?? Auth::guard('karyawan')->user()->kd_karyawan;
-        $karyawan = Karyawan::where('kd_karyawan', $kd_karyawan)->first();
-
-        if ($bulan > 12 || $bulan < 1) {
-            return redirect()->route('presensi.bulanan')->with('error', 'Mohon pilih bulan yang valid');
-        }
-
-        if ($bulan > Carbon::now()->month && $tahun >= Carbon::now()->year) {
-            return redirect()->route('presensi.bulanan')->with('error', 'Bulan tidak boleh melebihi bulan sekarang');
-        }
-
-        if ($tahun > Carbon::now()->year) {
-            return redirect()->route('presensi.bulanan')->with('error', 'Tahun tidak boleh melebihi tahun sekarang');
-        }
-
-        $rekapBulanan = PresensiBulanan::where('kd_karyawan', $kd_karyawan)
-            ->where('tahun', $tahun)
-            ->where('bulan', $bulan)
-            ->first();
-
-        $rekapData = null;
-        if (!$rekapBulanan) {
-            $request['kd_karyawan'] = $kd_karyawan;
-            $request['bulan'] = $bulan;
-            $request['tahun'] = $tahun;
-            $this->create($request);
-            $rekapBulanan = PresensiBulanan::where('kd_karyawan', $kd_karyawan)
-                ->where('tahun', $tahun)
-                ->where('bulan', $bulan)
-                ->first();
-
-            $rekapData = Presensi::whereYear('tanggal', $tahun)
-                ->whereMonth('tanggal', $bulan)
-                ->where('kd_karyawan', $kd_karyawan)
-                ->orderBy('tanggal', 'asc')
-                ->get();
-        }
-
-        if ($rekapBulanan) {
-            $rekapData = Presensi::whereYear('tanggal', $tahun)
-                ->whereMonth('tanggal', $bulan)
-                ->where('kd_karyawan', $kd_karyawan)
-                ->orderBy('tanggal', 'asc')
-                ->get();
-        }
-
+        $rekapBulanan = PresensiBulanan::orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->get();
+        $rekapData = Presensi::get();
         $karyawans = Karyawan::all();
+
+        if ($request->has('kd_presensi_bulanan')) {
+            $dataBulanan = PresensiBulanan::where('kd_presensi_bulanan', $request->kd_presensi_bulanan)->first();
+            $rekapData = Presensi::where('kd_karyawan', $dataBulanan->kd_karyawan)
+                ->whereYear('tanggal', $dataBulanan->tahun)
+                ->whereMonth('tanggal', $dataBulanan->bulan)
+                ->get();
+
+            $karyawan = Karyawan::where('kd_karyawan', $dataBulanan->kd_karyawan)->first();
+
+            return view('karyawan.presensi.bulanan', compact(
+                'rekapBulanan',
+                'rekapData',
+                'karyawans',
+                'dataBulanan',
+                'karyawan'
+            ));
+        }
+
         return view('karyawan.presensi.bulanan', compact(
             'rekapBulanan',
             'rekapData',
-            'bulan',
-            'tahun',
-            'kd_karyawan',
-            'karyawan',
             'karyawans'
         ));
     }
@@ -181,6 +150,26 @@ class PresensiBulananController extends Controller
 
     public function create(Request $request)
     {
+        if ($request->kd_karyawan == null) {
+            return redirect()->back()->with('error', 'Karyawan tidak ditemukan.');
+        }
+
+        if (PresensiBulanan::where('kd_karyawan', $request->kd_karyawan)->where('bulan', $request->bulan)->where('tahun', $request->tahun)->first() != null) {
+            return redirect()->back()->with('error', 'Rekap Bulanan sudah ada.')->withInput();
+        }
+
+        if ($request->bulan > 12 || $request->bulan < 1) {
+            return redirect()->route('presensi.bulanan')->with('error', 'Mohon pilih bulan yang valid')->withInput();
+        }
+
+        if ($request->bulan > Carbon::now()->month && $request->tahun >= Carbon::now()->year) {
+            return redirect()->route('presensi.bulanan')->with('error', 'Bulan tidak boleh melebihi bulan sekarang')->withInput();
+        }
+
+        if ($request->tahun > Carbon::now()->year) {
+            return redirect()->route('presensi.bulanan')->with('error', 'Tahun tidak boleh melebihi tahun sekarang')->withInput();
+        }
+
         $data = $this->check($request);
         $data['kd_karyawan'] = $request->kd_karyawan;
         $data['bulan'] = $request->bulan;
@@ -188,9 +177,10 @@ class PresensiBulananController extends Controller
         $data['verifikasi'] = '0';
         PresensiBulanan::create($data);
 
+        return redirect()->back()->with('success', 'Rekap Bulanan berhasil dibuat.');
     }
 
-    public function sync(Request $request)
+    public function sync(Request $request, $id)
     {
         $data = $this->check($request);
         $data['kd_presensi_bulanan'] = $request->kd_presensi_bulanan;
@@ -198,16 +188,16 @@ class PresensiBulananController extends Controller
         $data['tahun'] = $request->tahun;
         PresensiBulanan::where('kd_presensi_bulanan', $request->kd_presensi_bulanan)->update($data);
 
-        return redirect()->back()->with('success', 'Rekap Bulanan berhasil diupdate.');
+        return redirect()->back()->with('success', 'Auto Sync Rekap Bulanan berhasil.');
     }
 
-    public function verify(Request $request)
+    public function verify($id)
     {
-        $rekapBulanan = PresensiBulanan::find($request->kd_presensi_bulanan);
-        $rekapBulanan->verifikasi = '1';
-        $rekapBulanan->save();
+        PresensiBulanan::where('kd_presensi_bulanan', $id)->update([
+            'verifikasi' => '1'
+        ]);
 
-        return redirect()->back()->with('success', 'Rekap Bulanan berhasil diverifikasi.');
+        return redirect()->route('presensi-bulanan')->with('success', 'Rekap Bulanan berhasil diverifikasi.');
     }
 
     public function update(Request $request)
@@ -230,6 +220,10 @@ class PresensiBulananController extends Controller
             return redirect()->back()->with('error', $validator->errors()->first());
         }
 
+        if ($request->kd_presensi_bulanan == null) {
+            return redirect()->back()->with('error', 'Rekap Bulanan tidak ditemukan.');
+        }
+
         $rekapBulanan = PresensiBulanan::find($request->kd_presensi_bulanan);
         $rekapBulanan->jumlah_tanggal = $request->jumlah_tanggal;
         $rekapBulanan->jumlah_libur = $request->jumlah_libur;
@@ -242,8 +236,11 @@ class PresensiBulananController extends Controller
         $rekapBulanan->jumlah_jam_izin = $request->jumlah_jam_izin;
         $rekapBulanan->jumlah_hari_lembur = $request->jumlah_hari_lembur;
         $rekapBulanan->jumlah_jam_lembur = $request->jumlah_jam_lembur;
+        if (!$rekapBulanan->isDirty()) {
+            return redirect()->route('presensi.bulanan')->with('success', 'Tidak ada perubahan pada rekap bulanan.');
+        }
         $rekapBulanan->save();
 
-        return redirect()->back()->with('success', 'Rekap Bulanan berhasil diupdate.');
+        return redirect()->route('presensi.bulanan')->with('success', 'Rekap Bulanan berhasil diupdate.');
     }
 }
