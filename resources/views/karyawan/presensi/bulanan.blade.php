@@ -86,8 +86,8 @@
                     <th class="text-center">Jumlah Jam Izin</th>
                     <th class="text-center">Jumlah Hari Lembur</th>
                     <th class="text-center">Jumlah Jam Lembur</th>
-                    <th class="text-center">Verifikasi</th>
-                    <th class="text-center" width="10%">Aksi</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center" width="150px">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -345,7 +345,6 @@
             autoWidth: false,
             pageLength: -1,
             scrollY: '300px',
-            scrollX: true,
             language: {
                 lengthMenu: "Tampilkan _MENU_ entri",
                 zeroRecords: "Tidak ada data presensi yang ditemukan",
@@ -389,11 +388,6 @@
     $('#tombol-batal').on('click', function () {
         toggleEditMode(false);
     });
-
-    // $('#profile-form').on('submit', function (e) {
-    //     e.preventDefault();
-    //     saveProfileData();
-    // });
 
     function toggleEditMode(enable) {
         if (enable) {

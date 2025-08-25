@@ -186,8 +186,12 @@ class PresensiBulananController extends Controller
         $data['kd_presensi_bulanan'] = $request->kd_presensi_bulanan;
         $data['bulan'] = $request->bulan;
         $data['tahun'] = $request->tahun;
-        PresensiBulanan::where('kd_presensi_bulanan', $request->kd_presensi_bulanan)->update($data);
-
+        $presensiBulanan = PresensiBulanan::where('kd_presensi_bulanan', $request->kd_presensi_bulanan)->first();
+        if (!$presensiBulanan->isDirty($data)) {
+            return redirect()->back()->with('success', 'Tidak ada perubahan pada rekap bulanan.');
+        }
+        $presensiBulanan->update($data);
+        
         return redirect()->back()->with('success', 'Auto Sync Rekap Bulanan berhasil.');
     }
 
