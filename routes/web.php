@@ -66,6 +66,9 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::put('barang/{id}/updateStok', [App\Http\Controllers\BarangController::class, 'updateStok'])->name('updateStok');
     Route::resource('stok', App\Http\Controllers\StokController::class);
 
+    ## Jasa
+    Route::resource('jasa', App\Http\Controllers\JasaController::class);
+
     ## Keuangan
     Route::resource('keuangan', App\Http\Controllers\KeuanganController::class);
     Route::resource('kotak', App\Http\Controllers\KotakKeuanganController::class);

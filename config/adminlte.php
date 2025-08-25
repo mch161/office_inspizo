@@ -429,6 +429,12 @@ return [
             ]
         ],
         [
+            'text' => 'Jasa',
+            'icon' => 'fas fa-fw fa-dollar-sign',
+            'can' => 'access-karyawan',
+            'route' => 'jasa.index'
+        ],
+        [
 
             'text' => 'Keuangan',
             'icon' => 'fas fa-fw fa-coins',
