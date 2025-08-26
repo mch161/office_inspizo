@@ -173,10 +173,10 @@ class BarangController extends Controller
 
 
         if ($barang) {
-            return redirect()->route('barang.index')
+            return redirect()->back()
                 ->with('success', 'Barang berhasil diupdate.');
         } else {
-            return redirect()->route('barang.index')
+            return redirect()->back()
                 ->with('error', 'Barang gagal diupdate.');
         }
     }
@@ -193,19 +193,19 @@ class BarangController extends Controller
         if ($request->has('tambah_stok') && $request->tambah_stok > 0) {
             $barang->stok += $request->tambah_stok;
             $barang->save();
-            return redirect()->route('barang.index')->with('success', 'Stok berhasil ditambahkan.');
+            return redirect()->back()->with('success', 'Stok berhasil ditambahkan.');
         }
 
         if ($request->has('kurangi_stok') && $request->kurangi_stok > 0) {
             if ($barang->stok < $request->kurangi_stok) {
-                return redirect()->route('barang.index')->with('error', 'Stok tidak mencukupi untuk dikurangi.');
+                return redirect()->back()->with('error', 'Stok tidak mencukupi untuk dikurangi.');
             }
             $barang->stok -= $request->kurangi_stok;
             $barang->save();
-            return redirect()->route('barang.index')->with('success', 'Stok berhasil dikurangi.');
+            return redirect()->back()->with('success', 'Stok berhasil dikurangi.');
         }
 
-        return redirect()->route('barang.index')->with('error', 'Tidak ada perubahan stok yang dilakukan.');
+        return redirect()->back()->with('error', 'Tidak ada perubahan stok yang dilakukan.');
     }
 
     /**
@@ -218,10 +218,10 @@ class BarangController extends Controller
         $barang->save();
 
         if ($barang) {
-            return redirect()->route('barang.index')
+            return redirect()->back()
                 ->with('success', 'Barang berhasil dihapus.');
         } else {
-            return redirect()->route('barang.index')
+            return redirect()->back()
                 ->with('error', 'Barang gagal dihapus.');
         }
     }
