@@ -80,7 +80,7 @@
         @csrf
         <div class="row">
             @php $config = ['format' => 'YYYY-MM-DD']; @endphp
-            <x-adminlte-input-date name="tanggal" value="{{ date('Y-m-d') }}" :config="$config"
+            <x-adminlte-input-date name="tanggal" id="tanggal-add" value="{{ date('Y-m-d') }}" :config="$config"
                 placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
                 <x-slot name="appendSlot">
                     <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
