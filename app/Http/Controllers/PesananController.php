@@ -10,6 +10,7 @@ use App\Models\Pesanan;
 use App\Models\PesananBarang;
 use App\Models\PesananDetail;
 use App\Models\PesananJasa;
+use App\Models\PesananProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -103,7 +104,6 @@ class PesananController extends Controller
 
     public function detail($pesanan)
     {
-
         $pesanan = Pesanan::find($pesanan);
         $pesanan_detail = PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->first();
         $pesanan_barang = PesananBarang::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
@@ -140,6 +140,13 @@ class PesananController extends Controller
             'end' => $startDateTime->addMinutes(60),
             'color' => '#007bff',
             'kd_karyawan' => Auth::guard('karyawan')->id(),
+            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+        ]);
+
+        PesananProgress::create([
+            'kd_karyawan' => Auth::guard('karyawan')->user()->kd_karyawan,
+            'kd_pesanan' => $request->kd_pesanan,
+            'keterangan' => 'Petugas akan melakukan kunjungan ke pelanggan tanggal ' . $request->tanggal,
             'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
         ]);
 
