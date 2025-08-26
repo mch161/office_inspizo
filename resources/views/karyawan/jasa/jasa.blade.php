@@ -83,7 +83,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->nama_jasa }}</td>
-                                <td>{{ $item->tarif }}</td>
+                                <td>Rp{{ number_format($item->tarif, 0, ',', '.') }}</td>
                                 <td>
                                     <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal"
                                         data-target="#modalEdit" data-id="{{ $item->kd_jasa }}"
