@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Jasa;
 use App\Models\PesananJasa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,8 +13,7 @@ class PesananJasaController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'kd_pesanan_detail' => 'required|exists:pesanan_detail,kd_pesanan_detail',
-            'nama_jasa' => 'required|string',
-            'harga_jasa' => 'required|numeric',
+            'kd_jasa' => 'required|exists:jasa,kd_jasa',
             'jumlah' => 'required|numeric',
         ]);
 
@@ -22,12 +22,14 @@ class PesananJasaController extends Controller
                 ->with('error', 'Jasa gagal ditambahkan: ' . $validator->errors()->first());
         }
 
+        $jasa = Jasa::find($request->kd_jasa);
+
         $pesanan = PesananJasa::create([
             'kd_pesanan_detail' => $request->kd_pesanan_detail,
-            'nama_jasa' => $request->nama_jasa,
-            'harga_jasa' => $request->harga_jasa,
+            'nama_jasa' => $jasa->nama_jasa,
+            'harga_jasa' => $jasa->tarif,
             'jumlah' => $request->jumlah,
-            'subtotal' => $request->harga_jasa * $request->jumlah
+            'subtotal' => $jasa->tarif * $request->jumlah
         ]);
 
         return redirect()->back()->with('success', 'Jasa berhasil ditambahkan');

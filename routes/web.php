@@ -37,7 +37,11 @@ Route::middleware(['auth:karyawan'])->group(function () {
         'destroy' => 'pesanan.barang.destroy',
         'update' => 'pesanan.barang.update',
     ]);
-    Route::resource('pesanan/jasa', App\Http\Controllers\PesananJasaController::class);
+    Route::resource('pesanan/jasa', App\Http\Controllers\PesananJasaController::class)->names([
+        'store' => 'pesanan.jasa.store',
+        'destroy' => 'pesanan.jasa.destroy',
+        'update' => 'pesanan.jasa.update',
+    ]);
     Route::resource('pesanan/{pesanan}/progress', App\Http\Controllers\PesananProgressController::class);
 
     ## Agenda

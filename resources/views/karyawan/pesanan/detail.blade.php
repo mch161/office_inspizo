@@ -110,10 +110,14 @@
     {{-- /barang modal --}}
     {{-- jasa modal --}}
     <x-adminlte-modal id="jasaModal" title="Tambahkan jasa" theme="primary">
-        <form action="{{ route('jasa.store') }}" id="jasaForm">
+        <form action="{{ route('pesanan.jasa.store') }}" id="jasaForm">
             <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
-            <x-adminlte-input type="text" name="nama_jasa" label="Nama jasa" placeholder="Nama Jasa" />
-            <x-adminlte-input type="number" name="harga_jasa" label="Harga jasa" placeholder="Harga" />
+            <x-adminlte-select2 name="kd_jasa" label="Jasa">
+                <option class="text-muted" value="" selected disabled>Cari jasa...</option>
+                @foreach ($jasa as $jasa)
+                    <option value="{{ $jasa->kd_jasa }}">{{ $jasa->nama_jasa }}</option>
+                @endforeach
+            </x-adminlte-select2>
             <x-adminlte-input type="number" name="jumlah" label="Jumlah" placeholder="Jumlah" />
             <x-slot name="footerSlot">
                 <x-adminlte-button theme="success" label="Simpan" type="submit" form="jasaForm" />
@@ -259,7 +263,7 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $jasa->nama_jasa }}</td>
                                         <form class="update-form-jasa"
-                                            action="{{ route('jasa.update', $jasa->kd_pesanan_jasa) }}" method="post">
+                                            action="{{ route('pesanan.jasa.update', $jasa->kd_pesanan_jasa) }}" method="post">
                                             @csrf
                                             @method('PUT')
                                             <input type="hidden" name="kd_jasa" value="{{ $jasa->kd_jasa }}">
@@ -277,7 +281,7 @@
                                         </form>
                                         <td>{{ number_format($jasa->subtotal, 2, ',', '.') }}</td>
                                         <td>
-                                            <form action="{{ route('jasa.destroy', $jasa->kd_pesanan_jasa) }}" method="POST"
+                                            <form action="{{ route('pesanan.jasa.destroy', $jasa->kd_pesanan_jasa) }}" method="POST"
                                                 style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agenda;
 use App\Models\Barang;
+use App\Models\Jasa;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\PesananBarang;
@@ -108,8 +109,9 @@ class PesananController extends Controller
         $pesanan_barang = PesananBarang::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         $pesanan_jasa = PesananJasa::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         $barang = Barang::get()->all();
+        $jasa = Jasa::get()->all();
 
-        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_detail', 'pesanan_barang', 'barang', 'pesanan_jasa'));
+        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_detail', 'pesanan_barang', 'barang', 'jasa', 'pesanan_jasa'));
     }
 
     public function agenda(Request $request)
