@@ -136,7 +136,7 @@ class BarangController extends Controller
             'nama_barang' => 'required|string',
             'hpp' => 'nullable|numeric',
             'harga' => 'nullable|numeric',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]));
 
         if ($validate->fails()) {
