@@ -10,22 +10,83 @@
 @stop
 
 @section('css')
+<style>
+    .date-scroll-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
 
-@endsection
+    .date-scroll-container::-webkit-scrollbar {
+        display: none;
+        /* Chrome, Safari, and Opera */
+    }
+
+    .date-scroll-inner {
+        display: inline-block;
+    }
+
+    .date-btn {
+        display: inline-block;
+        text-align: center;
+        margin: 0 2px;
+        border-radius: 8px;
+        padding: 8px 12px;
+        min-width: 60px;
+        border: 1px solid #dee2e6;
+    }
+
+    .date-btn .day-name {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .date-btn .day-number {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .date-btn.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+</style>
+@stop
 
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Filter Data</h3>
+        <h3 class="card-title">Data Jurnal - {{ $tanggal->isoFormat('D MMMM YYYY') }}</h3>
+        <div class="card-tools">
+            <div class="date" id="monthPicker" data-target-input="nearest">
+                <input type="hidden" class="datetimepicker-input" data-target="#monthPicker" />
+                <button class="btn btn-outline-primary btn-sm" data-target="#monthPicker" data-toggle="datetimepicker">
+                    <i class="fa fa-calendar-alt"></i>
+                </button>
+            </div>
+        </div>
     </div>
     <div class="card-body">
-        <form action="{{ route('jurnalku') }}" method="GET" class="form-inline">
-            <div class="form-group mb-2">
-                <label for="tanggal" class="mr-2">Pilih Tanggal:</label>
-                <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ $tanggal }}">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="date-scroll-container">
+                    <div class="date-scroll-inner">
+                        @foreach($hariBulanIni as $hari)
+                            <a href="{{ route('jurnalku', ['date' => $hari->toDateString()]) }}"
+                                class="btn btn-outline-primary btn-sm date-btn {{ $tanggal->isSameDay($hari) ? 'active' : '' }}">
+                                <div class="day-name">{{ $hari->isoFormat('ddd') }}</div>
+                                <div class="day-number">{{ $hari->day }}</div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary mb-2 ml-2">Tampilkan</button>
-        </form>
+        </div>
     </div>
 </div>
 <div class="card">
@@ -143,6 +204,33 @@
 
 @section('js')
     <script>
+        $('#monthPicker').datetimepicker({
+            format: 'MMMM YYYY',
+            viewMode: 'months',
+            locale: 'id',
+            defaultDate: '{{ $tanggal->toDateString() }}'
+        });
+
+        $('#monthPicker').on('change.datetimepicker', function (e) {
+            if (e.date) {
+                const newDate = e.date.format('YYYY-MM-DD');
+                window.location.href = `{{ route('jurnalku') }}?date=${newDate}`;
+            }
+        });
+        $(document).ready(function () {
+            const $container = $('.date-scroll-container');
+            const $activeButton = $('.date-btn.active');
+
+            if ($activeButton.length) {
+                const containerWidth = $container.width();
+                const buttonPosition = $activeButton.position().left + $container.scrollLeft();
+                const buttonWidth = $activeButton.outerWidth();
+
+                const scrollPosition = buttonPosition - (containerWidth / 2) + (buttonWidth / 2);
+
+                $container.scrollLeft(scrollPosition);
+            }
+        });
         $(document).ready(function () {
             $('#JurnalTable').DataTable({
                 scrollX: true,
@@ -221,7 +309,7 @@
 
                 $('#modalEdit').modal('show');
             @endif
-                        });
+                                                });
         $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
             e.preventDefault();
             let form = $(this).closest('form');

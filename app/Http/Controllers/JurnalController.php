@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use App\Models\Jurnal;
 use Illuminate\Support\Carbon;
@@ -12,23 +13,16 @@ class JurnalController extends Controller
 {
     public function jurnalku(Request $request)
     {
-        $tanggal = null;
-        if ($request->has('tanggal') && $request->input('tanggal') != null) {
-            $tanggal = ($request->input('tanggal') ?? Carbon::now()->format('Y-m-d'));
+        $tanggal = $request->has('date') ? Carbon::parse($request->date) : Carbon::now();
 
-            $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)
-                ->whereDate('tanggal', $tanggal)
-                ->orderBy('dibuat_oleh', 'asc')
-                ->get();
-        } else {
-            $jurnals = Jurnal::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)
-                ->orderBy('tanggal', 'desc')->get();
-        }
+        $jumlah_hari = CarbonPeriod::create($tanggal->copy()->startOfMonth(), $tanggal->copy()->endOfMonth());
 
+        $jurnals = Jurnal::whereDate('tanggal', $tanggal->toDateString())->latest()->get();
 
         return view('karyawan.jurnal.jurnalku', [
-            "jurnals" => $jurnals,
-            "tanggal" => $tanggal
+            'jurnals' => $jurnals,
+            'hariBulanIni' => $jumlah_hari,
+            'tanggal' => $tanggal,
         ]);
     }
 
