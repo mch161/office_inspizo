@@ -133,10 +133,11 @@
             <div class="card mt-4">
                 <div class="card-header">
                     <h3 class="card-title">Detail Pesanan</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
+                    <div class="card-tools float-end">
+                        <a href="{{ route('pesanan.index') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i>
+                            Kembali
+                        </a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -147,10 +148,12 @@
                             <p><strong>Alamat:</strong> {{ $pesanan->pelanggan->alamat }}</p>
                             <p><strong>Telepon:</strong> {{ $pesanan->pelanggan->telepon }}</p>
                         </div>
-                        <a class="btn btn-primary mr-3"
-                            href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
-                                class="fas fa-chart-line"></i> Progress</a>
-                        @if ($pesanan->status == '0')
+                        @if ($pesanan->progres >= '3')
+                            <a class="btn btn-primary mr-3"
+                                href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
+                                    class="fas fa-chart-line"></i> Progress</a>
+                        @endif
+                        @if ($pesanan->status == '0' && $pesanan->progres >= '3')
                             <form action="{{ route('pesanan.complete', ['pesanan' => $pesanan->kd_pesanan]) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Selesaikan</button>
@@ -281,8 +284,8 @@
                                         </form>
                                         <td>{{ number_format($jasa->subtotal, 2, ',', '.') }}</td>
                                         <td>
-                                            <form action="{{ route('pesanan.jasa.destroy', $jasa->kd_pesanan_jasa) }}" method="POST"
-                                                style="display:inline;">
+                                            <form action="{{ route('pesanan.jasa.destroy', $jasa->kd_pesanan_jasa) }}"
+                                                method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm tombol-hapus">
