@@ -163,11 +163,18 @@
                 <div class="date-scroll-container">
                     <div class="date-scroll-inner">
                         @foreach($hariBulanIni as $hari)
-                            <a href="{{ route('jurnalku', ['date' => $hari->toDateString()]) }}"
-                                class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn {{ $tanggal->isSameDay($hari) ? 'active' : '' }}">
-                                <div class="day-name">{{ $hari->isoFormat('ddd') }}</div>
-                                <div class="day-number">{{ $hari->day }}</div>
-                            </a>
+                            @if($hari->isFuture())
+                                <button class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn" disabled>
+                                    <div class="day-name">{{ $hari->isoFormat('ddd') }}</div>
+                                    <div class="day-number">{{ $hari->day }}</div>
+                                </button>
+                            @else
+                                <a href="{{ route('jurnalku', ['date' => $hari->toDateString()]) }}"
+                                    class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn {{ $tanggal->isSameDay($hari) ? 'active' : '' }}">
+                                    <div class="day-name">{{ $hari->isoFormat('ddd') }}</div>
+                                    <div class="day-number">{{ $hari->day }}</div>
+                                </a>
+                            @endif
                         @endforeach
                     </div>
                 </div>
