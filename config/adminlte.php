@@ -349,7 +349,7 @@ return [
                     'can' => 'access-karyawan',
                 ],
                 [
-                    'text' => 'Permintaan',
+                    'text' => 'Pesanan yang belum disetujui',
                     'route' => 'pesanan.permintaan',
                     'icon' => 'fa fas fa-clipboard-list',
                     'can' => 'access-karyawan',
