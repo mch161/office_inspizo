@@ -55,6 +55,92 @@
         color: white;
         border-color: #007bff;
     }
+
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+        list-style: none;
+    }
+
+    .timeline:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 40px;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-icon {
+        position: absolute;
+        left: 40px;
+        top: 0;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #adb5bd;
+        /* Default color */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        z-index: 1;
+    }
+
+    .timeline-item.success .timeline-icon {
+        background-color: #28a745;
+    }
+
+    .timeline-item.info .timeline-icon {
+        background-color: #17a2b8;
+    }
+
+    .timeline-item.warning .timeline-icon {
+        background-color: #ffc107;
+    }
+
+    .timeline-content {
+        margin-left: 75px;
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        padding: 15px;
+        position: relative;
+    }
+
+    .timeline-content:before {
+        content: ' ';
+        height: 0;
+        position: absolute;
+        top: 15px;
+        right: 100%;
+        width: 0;
+        border: medium solid #f8f9fa;
+        border-width: 10px 10px 10px 0;
+        border-color: transparent #f8f9fa transparent transparent;
+    }
+
+    .timeline-content img {
+        max-width: 150px;
+        height: auto;
+        border-radius: 4px;
+        margin-top: 10px;
+    }
+
+    .timeline-time {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
 </style>
 @stop
 
@@ -78,7 +164,7 @@
                     <div class="date-scroll-inner">
                         @foreach($hariBulanIni as $hari)
                             <a href="{{ route('jurnalku', ['date' => $hari->toDateString()]) }}"
-                                class="btn btn-outline-primary btn-sm date-btn {{ $tanggal->isSameDay($hari) ? 'active' : '' }}">
+                                class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn {{ $tanggal->isSameDay($hari) ? 'active' : '' }}">
                                 <div class="day-name">{{ $hari->isoFormat('ddd') }}</div>
                                 <div class="day-number">{{ $hari->day }}</div>
                             </a>
@@ -91,49 +177,42 @@
 </div>
 <div class="card">
     <div class="card-body">
-        <x-adminlte-button label="Tambahkan Jurnal" class="float-right mb-2 bg-blue" data-toggle="modal"
-            data-target="#modalTambah" />
-        <table id="JurnalTable" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th width="5%">No.</th>
-                    <th width="100px">Tanggal</th>
-                    <th width="100px">Jam</th>
-                    <th width="150px">Nama Karyawan</th>
-                    <th>Isi Jurnal</th>
-                    <th width="150px">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($jurnals as $jurnal)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $jurnal->tanggal }}</td>
-                        <td>{{ $jurnal->jam }}</td>
-                        <td>{{ $jurnal->dibuat_oleh }}</td>
-                        <td>{!! $jurnal->isi_jurnal !!}</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#modalEdit"
+        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTambah"><i
+                class="fas fa-plus"></i> Tambahkan Jurnal</button>
+        <ul class="timeline">
+            @forelse ($jurnals as $jurnal)
+                <li class="timeline-item info">
+                    <div class="timeline-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div>
+                            <button class="btn btn-xs btn-primary tombol-edit" data-toggle="modal" data-target="#modalEdit"
                                 data-id="{{ $jurnal->kd_jurnal }}" data-tanggal="{{ $jurnal->tanggal }}"
                                 data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
-                                <i class="fas fa-edit"></i>
-                                Edit
+                                <i class="fas fa-edit"> Edit</i>
                             </button>
-
-                            <form action="{{ route('jurnal.destroy', $jurnal->kd_jurnal) }}" method="POST"
-                                style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus">
-                                    <i class="fas fa-trash"></i>
-                                    Hapus</button>
-                            </form>
-
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                            <button class="btn btn-xs btn-danger tombol-hapus" data-id="{{ $jurnal->kd_jurnal }}">
+                                <i class="fas fa-trash"> Hapus</i>
+                            </button>
+                        </div>
+                        <p class="mb-1">{!! $jurnal->isi_jurnal !!}</p>
+                        <span class="timeline-time">
+                            {{ $jurnal->jam }}
+                        </span>
+                    </div>
+                </li>
+            @empty
+                <li class="timeline-item warning">
+                    <div class="timeline-icon">
+                        <i class="fas fa-hourglass-start"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <p class="mb-1">Belum ada jurnal</p>
+                    </div>
+                </li>
+            @endforelse
+        </ul>
     </div>
 </div>
 <x-adminlte-modal id="modalTambah" title="Tambahkan Jurnal" theme="success" icon="fas fa-clipboard" size='lg'>
@@ -232,21 +311,6 @@
             }
         });
         $(document).ready(function () {
-            $('#JurnalTable').DataTable({
-                scrollX: true,
-                scrollCollapse: true,
-                pageLength: 10,
-                lengthChange: false,
-                language: {
-                    lengthMenu: "Tampilkan _MENU_ entri",
-                    zeroRecords: "Tidak ada data yang ditemukan",
-                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                    infoEmpty: "Tidak ada data yang tersedia",
-                    infoFiltered: "(difilter dari _MAX_ total entri)",
-                    search: "Cari:",
-                    searchPlaceholder: "Cari data..."
-                }
-            });
             var summernoteOptions = {
                 height: 250,
                 placeholder: 'Masukkan keterangan jurnal di sini...',
@@ -283,6 +347,25 @@
                 form.attr('action', updateUrl);
             });
 
+            $('.tombol-hapus').on('click', function () {
+                e.preventDefault();
+                let form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
             @if ($errors->any() && session('invalid_jurnal'))
                 const Toast = Swal.mixin({
                     toast: true,
@@ -309,70 +392,40 @@
 
                 $('#modalEdit').modal('show');
             @endif
-                                                });
-        $('#JurnalTable').on('click', '.tombol-hapus', function (e) {
-            e.preventDefault();
-            let form = $(this).closest('form');
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            })
-        });
-        $(document).ready(function () {
-            const timeInput = $('#jam');
-            function updateRealTime() {
-                const now = new Date();
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-
-                timeInput.val(`${hours}:${minutes}`);
-            }
-            setInterval(updateRealTime, 1000);
-            updateRealTime();
-        });
-        @if (session()->has('success'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-            Toast.fire({
-                icon: 'success',
-                text: '{{ session('success') }}',
-            })
-        @endif
-            @if (session()->has('error'))
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
+                @if (session()->has('success'))
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'success',
+                        text: '{{ session('success') }}',
+                    });
+                @endif
+                @if (session()->has('error'))
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'error',
+                        text: '{{ session('error') }}',
+                    });
+                @endif
                 });
-                Toast.fire({
-                    icon: 'error',
-                    text: '{{ session('error') }}',
-                })
-            @endif
     </script>
 @endsection

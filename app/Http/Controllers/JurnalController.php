@@ -87,7 +87,7 @@ class JurnalController extends Controller
         $jurnal->isi_jurnal = $request->input('isi_jurnal_edit');
         $jurnal->save();
 
-        return redirect()->route('jurnalku')->with('success', 'Jurnal berhasil diupdate.');
+        return redirect()->back()->with('success', 'Jurnal berhasil diupdate.');
     }
 
     public function destroy($id)
