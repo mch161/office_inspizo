@@ -17,7 +17,7 @@ class JurnalController extends Controller
 
         $jumlah_hari = CarbonPeriod::create($tanggal->copy()->startOfMonth(), $tanggal->copy()->endOfMonth());
 
-        $jurnals = Jurnal::whereDate('tanggal', $tanggal->toDateString())->latest()->get();
+        $jurnals = Jurnal::where('kd_karyawan', Auth::user()->kd_karyawan)->whereDate('tanggal', $tanggal->toDateString())->latest()->get();
 
         return view('karyawan.jurnal.jurnalku', [
             'jurnals' => $jurnals,
@@ -28,21 +28,16 @@ class JurnalController extends Controller
 
     public function jurnal_kita(Request $request)
     {
-        $tanggal = null;
-        if ($request->has('tanggal') && $request->input('tanggal') != null) {
-            $tanggal = ($request->input('tanggal') ?? Carbon::now()->format('Y-m-d'));
+        $tanggal = $request->has('date') ? Carbon::parse($request->date) : Carbon::now();
 
-            $jurnals = Jurnal::whereDate('tanggal', $tanggal)
-                ->orderBy('dibuat_oleh', 'asc')
-                ->get();
-        } else {
-            $jurnals = Jurnal::orderBy('tanggal', 'desc')->get();
-        }
+        $jumlah_hari = CarbonPeriod::create($tanggal->copy()->startOfMonth(), $tanggal->copy()->endOfMonth());
 
+        $jurnals = Jurnal::whereDate('tanggal', $tanggal->toDateString())->latest()->get();
 
         return view('karyawan.jurnal.jurnal_kita', [
-            "jurnals" => $jurnals,
-            "tanggal" => $tanggal
+            'jurnals' => $jurnals,
+            'hariBulanIni' => $jumlah_hari,
+            'tanggal' => $tanggal,
         ]);
     }
 
