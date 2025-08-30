@@ -422,6 +422,11 @@ return [
                     'icon' => 'fas fa-fw fa-box-open'
                 ],
                 [
+                    'text' => 'Peminjaman Barang',
+                    'route' => 'peminjaman.index',
+                    'icon' => 'fas fa-fw fa-box'
+                ],
+                [
                     'text' => 'Riwayat Stok',
                     'route' => 'stok.index',
                     'icon' => 'fas fa-fw fa-history'
