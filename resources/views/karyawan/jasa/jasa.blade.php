@@ -74,7 +74,7 @@
                         <tr>
                             <th width="50px">No</th>
                             <th>Nama</th>
-                            <th>Harga</th>
+                            <th>Tarif</th>
                             <th width="150px">Aksi</th>
                         </tr>
                     </thead>
