@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Karyawan;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use App\Models\Jurnal;
@@ -28,16 +29,47 @@ class JurnalController extends Controller
 
     public function jurnal_kita(Request $request)
     {
+        if ($request->has('kd_karyawan')) {
+
+
+            if ($request->bulan !== null) {
+                $jurnals = Jurnal::where('kd_karyawan', $request->kd_karyawan)->whereMonth('tanggal', $request->bulan)->whereYear('tanggal', $request->tahun)->orderBy('tanggal', 'desc')->orderBy('jam', 'desc')->latest()->get();
+                $tanggal = null;
+                $jumlah_hari = CarbonPeriod::create(Carbon::create($request->tahun, $request->bulan, 1), Carbon::create($request->tahun, $request->bulan, 1)->endOfMonth());
+            } else {
+                $tanggal = $request->has('date') ? Carbon::parse($request->date) : Carbon::now();
+                $jurnals = Jurnal::where('kd_karyawan', $request->kd_karyawan)->whereDate('tanggal', $tanggal->toDateString())->orderBy('jam', 'desc')->latest()->get();
+                $jumlah_hari = CarbonPeriod::create($tanggal->copy()->startOfMonth(), $tanggal->copy()->endOfMonth());
+            }
+
+            $bulan = $request->bulan ?? null;
+            $tahun = $request->tahun ?? null;
+            $karyawans = Karyawan::all();
+            $karyawan = Karyawan::where('kd_karyawan', $request->kd_karyawan)->first();
+
+            return view('karyawan.jurnal.jurnal_kita', [
+                'jurnals' => $jurnals,
+                'hariBulanIni' => $jumlah_hari,
+                'tanggal' => $tanggal,
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'karyawans' => $karyawans,
+                'karyawan' => $karyawan
+            ]);
+        }
         $tanggal = $request->has('date') ? Carbon::parse($request->date) : Carbon::now();
 
         $jumlah_hari = CarbonPeriod::create($tanggal->copy()->startOfMonth(), $tanggal->copy()->endOfMonth());
 
-        $jurnals = Jurnal::whereDate('tanggal', $tanggal->toDateString())->latest()->get();
+        $jurnals = Jurnal::whereDate('tanggal', $tanggal->toDateString())->orderBy('jam', 'desc')->get();
+
+        $karyawans = Karyawan::all();
 
         return view('karyawan.jurnal.jurnal_kita', [
             'jurnals' => $jurnals,
             'hariBulanIni' => $jumlah_hari,
             'tanggal' => $tanggal,
+            'karyawans' => $karyawans
         ]);
     }
 

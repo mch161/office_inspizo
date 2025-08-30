@@ -4,6 +4,7 @@
 
 @section('plugins.Sweetalert2', true)
 @section('plugins.Summernote', true)
+@section('plugins.Select2', true)
 
 @section('content_header')
 <h1>Jurnal</h1>
@@ -147,13 +148,19 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Data Jurnal - {{ $tanggal->isoFormat('D MMMM YYYY') }}</h3>
+        <h3 class="card-title">Data Jurnal -
+            {{ $tanggal ? $tanggal->locale('id_ID')->translatedFormat('d F Y') : \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id_ID')->translatedFormat('F Y')}}
+        </h3>
         <div class="card-tools">
-            <div class="date" id="monthPicker" data-target-input="nearest">
-                <input type="hidden" class="datetimepicker-input" data-target="#monthPicker" />
-                <button class="btn btn-outline-primary btn-sm" data-target="#monthPicker" data-toggle="datetimepicker">
-                    <i class="fa fa-calendar-alt"></i>
-                </button>
+            <div class="input-group input-group-sm">
+                <button data-toggle="modal" data-target="#modalFilter" class="btn btn-outline-primary mr-1"><i
+                        class="fas fa-filter"></i></button>
+                <div class="date" id="monthPicker" data-target-input="nearest">
+                    <input type="hidden" class="datetimepicker-input" data-target="#monthPicker" />
+                    <button class="btn btn-outline-primary" data-target="#monthPicker" data-toggle="datetimepicker">
+                        <i class="fa fa-calendar-alt"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -164,13 +171,15 @@
                     <div class="date-scroll-inner">
                         @foreach($hariBulanIni as $hari)
                             @if($hari->isFuture())
-                                <button class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn" disabled>
+                                <button
+                                    class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn"
+                                    disabled>
                                     <div class="day-name">{{ $hari->isoFormat('ddd') }}</div>
                                     <div class="day-number">{{ $hari->day }}</div>
                                 </button>
                             @else
-                                <a href="{{ route('jurnal_kita', ['date' => $hari->toDateString()]) }}"
-                                    class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn {{ $tanggal->isSameDay($hari) ? 'active' : '' }}">
+                                <a href="{{ route('jurnal_kita', isset($karyawan) ? ['date' => $hari->toDateString(), 'kd_karyawan' => $karyawan] : ['date' => $hari->toDateString()]) }}"
+                                    class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn {{ $tanggal && $tanggal->isSameDay($hari) ? 'active' : '' }}">
                                     <div class="day-name">{{ $hari->isoFormat('ddd') }}</div>
                                     <div class="day-number">{{ $hari->day }}</div>
                                 </a>
@@ -193,7 +202,8 @@
                     <div class="timeline-content">
                         <p class="mb-1">{!! $jurnal->isi_jurnal !!}</p>
                         <span class="timeline-time">
-                            {{ $jurnal->tanggal }}({{ $jurnal->jam }}) by {{ $jurnal->dibuat_oleh }}
+                            {{ \Carbon\Carbon::parse($jurnal->tanggal)->isoFormat('dddd, D MMMM YYYY') }}
+                            ({{ $jurnal->jam }}) by {{ $jurnal->dibuat_oleh }}
                         </span>
                     </div>
                 </li>
@@ -210,21 +220,75 @@
         </ul>
     </div>
 </div>
+
+<x-adminlte-modal id="modalFilter" title="Filter Jurnal" theme="primary" icon="fas fa-filter" size="lg" v-centered>
+    <form action="{{ route('jurnal_kita') }}" method="GET" id="filterForm">
+        <div class="row">
+            <div class="col-md-12">
+                @php
+                    $config = [
+                        "placeholder" => "Cari atau ketik nama karyawan...",
+                        "allowClear" => true,
+                        "dropdownParent" => "#modalFilter",
+                    ];
+                @endphp
+                <x-adminlte-select2 name="kd_karyawan" id="kd_karyawan" :config="$config" label="Karyawan">
+                    <option class="text-muted" value="" @if(request()->query('kd_karyawan') == null) selected disabled
+                    @endif>Cari karyawan...</option>
+                    @foreach ($karyawans as $karyawan)
+                        <option value="{{ $karyawan->kd_karyawan }}"
+                            @if(request()->query('kd_karyawan') == $karyawan->kd_karyawan) selected @endif>
+                            {{ $karyawan->nama }}</option>
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
+            <div class="col-md-6">
+                <select name="bulan" id="bulan" class="form-control">
+                    <option value="" selecteddisabled>Pilih bulan...</option>
+                    <option value="01">Januari</option>
+                    <option value="02">Februari</option>
+                    <option value="03">Maret</option>
+                    <option value="04">April</option>
+                    <option value="05">Mei</option>
+                    <option value="06">Juni</option>
+                    <option value="07">Juli</option>
+                    <option value="08">Agustus</option>
+                    <option value="09">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <input type="number" name="tahun" id="tahun" class="form-control" placeholder="Masukkan tahun..."
+                    value="{{ date('Y') }}">
+            </div>
+        </div>
+        <x-slot name="footerSlot">
+            <x-adminlte-button theme="success" label="Filter" type="submit" form="filterForm" />
+            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+        </x-slot>
+    </form>
+</x-adminlte-modal>
 @stop
 
 @section('js')
     <script>
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
         $('#monthPicker').datetimepicker({
             format: 'MMMM YYYY',
             viewMode: 'months',
             locale: 'id',
-            defaultDate: '{{ $tanggal->toDateString() }}'
+            defaultDate: '{{ $tanggal ? $tanggal->toDateString() : now()->toDateString() }}'
         });
 
         $('#monthPicker').on('change.datetimepicker', function (e) {
             if (e.date) {
                 const newDate = e.date.format('YYYY-MM-DD');
-                window.location.href = `{{ route('jurnal_kita') }}?date=${newDate}`;
+                const kd_karyawan = $('#kd_karyawan').val() ? `&kd_karyawan=${$('#kd_karyawan').val()}` : '';
+                window.location.href = `{{ route('jurnal_kita') }}?date=${newDate}${kd_karyawan}`;
             }
         });
         $(document).ready(function () {
@@ -357,6 +421,6 @@
                         text: '{{ session('error') }}',
                     });
                 @endif
-                });
+                            });
     </script>
 @endsection
