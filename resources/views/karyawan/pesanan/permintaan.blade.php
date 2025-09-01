@@ -33,21 +33,46 @@
                             <td>{{ Str::limit($pesanan->deskripsi_pesanan, 50) }}</td>
                             <td>{{ $pesanan->tanggal}}</td>
                             <td class="text-center">
-                                <span class="badge badge-warning">Menunggu</span>
+                                @if ($pesanan->status == '2')
+                                    <span class="badge badge-danger">Dibatalkan</span>
+                                @else
+                                    <span class="badge badge-warning">Menunggu</span>
+                                @endif
                             </td>
                             <td>
-                                <form action="{{ route('pesanan.accept', $pesanan->kd_pesanan) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success btn-sm accept-btn  "><i
-                                            class="fas fa-check"></i></button>
-                                </form>
+                                @if ($pesanan->status == '0')
+                                    <form action="{{ route('pesanan.update', $pesanan->kd_pesanan) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="progres" value="2">
+                                        <button type="submit" class="btn btn-success btn-sm accept-btn  "><i
+                                                class="fas fa-check"></i></button>
+                                    </form>
+                                    <form action="{{ route('pesanan.update', $pesanan->kd_pesanan) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="2">
+                                        <button type="submit" class="btn btn-danger btn-sm batalkan-btn"><i
+                                                class="fas fa-times"></i></button>
+                                    </form>
+                                @endif
+                                @if ($pesanan->status == '2')
+                                    <form action="{{ route('pesanan.destroy', $pesanan->kd_pesanan) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm hapus-btn"><i
+                                                class="fas fa-trash"></i></button>
+                                    </form>
+                                @endif
                             </td>
                     @empty
-                        <tr>
-                            <td colspan="6" class="text-center"><span>Tidak ada data</span></td>
-                        </tr>
-                    @endforelse
+                            <tr>
+                                <td colspan="6" class="text-center"><span>Tidak ada data</span></td>
+                            </tr>
+                        @endforelse
                     </tr>
                 </tbody>
             </table>
@@ -65,18 +90,26 @@
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
         });
 
-        $('#pesananTable').on('click', '.accept-btn', function (e) {
+        $('#pesananTable').on('click', '.accept-btn, .batalkan-btn, .hapus-btn', function (e) {
             e.preventDefault();
             let form = $(this).closest('form');
+            let title = $(this).hasClass('accept-btn') ? 'Terima Pesanan' : ($(this).hasClass('batalkan-btn') ? 'Batalkan Pesanan' : 'Hapus Pesanan');
+            let text = $(this).hasClass('hapus-btn') ? 'Data yang dihapus tidak dapat dikembalikan!' : 'Data yang di ganti tidak dapat dikembalikan!';
+            let icon = $(this).hasClass('hapus-btn') ? 'warning' : 'question';
+            let confirmButtonText = $(this).hasClass('accept-btn') ? 'Ya, Terima!' : ($(this).hasClass('batalkan-btn') ? 'Ya, Batalkan!' : 'Ya, Hapus!');
+            let cancelButtonText = 'Batal';
+            let confirmButtonColor = $(this).hasClass('accept-btn') ? '#28a745' : ($(this).hasClass('batalkan-btn') ? '#3085d6' : '#d33');
+            let cancelButtonColor = $(this).hasClass('hapus-btn') ? '#28a745' : '#d33';
+
             Swal.fire({
-                title: 'Terima Pesanan',
-                text: "Data yang di ganti tidak dapat dikembalikan!",
-                icon: 'question',
+                title: title,
+                text: text,
+                icon: icon,
                 showCancelButton: true,
-                confirmButtonColor: '#28a745',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Terima!',
-                cancelButtonText: 'Batal'
+                confirmButtonColor: confirmButtonColor,
+                cancelButtonColor: cancelButtonColor,
+                confirmButtonText: confirmButtonText,
+                cancelButtonText: cancelButtonText
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -100,19 +133,19 @@
                 text: '{{ session('success') }}',
             })
         @endif
-        @if (session()->has('error'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-            });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('error') }}',
-            })
-        @endif
+            @if (session()->has('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                })
+            @endif
     });
 </script>
 @stop

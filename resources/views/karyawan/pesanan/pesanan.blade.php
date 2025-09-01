@@ -43,12 +43,31 @@
                                 @elseif ($pesanan->status == 0 && $pesanan->progres == 3)
                                     <span class="badge bg-secondary">Pesanan Diproses</span>
                                 @elseif ($pesanan->status == 2)
-                                    <span class="badge bg-danger">Batal</span>
+                                    <span class="badge bg-danger">Pesanan Dibatalkan</span>
                                 @endif
                             </td>
                             <td>
                                 <a href="{{ route('pesanan.detail', $pesanan->kd_pesanan)}}"
                                     class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
+                                @if ($pesanan->status == 0)
+                                    <form action="{{ route('pesanan.update', $pesanan->kd_pesanan) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="2">
+                                        <button type="submit" class="btn btn-danger btn-sm batalkan-btn"><i
+                                                class="fas fa-times"></i></button>
+                                    </form>
+                                @endif
+                                @if ($pesanan->status == '2')
+                                    <form action="{{ route('pesanan.destroy', $pesanan->kd_pesanan) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm hapus-btn"><i
+                                                class="fas fa-trash"></i></button>
+                                    </form>
+                                @endif
                                 @if ($pesanan->status == 0 && $pesanan->progres == 2)
                                     <button class="btn btn-sm btn-warning agenda-btn" data-toggle="modal"
                                         data-target="#agendaModal" data-id="{{ $pesanan->kd_pesanan }}"
@@ -102,7 +121,7 @@
             <input type="hidden" name="kd_pesanan" id="kd_pesanan">
             <label for="title">Nama</label>
             <input class="form-control" type="text" name="title" id="title" placeholder="Nama Agenda" required>
-            
+
             @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
             <x-adminlte-input-date name="tanggal" id="tanggal-agenda2" :config="$configDate"
                 placeholder="Pilih tanggal..." label="Tanggal Janji Temu" igroup-size="md" required>
@@ -136,6 +155,32 @@
         $.ajaxSetup({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
         });
+        $('#pesananTable').on('click', '.batalkan-btn, .hapus-btn', function (e) {
+            e.preventDefault();
+            let form = $(this).closest('form');
+            let title = $(this).hasClass('batalkan-btn') ? 'Batalkan Pesanan' : 'Hapus Pesanan';
+            let text = $(this).hasClass('hapus-btn') ? 'Data yang dihapus tidak dapat dikembalikan!' : 'Data yang di ganti tidak dapat dikembalikan!';
+            let icon = $(this).hasClass('hapus-btn') ? 'warning' : 'question';
+            let confirmButtonText = $(this).hasClass('batalkan-btn') ? 'Ya, Batalkan!' : 'Ya, Hapus!';
+            let cancelButtonText = 'Batal';
+            let confirmButtonColor = $(this).hasClass('batalkan-btn') ? '#3085d6' : '#d33';
+            let cancelButtonColor = $(this).hasClass('hapus-btn') ? '#28a745' : '#d33';
+
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon,
+                showCancelButton: true,
+                confirmButtonColor: confirmButtonColor,
+                cancelButtonColor: cancelButtonColor,
+                confirmButtonText: confirmButtonText,
+                cancelButtonText: cancelButtonText
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            })
+        });
         @if (session()->has('success'))
             const Toast = Swal.mixin({
                 toast: true,
@@ -153,19 +198,19 @@
                 text: '{{ session('success') }}',
             })
         @endif
-        @if (session()->has('error'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-            });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('error') }}',
-            })
-        @endif
+            @if (session()->has('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                })
+            @endif
 
         $('.agenda-btn').on('click', function () {
             var tanggal = $(this).data('tanggal');

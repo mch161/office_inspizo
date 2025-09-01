@@ -23,10 +23,8 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('jurnalku', [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
 
     ## Pesanan
-    Route::get('pesanan', [App\Http\Controllers\PesananController::class, 'index'])->name('pesanan.index');
     Route::get('pesanan/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('pesanan.permintaan');
-    Route::post('pesanan', [App\Http\Controllers\PesananController::class, 'store'])->name('pesanan.store');
-    Route::post('pesanan/{pesanan}/accept', [App\Http\Controllers\PesananController::class, 'accept'])->name('pesanan.accept');
+    Route::resource('pesanan', App\Http\Controllers\PesananController::class);
     Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
     Route::post('pesanan/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('pesanan.complete');
 

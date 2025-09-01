@@ -33,7 +33,7 @@ class PesananController extends Controller
 
     public function permintaan()
     {
-        $pesanan = Pesanan::where('progres', '1')->get();
+        $pesanan = Pesanan::where('progres', '1')->where('status', '!=', '1')->get();
 
         return view('karyawan.pesanan.permintaan', [
             "pesanan" => $pesanan
@@ -90,16 +90,6 @@ class PesananController extends Controller
             return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil dibuat.');
         }
         return redirect()->route('pesanan.index')->with('error', 'Pesanan gagal dibuat.');
-    }
-
-
-    public function accept($pesanan)
-    {
-        $p = Pesanan::find($pesanan);
-        $p->progres = '2';
-        $p->save();
-
-        return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil diterima.');
     }
 
     public function detail($pesanan)
@@ -186,16 +176,33 @@ class PesananController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Pesanan $pesanan)
     {
-        //
+        if ($request->has('progres')) {
+            $pesanan->update([
+                'progres' => $request->progres
+            ]);
+
+            return redirect()->back()->with('success', 'Pesanan berhasil diterima.');
+        }
+        if ($request->has('status')) {
+            $pesanan->update([
+                'status' => $request->status
+            ]);
+
+            return redirect()->back()->with('success', 'Pesanan berhasil dibatalkan.');
+        }
+
+        return redirect()->back()->with('error', 'Terjadi kesalahan.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Pesanan $pesanan)
     {
-        //
+        $pesanan->delete();
+
+        return redirect()->back()->with('success', 'Pesanan berhasil dihapus.');
     }
 }
