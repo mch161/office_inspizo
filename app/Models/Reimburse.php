@@ -16,8 +16,10 @@ class Reimburse extends Model
         'nominal',
         'foto',
         'keterangan',
+        'kategori',
         'status',
         'bukti_transfer',
+        'kotak',
         'dibuat_oleh'
     ];
 

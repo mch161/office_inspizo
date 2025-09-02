@@ -4,6 +4,7 @@
 
 @section('plugins.Sweetalert2', true)
 @section('plugins.Summernote', true)
+@section('plugins.Select2', true)
 
 @section('content_header')
 <h1>Form Reimburse</h1>
@@ -36,46 +37,68 @@
             <form action="{{ route('reimburse.store') }}" method="POST" id="reimburseForm" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
-                    @php $config = ['format' => 'YYYY-MM-DD']; @endphp
-                    <x-adminlte-input-date name="tanggal" value="{{ date('Y-m-d') }}" :config="$config"
-                        placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" clas required>
-                        <x-slot name="appendSlot">
-                            <div class="input-group-text bg-gray mr-3"><i class="fas fa-calendar-day"></i></div>
-                        </x-slot>
-                    </x-adminlte-input-date>
+                    <div class="form-group col-md-4">
+                        @php $config = ['format' => 'YYYY-MM-DD']; @endphp
+                        <x-adminlte-input-date name="tanggal" value="{{ date('Y-m-d') }}" :config="$config"
+                            placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" clas required>
+                            <x-slot name="appendSlot">
+                                <div class="input-group-text bg-gray mr-3"><i class="fas fa-calendar-day"></i></div>
+                            </x-slot>
+                        </x-adminlte-input-date>
+                    </div>
+                    <div class="form-group col-md-4">
+                        @php $config = ['format' => 'HH:mm']; @endphp
+                        <x-adminlte-input-date name="jam" id="jam" :config="$config" placeholder="Pilih jam..." label="Jam"
+                            igroup-size="md" required>
+                            <x-slot name="appendSlot">
+                                <div class="input-group-text bg-gray"><i class="fas fa-clock"></i></div>
+                            </x-slot>
+                        </x-adminlte-input-date>
+                    </div>
+                    <div class="mb-3 col-md-12">
+                        <img id="preview" src="" alt="Image preview"
+                            style="max-width: 20%; display: block; padding: 5px;display:none;">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <x-adminlte-input-file name="foto" label="Nota (Kosongkan jika tidak ada)"
+                            placeholder="Pilih file..." show-file-name
+                            onchange="documen.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
 
-                    @php $config = ['format' => 'HH:mm']; @endphp
-                    <x-adminlte-input-date name="jam" id="jam" :config="$config" placeholder="Pilih jam..." label="Jam"
-                        igroup-size="md" required>
-                        <x-slot name="appendSlot">
-                            <div class="input-group-text bg-gray"><i class="fas fa-clock"></i></div>
-                        </x-slot>
-                    </x-adminlte-input-date>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <x-adminlte-input name="nominal" label="Nominal" placeholder="10000" min='0' type="number">
+                            <x-slot name="prependSlot">
+                                <div class="input-group-text bg-gray">
+                                    <i class="fas"></i>Rp
+                                </div>
+                            </x-slot>
+                        </x-adminlte-input>
+                    </div>
+                    <div class="form-group col-md-6">
+                        @php
+                            $kategori = App\Models\Keuangan_Kategori::all();
+                            $select2 = [
+                                'placeholder' => 'Pilih kategori...',
+                                'allowClear' => true
+                            ]
+                        @endphp
+                        <x-adminlte-select2 name="kategori" :config="$select2" label="Kategori" required>
+                            <option value="" disabled selected>Pilih Kategori</option>
+                            @foreach ($kategori as $item)
+                                <option value="{{ $item->kd_kategori }}">{{ $item->nama }}</option>
+                            @endforeach
+                        </x-adminlte-select2>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <x-adminlte-textarea name="keterangan" label="Keterangan"
+                            placeholder="Tuliskan keterangan reimburse Anda di sini..."></x-adminlte-textarea>
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <img id="preview" src="" alt="Image preview"
-                        style="max-width: 20%; display: block; padding: 5px;display:none;">
-                </div>
-
-                <x-adminlte-input-file name="foto" label="Nota (Kosongkan jika tidak ada)" placeholder="Pilih file..."
-                    show-file-name
-                    onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
-
-                <x-adminlte-input name="nominal" label="Nominal" placeholder="10000" min='0' type="number">
-                    <x-slot name="prependSlot">
-                        <div class="input-group-text bg-gray">
-                            <i class="fas"></i>Rp
-                        </div>
-                    </x-slot>
-                </x-adminlte-input>
-
-                <x-adminlte-textarea name="keterangan" label="Keterangan"
-                    placeholder="Tuliskan keterangan reimburse Anda di sini..."></x-adminlte-textarea>
 
                 <div class="mt-4">
                     <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Kirim</button>
-                    <a href="{{ route('reimburse.form') }}" class="btn btn-danger"><i class="fas fa-times"></i> Batal</a>
+                    <a href="{{ route('reimburse.form') }}" class="btn btn-danger"><i class="fas fa-times"></i>
+                        Batal</a>
                 </div>
             </form>
         </div>
@@ -100,6 +123,9 @@
                     searchPlaceholder: "Cari data..."
                 }
             });
+        });
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
         });
         $(document).ready(function () {
             $('.tombol-edit').on('click', function () {
@@ -146,7 +172,7 @@
 
                 $('#modalEdit').modal('show');
             @endif
-        });
+                                    });
         $('#reimburseTable').on('click', '.tombol-hapus', function (e) {
             e.preventDefault();
             let form = $(this).closest('form');

@@ -18,6 +18,9 @@ class Keuangan extends Model
         'keluar',
         'kd_kotak',
         'kd_kategori',
+        'keterangan',
+        'tanggal',
+        'dibuat_oleh'
     ];
 
     public function karyawan()

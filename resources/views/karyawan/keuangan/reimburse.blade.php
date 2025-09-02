@@ -5,12 +5,12 @@
 @section('content_header')
 <h1>Table Reimburse</h1>
 @stop
-{{-- Include SweetAlert2 and DataTables plugins --}}
+
 @section('plugins.Sweetalert2', true)
 @section('plugins.Datatables', true)
+@section('plugins.Select2', true)
 
 @section('css')
-    {{-- Custom styles for a polished table appearance --}}
     <style>
         .card {
             border-radius: .5rem;
@@ -64,10 +64,12 @@
                     <th class="text-left">Foto</th>
                     <th class="text-left">Karyawan</th>
                     <th class="text-left">Keterangan</th>
+                    <th class="text-left">Kategori</th>
                     <th class="text-left">Tanggal</th>
                     <th width="10%" class="text-left">Status</th>
                     <th class="text-left">Bukti Transfer</th>
                     @if (Auth::user()->role == 'superadmin')
+                        <th class="text-left">Kotak</th>
                         <th width="15%" class="text-left">Aksi</th>
                     @endif
                 </tr>
@@ -90,6 +92,7 @@
                         </td>
                         <td class="text-left">{{ App\Models\Karyawan::find($item->kd_karyawan)->nama }}</td>
                         <td class="keterangan-column text-left">{!! $item->keterangan !!}</td>
+                        <td class="text-left">{{ App\Models\Keuangan_Kategori::find($item->kategori)->nama }}</td>
                         <td class="text-left">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
                         <td class="text-left">
                             @if ($item->status == '0')
@@ -111,6 +114,7 @@
                             @endif
                         </td>
                         @if (Auth::user()->role == 'superadmin')
+                            <td>{{ App\Models\Keuangan_Kotak::find($item->kotak)->nama ?? '-' }}</td>
                             <td class="text-left">
                                 @if ($item->status == '0')
                                     <button class="btn btn-success btn-sm tombol-selesaikan" data-toggle="modal"
@@ -142,27 +146,45 @@
         </div>
     </div>
 </div>
+@if (Auth::user()->role == 'superadmin')
+    <x-adminlte-modal id="selesaikanModal" title="Bukti Transfer" theme="primary" icon="fas fa-edit" size='lg'>
+        <form method="POST" id="form-selesaikan" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="id" id="id" value="">
+            <input type="hidden" name="status" value="1">
+            <div class="mb-3">
+                <img id="preview" src="" alt="Image preview"
+                    style="max-width: 20%; display: block; padding: 5px;display:none;">
+            </div>
+            <div class="form-group">
+                <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name
+                    onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
+            </div>
+            <div class="form-group">
+                @php
+                    $kotak = App\Models\Keuangan_Kotak::all();
+                    $select2 = [
+                        'placeholder' => 'Pilih Kotak...',
+                        'allowClear' => true,
+                        'dropdownParent' => '#selesaikanModal',
+                    ];
+                @endphp
+                <x-adminlte-select2 name="kotak" :config="$select2" label="Kotak" required>
+                    <option value="" disabled selected>Pilih Kotak</option>
+                    @foreach ($kotak as $item)
+                        <option value="{{ $item->kd_kotak }}">{{ $item->nama }}</option>
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
+            <x-slot name="footerSlot">
+                <x-adminlte-button theme="primary" label="Simpan Perubahan" type="submit" form="form-selesaikan" />
+                <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+            </x-slot>
+        </form>
+    </x-adminlte-modal>
+@endif
 
-<x-adminlte-modal id="selesaikanModal" title="Bukti Transfer" theme="primary" icon="fas fa-edit" size='lg'>
-    <form method="POST" id="form-selesaikan" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-        <input type="hidden" name="id" id="id" value="">
-        <input type="hidden" name="status" value="1">
-        <div class="mb-3">
-            <img id="preview" src="" alt="Image preview"
-                style="max-width: 20%; display: block; padding: 5px;display:none;">
-        </div>
-        <div class="form-group">
-            <x-adminlte-input-file name="foto" label="Upload file" placeholder="Pilih file" show-file-name
-                onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview').style.display = 'block';" />
-        </div>
-        <x-slot name="footerSlot">
-            <x-adminlte-button theme="primary" label="Simpan Perubahan" type="submit" form="form-selesaikan" />
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
-        </x-slot>
-    </form>
-</x-adminlte-modal>
 @stop
 
 @section('js')
@@ -184,9 +206,10 @@
                 searchPlaceholder: "Cari data..."
             }
         });
-
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
         $(document).ready(function () {
-            console.log('JavaScript code is being executed');
             $('#ReimburseTable').on('click', '.tombol-selesaikan', function () {
                 console.log('Button was clicked');
                 const kd_reimburse = $(this).data('id');
@@ -194,7 +217,7 @@
                 let form = $('#form-selesaikan');
                 let updateUrl = "{{ route('reimburse.update', ':id') }}";
                 updateUrl = updateUrl.replace(':id', kd_reimburse);
-                console.log(updateUrl); // Add this line
+                console.log(updateUrl);
                 form.attr('action', updateUrl);
             });
         });

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Keuangan;
+use App\Models\Keuangan_Kategori;
 use App\Models\Reimburse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +29,8 @@ class ReimburseController extends Controller
 
     public function reimburseForm()
     {
-        return view('karyawan.forms.reimburse');
+        $kategori = Keuangan_Kategori::get();
+        return view('karyawan.forms.reimburse', compact('kategori'));
     }
 
     /**
@@ -49,6 +52,7 @@ class ReimburseController extends Controller
             'foto' => 'image|mimes:jpg,jpeg,png|max:2048',
             'keterangan' => 'required|string',
             'nominal' => 'required|numeric',
+            'kategori' => 'nullable|string'
         ]));
 
         if ($validate->fails()) {
@@ -71,6 +75,7 @@ class ReimburseController extends Controller
             'nominal' => $request->nominal,
             'foto' => $imageName,
             'keterangan' => $request->keterangan,
+            'kategori' => $request->kategori,
             'status' => 0,
             'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
         ]);
@@ -105,7 +110,22 @@ class ReimburseController extends Controller
     {
         $request->validate([
             'status' => 'required|in:0,1',
+            'kotak' => 'nullable|string|exists:keuangan_kotak,kd_kotak',
         ]);
+
+        if (Reimburse::findOrFail($id)->status == 0) {
+            $reimburse = Reimburse::findOrFail($id);
+            Keuangan::create([
+                'kd_karyawan' => $reimburse->kd_karyawan,
+                'jenis' => 'Keluar',
+                'keluar' => $reimburse->nominal,
+                'kd_kotak' => $request->kotak,
+                'kd_kategori' => $reimburse->kategori,
+                'keterangan' => 'Reimburse: ' . $reimburse->keterangan,
+                'tanggal' => $reimburse->tanggal,
+                'dibuat_oleh' => $reimburse->dibuat_oleh
+            ]);
+        }
 
         if ($request->hasFile('foto')) {
             $image = $request->file('foto');
@@ -122,6 +142,10 @@ class ReimburseController extends Controller
 
         $reimburse = Reimburse::findOrFail($id);
         $reimburse->status = $request->status;
+
+        if ($request->kotak) {
+            $reimburse->kotak = $request->kotak;
+        }
 
         if ($request->hasFile('foto')) {
             $reimburse->bukti_transfer = $imageName;
