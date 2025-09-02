@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('peminjaman', function (Blueprint $table) {
             $table->id('kd_peminjaman');
-            $table->unsignedInteger('kd_barang');
+            $table->unsignedBigInteger('kd_barang');
             $table->string('jumlah', 200);
-            $table->unsignedInteger('kd_karyawan');
+            $table->unsignedBigInteger('kd_karyawan');
             $table->string('status', 1)->default('0');
             $table->timestamps();
 

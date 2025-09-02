@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('presensi', function (Blueprint $table) {
             $table->id();
-            $table->integer('kd_karyawan')->nullable();
+            $table->unsignedBigInteger('kd_karyawan')->nullable();
             $table->string('nama');
             $table->date('tanggal');
             $table->time('jam_masuk')->nullable();

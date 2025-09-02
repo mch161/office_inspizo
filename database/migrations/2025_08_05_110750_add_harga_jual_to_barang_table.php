@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('barang', function (Blueprint $table) {
             $table->renameColumn('harga', 'hpp')->after('harga');
-            $table->string('harga_jual')->after('harga')->nullable();
+            $table->string('harga_jual')->after('hpp')->nullable();
         });
     }
 
