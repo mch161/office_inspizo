@@ -63,7 +63,7 @@ class StokController extends Controller
             'stok_masuk' => ($klasifikasi == 'Stok Masuk') ? $jumlah : 0,
             'stok_keluar' => ($klasifikasi == 'Stok Keluar') ? $jumlah : 0,
             'klasifikasi' => $klasifikasi,
-            'keterangan' => $request->keterangan,
+            'keterangan' => $request->keterangan ?? '-',
             'dibuat_oleh' => Auth::user()->nama,
         ]);
 

@@ -113,19 +113,19 @@ class ReimburseController extends Controller
             'kotak' => 'nullable|string|exists:keuangan_kotak,kd_kotak',
         ]);
 
-        if (Reimburse::findOrFail($id)->status == 0) {
-            $reimburse = Reimburse::findOrFail($id);
-            Keuangan::create([
-                'kd_karyawan' => $reimburse->kd_karyawan,
-                'jenis' => 'Keluar',
-                'keluar' => $reimburse->nominal,
-                'kd_kotak' => $request->kotak,
-                'kd_kategori' => $reimburse->kategori,
-                'keterangan' => 'Reimburse: ' . $reimburse->keterangan,
-                'tanggal' => $reimburse->tanggal,
-                'dibuat_oleh' => $reimburse->dibuat_oleh
-            ]);
-        }
+        // if (Reimburse::findOrFail($id)->status == 0) {
+        //     $reimburse = Reimburse::findOrFail($id);
+        //     Keuangan::create([
+        //         'kd_karyawan' => $reimburse->kd_karyawan,
+        //         'jenis' => 'Keluar',
+        //         'keluar' => $reimburse->nominal,
+        //         'kd_kotak' => $request->kotak,
+        //         'kd_kategori' => $reimburse->kategori,
+        //         'keterangan' => 'Reimburse: ' . $reimburse->keterangan,
+        //         'tanggal' => $reimburse->tanggal,
+        //         'dibuat_oleh' => $reimburse->dibuat_oleh
+        //     ]);
+        // }
 
         if ($request->hasFile('foto')) {
             $image = $request->file('foto');

@@ -174,7 +174,7 @@
                         <td>{{ $keuangan->kotak->nama }}</td>
                         <td>{{ $keuangan->kategori->nama }}</td>
                         <td>{{ $keuangan->keterangan }}</td>
-                        <td>{{ $keuangan->created_at }}</td>
+                        <td>{{ $keuangan->tanggal }}</td>
                         <td>{{ $keuangan->status }}</td>
                         <td>
                             <form action="{{ route('keuangan.destroy', $keuangan->kd_keuangan) }}" method="POST"

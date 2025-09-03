@@ -87,22 +87,22 @@ class BarangController extends Controller
         $barang->kode = $request->kode;
         $barang->hpp = $request->hpp;
         $barang->harga_jual = $request->harga;
-        $barang->stok = 0;
+        $barang->stok = $request->stok ?? 1;
         $barang->foto = $imageName;
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
 
-        $stok = new Stok();
-        $stok->kd_barang = $barang->kd_barang;
-        $stok->kd_karyawan = Auth::id();
-        $stok->stok_masuk = $request->stok ?? 1;
-        $stok->stok_keluar = 0;
-        $stok->klasifikasi = 'Stok Awal';
-        $stok->keterangan = 'Stok awal saat barang dibuat.';
-        $stok->dibuat_oleh = Auth::user()->nama;
-        $stok->save();
+        // $stok = new Stok();
+        // $stok->kd_barang = $barang->kd_barang;
+        // $stok->kd_karyawan = Auth::id();
+        // $stok->stok_masuk = $request->stok ?? 1;
+        // $stok->stok_keluar = 0;
+        // $stok->klasifikasi = 'Stok Awal';
+        // $stok->keterangan = 'Stok awal saat barang dibuat.';
+        // $stok->dibuat_oleh = Auth::user()->nama;
+        // $stok->save();
 
-        if ($barang && $stok) {
+        if ($barang) {
             return redirect()->route('barang.index')
                 ->with('success', 'Barang berhasil dibuat.');
         } else {
