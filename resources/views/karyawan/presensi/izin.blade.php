@@ -90,7 +90,7 @@
                             <td class="keterangan-column">{!! $item->keterangan !!}</td>
                             <td>
                                 @if($item->foto)
-                                    <a href="#" class="image-popup" data-toggle="modal" data-target="#imageModal"
+                                    <a class="image-popup" data-toggle="modal" data-target="#imageModal"
                                         data-src="{{ asset('storage/images/izin/' . $item->foto) }}">
                                         <img class="izin-image" src="{{ asset('storage/images/izin/' . $item->foto) }}"
                                             alt="Foto Izin">
