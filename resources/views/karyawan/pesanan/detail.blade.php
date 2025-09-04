@@ -148,8 +148,9 @@
                             <p><strong>Alamat:</strong> {{ $pesanan->pelanggan->alamat }}</p>
                             <p><strong>Telepon:</strong> {{ $pesanan->pelanggan->telepon }}</p>
                         </div>
+                        <a href="{{ route('galeri.index', ['pesanan' => $pesanan->kd_pesanan]) }}" class="btn btn-primary mr-2"><i class="fas fa-images"></i> Galeri</a>
                         @if ($pesanan->progres >= '3')
-                            <a class="btn btn-primary mr-3"
+                            <a class="btn btn-primary mr-2"
                                 href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
                                     class="fas fa-chart-line"></i> Progress</a>
                         @endif
