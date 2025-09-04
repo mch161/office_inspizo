@@ -12,6 +12,7 @@ class PesananJasa extends Model
 
     protected $fillable = [
         'kd_pesanan_detail',
+        'kd_jasa',
         'nama_jasa',
         'harga_jasa',
         'jumlah',

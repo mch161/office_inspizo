@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class PesananBarangController extends Controller
 {
-    public function index(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'kd_pesanan_detail' => 'required|exists:pesanan_detail,kd_pesanan_detail',

@@ -40,6 +40,9 @@ class GaleriController extends Controller
                 $i++;
             }
             $path = public_path('storage/images/pesanan/' . $id);
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true);
+            }
             $img = Image::read($file->path());
             $img->scale(width: 480)->save($path . '/' . $imageName);
 

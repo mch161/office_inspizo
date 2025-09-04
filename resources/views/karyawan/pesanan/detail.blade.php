@@ -92,7 +92,8 @@
 
 @section('content')
     <x-adminlte-modal id="barangModal" title="Tambahkan barang" theme="primary">
-        <form id="barangForm" action="{{ route('pesanan.barang.store') }}">
+        <form id="barangForm" action="{{ route('pesanan.barang.store') }}" method="POST">
+            @csrf
             <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
             <x-adminlte-select2 name="kd_barang" label="Barang">
                 <option class="text-muted" value="" selected disabled>Cari barang...</option>
@@ -110,7 +111,8 @@
     {{-- /barang modal --}}
     {{-- jasa modal --}}
     <x-adminlte-modal id="jasaModal" title="Tambahkan jasa" theme="primary">
-        <form action="{{ route('pesanan.jasa.store') }}" id="jasaForm">
+        <form action="{{ route('pesanan.jasa.store') }}" id="jasaForm" method="POST">
+            @csrf
             <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
             <x-adminlte-select2 name="kd_jasa" label="Jasa">
                 <option class="text-muted" value="" selected disabled>Cari jasa...</option>
@@ -148,7 +150,8 @@
                             <p><strong>Alamat:</strong> {{ $pesanan->pelanggan->alamat }}</p>
                             <p><strong>Telepon:</strong> {{ $pesanan->pelanggan->telepon }}</p>
                         </div>
-                        <a href="{{ route('galeri.index', ['pesanan' => $pesanan->kd_pesanan]) }}" class="btn btn-primary mr-2"><i class="fas fa-images"></i> Galeri</a>
+                        <a href="{{ route('galeri.index', ['pesanan' => $pesanan->kd_pesanan]) }}"
+                            class="btn btn-primary mr-2"><i class="fas fa-images"></i> Galeri</a>
                         @if ($pesanan->progres >= '3')
                             <a class="btn btn-primary mr-2"
                                 href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
@@ -255,7 +258,7 @@
                                 <tr>
                                     <th width="5%">No</th>
                                     <th>Nama Jasa</th>
-                                    <th>Harga</th>
+                                    <th>Tarif</th>
                                     <th>Jumlah</th>
                                     <th>Subtotal</th>
                                     <th>Aksi</th>
