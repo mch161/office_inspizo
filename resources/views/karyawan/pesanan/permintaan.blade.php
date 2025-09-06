@@ -26,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($pesanan as $pesanan)
+                    @foreach ($pesanan as $pesanan)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $pesanan->pelanggan->nama_pelanggan ?? 'N/A' }}</td>
@@ -68,12 +68,8 @@
                                     </form>
                                 @endif
                             </td>
-                    @empty
-                            <tr>
-                                <td colspan="6" class="text-center"><span>Tidak ada data</span></td>
-                            </tr>
-                        @endforelse
-                    </tr>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -89,7 +85,20 @@
         $.ajaxSetup({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
         });
-
+        $('#pesananTable').DataTable({
+            scrollX: true,
+            paging: false,
+            scrollCollapse: true,
+            scrollY: '200px',
+            searching: false,
+            language: {
+                lengthMenu: "Tampilkan _MENU_ entri",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total entri)"
+            }
+        });
         $('#pesananTable').on('click', '.accept-btn, .batalkan-btn, .hapus-btn', function (e) {
             e.preventDefault();
             let form = $(this).closest('form');

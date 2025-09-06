@@ -18,12 +18,12 @@
             <table id="pesananTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th width="5%">No</th>
                         <th>Nama Pelanggan</th>
                         <th>Deskripsi Pesanan</th>
                         <th>Tanggal</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
+                        <th width="100px">Status</th>
+                        <th width="100px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -154,6 +154,20 @@
     $(document).ready(function () {
         $.ajaxSetup({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+        });
+        $('#pesananTable').DataTable({
+            scrollX: true,
+            paging: false,
+            scrollCollapse: true,
+            scrollY: '200px',
+            searching: false,
+            language: {
+                lengthMenu: "Tampilkan _MENU_ entri",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                infoEmpty: "Tidak ada data yang tersedia",
+                infoFiltered: "(difilter dari _MAX_ total entri)"
+            }
         });
         $('#pesananTable').on('click', '.batalkan-btn, .hapus-btn', function (e) {
             e.preventDefault();

@@ -61,6 +61,7 @@
             responsive: true,
             lengthChange: false,
             autoWidth: false,
+            scrollX: true,
             order: [[0, "desc"]],
             language: {
                 lengthMenu: "Tampilkan _MENU_ entri",
