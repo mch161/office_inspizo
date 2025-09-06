@@ -28,6 +28,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
     Route::post('pesanan/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('pesanan.complete');
     Route::resource('pesanan/{pesanan}/galeri', App\Http\Controllers\GaleriController::class);
+    Route::resource('pesanan/{pesanan}/signature', App\Http\Controllers\SignatureController::class);
 
     ## Pesanan Detail
     Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');
