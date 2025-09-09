@@ -440,6 +440,12 @@ return [
             'route' => 'jasa.index'
         ],
         [
+            'text' => 'Project',
+            'icon' => 'fas fa-fw fa-project-diagram',
+            'can' => 'access-karyawan',
+            'route' => 'project.index'
+        ],
+        [
 
             'text' => 'Keuangan',
             'icon' => 'fas fa-fw fa-coins',

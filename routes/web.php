@@ -74,6 +74,11 @@ Route::middleware(['auth:karyawan'])->group(function () {
     ## Jasa
     Route::resource('jasa', App\Http\Controllers\JasaController::class);
 
+    ## Project
+    Route::get('project/search', [App\Http\Controllers\ProjectController::class, 'search'])->name('project.search');
+    Route::resource('project', App\Http\Controllers\ProjectController::class);
+    Route::get('project/{project}/detail', [App\Http\Controllers\ProjectController::class, 'detail'])->name('project.detail');
+
     ## Keuangan
     Route::resource('keuangan', App\Http\Controllers\KeuanganController::class);
     Route::resource('kotak', App\Http\Controllers\KotakKeuanganController::class);
