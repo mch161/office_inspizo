@@ -58,7 +58,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::put('presensi/bulanan/{kd_presensi_bulanan}/update', [App\Http\Controllers\PresensiBulananController::class, 'update'])->name('presensi.bulanan.update');
     Route::put('presensi/bulanan/{kd_presensi_bulanan}/verify', [App\Http\Controllers\PresensiBulananController::class, 'verify'])->name('presensi.bulanan.verify');
     Route::resource('presensi', App\Http\Controllers\PresensiController::class);
-    Route::get('forms/izin', [App\Http\Controllers\IzinController::class, 'izinForm'])->name('izin.form');
+    Route::get('izin/form', [App\Http\Controllers\IzinController::class, 'izinForm'])->name('izin.form');
     Route::resource('izin', App\Http\Controllers\IzinController::class);
     Route::put('lembur/approve', [App\Http\Controllers\LemburController::class, 'approve'])->name('lembur.approve');
     Route::resource('lembur', App\Http\Controllers\LemburController::class);
@@ -83,8 +83,8 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('keuangan', App\Http\Controllers\KeuanganController::class);
     Route::resource('kotak', App\Http\Controllers\KotakKeuanganController::class);
     Route::resource('kategori', App\Http\Controllers\KategoriKeuanganController::class);
+    Route::get('reimburse/form', [App\Http\Controllers\ReimburseController::class, 'reimburseForm'])->name('reimburse.form');
     Route::resource('reimburse', App\Http\Controllers\ReimburseController::class);
-    Route::get('forms/reimburse', [App\Http\Controllers\ReimburseController::class, 'reimburseForm'])->name('reimburse.form');
 
     ## PDF
     Route::get('/download-card', [App\Http\Controllers\PDFController::class, 'card'])->name('downloadCard');

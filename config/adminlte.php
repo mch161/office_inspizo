@@ -347,6 +347,9 @@ return [
                     'route' => 'pesanan.index',
                     'icon' => 'fa fas fa-clipboard-list',
                     'can' => 'access-karyawan',
+                    'active' => [
+                        'pesanan/*/*',
+                    ],
                 ],
                 [
                     'text' => 'Pesanan yang belum disetujui',
@@ -366,18 +369,23 @@ return [
                     'route' => 'presensi.index',
                     'icon' => 'fa fas fa-fingerprint',
                     'can' => 'access-karyawan',
+                    'active' => [
+                        'presensi*',
+                    ]
                 ],
                 [
                     'text' => 'Izin',
                     'icon' => 'fa fas fa-envelope-open',
                     'route' => 'izin.index',
-                    'can' => 'access-karyawan'
+                    'can' => 'access-karyawan',
+                    'active' => ['izin*']
                 ],
                 [
                     'text' => 'Lembur',
                     'route' => 'lembur.index',
                     'icon' => 'fa fas fa-clipboard-list',
                     'can' => 'access-karyawan',
+                    'active' => ['form/lembur*']
                 ],
                 [
                     'text' => 'Hari Libur',
@@ -462,6 +470,7 @@ return [
                     'route' => 'reimburse.index',
                     'icon' => 'fas fa-fw fa-money-check',
                     'can' => 'access-karyawan',
+                    'active' => ['reimburse*']
                 ],
                 [
                     'text' => 'Kotak',
