@@ -454,6 +454,13 @@ return [
             'route' => 'project.index'
         ],
         [
+            'text' => 'Surat Perintah',
+            'icon' => 'fas fa-fw fa-scroll',
+            'can' => 'access-karyawan',
+            'route' => 'surat-perintah.index',
+            'active' => ['surat-perintah*']
+        ],
+        [
 
             'text' => 'Keuangan',
             'icon' => 'fas fa-fw fa-coins',
