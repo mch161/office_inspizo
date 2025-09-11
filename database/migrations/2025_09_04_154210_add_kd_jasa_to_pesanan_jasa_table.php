@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::table('pesanan_jasa', function (Blueprint $table) {
             $table->string('kd_jasa')->after('kd_pesanan_detail');
+
+            $table->foreign('kd_jasa')->references('kd_jasa')->on('jasa');
         });
     }
 

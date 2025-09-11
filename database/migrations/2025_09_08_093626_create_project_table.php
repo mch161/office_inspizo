@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('status');
             $table->string('dibuat_oleh');
             $table->timestamps();
+
+            $table->foreign('kd_karyawan')->references('kd_karyawan')->on('karyawan');
         });
     }
 

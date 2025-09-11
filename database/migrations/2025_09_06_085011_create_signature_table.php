@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('kd_pesanan');
             $table->text('signature');
             $table->timestamps();
+
+            $table->foreign('kd_pesanan')->references('kd_pesanan')->on('pesanan');
         });
     }
 
