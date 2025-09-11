@@ -22,9 +22,10 @@
                             @if (Auth::guard('karyawan')->user()->role == 'superadmin')
                                 <th>Karyawan</th>
                             @endif
-                            <th>Pesanan</th>
+                            <th>Pesanan / Project</th>
                             <th>Keterangan</th>
                             <th>Tanggal</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -40,12 +41,30 @@
                                         <a href="{{ route('pesanan.detail', $item->pesanan->kd_pesanan) }}">
                                             {{ $item->pesanan->deskripsi_pesanan ?? '-' }}
                                         </a>
+                                    @elseif ($item->project)
+                                        <a href="{{ route('project.detail', $item->project->kd_project) }}">
+                                            {{ $item->project->nama_project ?? '-' }}
+                                        </a>
                                     @else
                                         -
                                     @endif
                                 </td>
                                 <td>{{ $item->keterangan }}</td>
-                                <td>{{ $item->tanggal_mulai }}</td>
+                                <td>
+                                    @if ($item->tanggal_selesai)
+                                        {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d-m-Y') }} -
+                                        {{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d-m-Y') }}
+                                    @else
+                                        {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d-m-Y') }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($item->status == '0')
+                                        <div class="badge badge-warning">Menunggu</div>
+                                    @else
+                                        <div class="badge badge-success">Selesai</div>
+                                    @endif
+                                </td>
                                 <td>
                                     @if (Auth::guard('karyawan')->user()->role == 'superadmin')
                                         <form action="{{ route('surat-perintah.destroy', $item->kd_surat_perintah_kerja) }}"
@@ -54,6 +73,15 @@
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger tombol-hapus"><i
                                                     class="fas fa-trash"></i> Hapus</button>
+                                        </form>
+                                    @endif
+                                    @if (Auth::guard('karyawan')->user()->kd_karyawan == $item->kd_karyawan && $item->status == '0')
+                                        <form action="{{ route('surat-perintah.update', $item->kd_surat_perintah_kerja) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i>
+                                                Tandai Selesai</button>
                                         </form>
                                     @endif
                                 </td>
@@ -117,18 +145,18 @@
                 text: '{{ session('success') }}',
             })
         @endif
-            @if (session()->has('error'))
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                });
-                Toast.fire({
-                    icon: 'error',
-                    text: '{{ session('error') }}',
-                })
-            @endif
+        @if (session()->has('error'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+            Toast.fire({
+                icon: 'error',
+                text: '{{ session('error') }}',
+            })
+        @endif
     </script>
 @endsection

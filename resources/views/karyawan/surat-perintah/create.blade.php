@@ -25,6 +25,12 @@
                         <option value="{{ $item->kd_pesanan }}">{{ $item->deskripsi_pesanan }}</option>
                     @endforeach
                 </x-adminlte-select2>
+                <x-adminlte-select2 name="kd_project" label="Project">
+                    <option class="text-muted" value="" selected disabled>Cari project...</option>
+                    @foreach ($project as $item)
+                        <option value="{{ $item->kd_project }}">{{ $item->nama_project }}</option>
+                    @endforeach
+                </x-adminlte-select2>
             </div>
             <x-adminlte-select2 name="kd_karyawan" label="Karyawan">
                 <option class="text-muted" value="" selected disabled>Cari karyawan...</option>

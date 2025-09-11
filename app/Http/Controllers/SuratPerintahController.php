@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
 use App\Models\Pesanan;
+use App\Models\Project;
 use App\Models\SuratPerintahKerja;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,14 +28,16 @@ class SuratPerintahController extends Controller
     public function create()
     {
         $pesanan = Pesanan::get()->all();
+        $project = Project::get()->all();
         $karyawan = Karyawan::get()->all();
-        return view('karyawan.surat-perintah.create', compact('pesanan', 'karyawan'));
+        return view('karyawan.surat-perintah.create', compact('pesanan', 'project', 'karyawan'));
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'kd_pesanan' => 'nullable|exists:pesanan,kd_pesanan',
+            'kd_project' => 'nullable|exists:project,kd_project',
             'kd_karyawan' => 'required|exists:karyawan,kd_karyawan',
             'tanggal_mulai' => 'required|date',
             'keterangan' => 'required',
@@ -45,13 +49,24 @@ class SuratPerintahController extends Controller
 
         SuratPerintahKerja::create([
             'kd_pesanan' => $request->kd_pesanan,
+            'kd_project' => $request->kd_project,
             'kd_karyawan' => $request->kd_karyawan,
             'tanggal_mulai' => $request->tanggal_mulai,
             'keterangan' => $request->keterangan,
+            'status' => '0',
             'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
         ]);
 
         return redirect()->route('surat-perintah.index')->with('success', 'Surat perintah berhasil dibuat.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $surat_perintah = SuratPerintahKerja::find($id);
+        $surat_perintah->tanggal_selesai = Carbon::parse($request->tanggal_selesai)->format('Y-m-d');
+        $surat_perintah->status = '1';
+        $surat_perintah->save();
+        return redirect()->route('surat-perintah.index')->with('success', 'Surat perintah berhasil selesai.');
     }
 
     public function destroy($id)

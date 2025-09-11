@@ -12,16 +12,23 @@ class SuratPerintahKerja extends Model
 
     protected $fillable = [
         'kd_pesanan',
+        'kd_project',
         'kd_karyawan',
         'tanggal_mulai',
         'tanggal_selesai',
         'keterangan',
+        'status',
         'dibuat_oleh',
     ];
 
     public function pesanan()
     {
         return $this->belongsTo(Pesanan::class, 'kd_pesanan', 'kd_pesanan');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'kd_project', 'kd_project');
     }
 
     public function karyawan()
