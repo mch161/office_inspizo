@@ -62,6 +62,17 @@ class SuratPerintahController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'tanggal_selesai' => 'required|date|after_or_equal:today',
+        ], [
+            'tanggal_selesai.required' => 'Tanggal selesai harus diisi.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal tidak boleh kurang dari hari ini.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors()->first())->withInput();
+        }
+
         $surat_perintah = SuratPerintahKerja::find($id);
         $surat_perintah->tanggal_selesai = Carbon::parse($request->tanggal_selesai)->format('Y-m-d');
         $surat_perintah->status = '1';

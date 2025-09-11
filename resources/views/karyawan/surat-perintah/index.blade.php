@@ -51,7 +51,9 @@
                                 </td>
                                 <td>{{ $item->keterangan }}</td>
                                 <td>
-                                    @if ($item->tanggal_selesai)
+                                    @if ($item->tanggal_selesai && \Carbon\Carbon::parse($item->tanggal_mulai)->isSameDay(\Carbon\Carbon::parse($item->tanggal_selesai)))
+                                        {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d-m-Y') }}
+                                    @elseif ($item->tanggal_selesai)
                                         {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d-m-Y') }} -
                                         {{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d-m-Y') }}
                                     @else
@@ -76,13 +78,10 @@
                                         </form>
                                     @endif
                                     @if (Auth::guard('karyawan')->user()->kd_karyawan == $item->kd_karyawan && $item->status == '0')
-                                        <form action="{{ route('surat-perintah.update', $item->kd_surat_perintah_kerja) }}"
-                                            method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i>
-                                                Tandai Selesai</button>
-                                        </form>
+                                        <button data-toggle="modal" data-target="#selesaiModal"
+                                            data-id="{{ $item->kd_surat_perintah_kerja }}"
+                                            class="btn btn-sm btn-success tombol-selesai"><i class="fas fa-check"></i>
+                                            Tandai Selesai</button>
                                     @endif
                                 </td>
                             </tr>
@@ -93,6 +92,30 @@
         </div>
     </div>
 </div>
+
+@if (Auth::guard('karyawan')->user()->role !== 'superadmin')
+    <x-adminlte-modal id="selesaiModal" title="Tandai Selesai" theme="success">
+        <form id="form-selesai" action="{{ route('surat-perintah.update', $item->kd_surat_perintah_kerja) }}" method="POST">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="status" value="1">
+            @php
+                $config = ['format' => 'DD-MM-YYYY'];
+            @endphp
+            <x-adminlte-input-date name="tanggal_selesai" value="{{ old('tanggal', date('d-m-Y')) }}" :config="$config"
+                placeholder="Pilih tanggal..." label="Tanggal Selesai" igroup-size="md">
+                <x-slot name="appendSlot">
+                    <div class="input-group-text bg-gray"><i class="fas fa-calendar-day"></i></div>
+                </x-slot>
+            </x-adminlte-input-date>
+            <x-slot name="footerSlot">
+                <button type="submit" form="form-selesai" class="btn btn-success">Tandai Selesai</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+            </x-slot>
+        </form>
+    </x-adminlte-modal>
+@endif
+
 @stop
 
 @section('js')
@@ -131,6 +154,12 @@
                     }
                 })
             })
+            $('.tombol-selesai').on('click', function (e) {
+                let id = $(this).data('id');
+                let form = $('#form-selesai');
+                let updateUrl = "{{ url('surat-perintah') }}/" + id;
+                form.attr('action', updateUrl);
+            })
         });
         @if (session()->has('success'))
             const Toast = Swal.mixin({
@@ -145,18 +174,18 @@
                 text: '{{ session('success') }}',
             })
         @endif
-        @if (session()->has('error'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-            });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('error') }}',
-            })
-        @endif
+            @if (session()->has('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                })
+            @endif
     </script>
 @endsection
