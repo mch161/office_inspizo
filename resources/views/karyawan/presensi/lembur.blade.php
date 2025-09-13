@@ -82,14 +82,16 @@
                             @endif
                         </td>
                         <td>
-                            @if ($lembur->verifikasi == '0' && Auth::user()->role == 'superadmin')
-                                <form action="{{ route('lembur.approve') }}" method="POST" style="display: inline">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" name="kd_lembur" value="{{ $lembur->kd_lembur }}">
-                                    <button type="submit" class="btn btn-success"><i class="fas fa-check"></i></button>
-                                </form>
-                            @endif
+                            @can('superadmin')
+                                @if ($lembur->verifikasi == '0')
+                                    <form action="{{ route('lembur.approve') }}" method="POST" style="display: inline">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="kd_lembur" value="{{ $lembur->kd_lembur }}">
+                                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i></button>
+                                    </form>
+                                @endif
+                            @endcan
                             @if ($lembur->verifikasi == '0' && $lembur->dibuat_oleh == auth()->user()->nama)
                                 <form action="{{ route('lembur.destroy', $lembur->kd_lembur) }}" method="POST"
                                     style="display: inline">

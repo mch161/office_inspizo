@@ -11,17 +11,17 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                @if (Auth::guard('karyawan')->user()->role == 'superadmin')
+                @can('superadmin')
                     <a href="{{ route('surat-perintah.create') }}" class="btn btn-sm btn-primary mb-3 float-right"><i
                             class="fas fa-plus"></i> Tambah Surat Perintah Kerja</a>
-                @endif
+                @endcan
                 <table id="suratPerintahTable" class="table table-bordered">
                     <thead>
                         <tr>
                             <th>No</th>
-                            @if (Auth::guard('karyawan')->user()->role == 'superadmin')
+                            @can('superadmin')
                                 <th>Karyawan</th>
-                            @endif
+                            @endcan
                             <th>Pesanan / Project</th>
                             <th>Keterangan</th>
                             <th>Tanggal</th>
@@ -33,9 +33,9 @@
                         @foreach ($surat_perintah as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                @if (Auth::guard('karyawan')->user()->role == 'superadmin')
+                                @can('superadmin')
                                     <td>{{ $item->karyawan->nama }}</td>
-                                @endif
+                                @endcan
                                 <td>
                                     @if ($item->pesanan)
                                         <a href="{{ route('pesanan.detail', $item->pesanan->kd_pesanan) }}">
@@ -68,7 +68,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if (Auth::guard('karyawan')->user()->role == 'superadmin')
+                                    @can('superadmin')
                                         <form action="{{ route('surat-perintah.destroy', $item->kd_surat_perintah_kerja) }}"
                                             method="POST" class="d-inline">
                                             @csrf
@@ -76,7 +76,7 @@
                                             <button type="submit" class="btn btn-sm btn-danger tombol-hapus"><i
                                                     class="fas fa-trash"></i> Hapus</button>
                                         </form>
-                                    @endif
+                                    @endcan
                                     @if (Auth::guard('karyawan')->user()->kd_karyawan == $item->kd_karyawan && $item->status == '0')
                                         <button data-toggle="modal" data-target="#selesaiModal"
                                             data-id="{{ $item->kd_surat_perintah_kerja }}"
@@ -93,7 +93,7 @@
     </div>
 </div>
 
-@if (Auth::guard('karyawan')->user()->role !== 'superadmin')
+@cannot('superadmin')
     <x-adminlte-modal id="selesaiModal" title="Tandai Selesai" theme="success">
         <form id="form-selesai" action="{{ route('surat-perintah.update', $item->kd_surat_perintah_kerja) }}" method="POST">
             @csrf
@@ -114,7 +114,7 @@
             </x-slot>
         </form>
     </x-adminlte-modal>
-@endif
+@endcannot
 
 @stop
 

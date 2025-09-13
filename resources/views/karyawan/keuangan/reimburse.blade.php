@@ -68,7 +68,7 @@
                     <th class="text-left">Tanggal</th>
                     <th width="10%" class="text-left">Status</th>
                     <th class="text-left">Bukti Transfer</th>
-                    @if (Auth::user()->role == 'superadmin')
+                    @can('superadmin')
                         <th class="text-left">Kotak</th>
                         <th width="15%" class="text-left">Aksi</th>
                     @endif
@@ -113,7 +113,7 @@
                                 <span class="text-muted">Tidak ada foto</span>
                             @endif
                         </td>
-                        @if (Auth::user()->role == 'superadmin')
+                        @can('superadmin')
                             <td>{{ App\Models\Keuangan_Kotak::find($item->kotak)->nama ?? '-' }}</td>
                             <td class="text-left">
                                 @if ($item->status == '0')
@@ -146,7 +146,7 @@
         </div>
     </div>
 </div>
-@if (Auth::user()->role == 'superadmin')
+@can('superadmin')
     <x-adminlte-modal id="selesaikanModal" title="Bukti Transfer" theme="primary" icon="fas fa-edit" size='lg'>
         <form method="POST" id="form-selesaikan" enctype="multipart/form-data">
             @csrf

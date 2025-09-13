@@ -72,7 +72,7 @@
                     <th class="text-left">Keterangan</th>
                     <th class="text-left">Foto</th>
                     <th width="10%" class="text-left">Status</th>
-                    @if (Auth::user()->role == 'superadmin')
+                    @can('superadmin')
                         <th width="20%" class="text-left">Aksi</th>
                     @endif
 
@@ -108,7 +108,7 @@
                                     <span class="badge badge-warning">Menunggu</span>
                                 @endif
                             </td>
-                            @if (auth()->user()->role == 'superadmin')
+                            @can('superadmin')
                                 <td>
                                     <div class="action-buttons">
                                         @if($item->status == '0')
