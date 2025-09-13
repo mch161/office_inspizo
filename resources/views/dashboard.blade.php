@@ -10,35 +10,58 @@
 
 @section('content')
 <div class="container-fluid">
-    @if (Auth::guard('karyawan')->user()->role == 'superadmin')
-        <div class="row row-cols-1 row-cols-md-4 g-4">
-    @else
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-    @endif
-
-        <div class="col">
-            <x-adminlte-small-box title="{{ $totalPelanggan }}" text="Total Pelanggan" icon="fas fa-users text-primary"
-                theme="primary" url="{{ route('pelanggan.index') }}" url-text="Lihat Detail" />
-        </div>
-        <div class="col">
-            <x-adminlte-small-box title="{{ $totalPesananAktif }}" text="Pesanan Aktif"
-                icon="fas fa-shopping-cart text-warning" theme="warning" url="{{ route('pesanan.index') }}"
-                url-text="Lihat Detail" />
-        </div>
-        <div class="col">
-            <x-adminlte-small-box title="{{ $totalAgendaHariIni }}" text="Agenda Hari Ini"
-                icon="fas fa-calendar-day text-success" theme="success" url="{{ route('agenda.index') }}"
-                url-text="Lihat Detail" />
-        </div>
-        @if (Auth::guard('karyawan')->user()->role == 'superadmin')
-            <div class="col">
-                <x-adminlte-small-box title="Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}"
-                    text="Pendapatan Bulan Ini" icon="fas fa-dollar-sign text-info" theme="info"
-                    url="{{ route('keuangan.index') }}" url-text="Lihat Detail" />
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ $totalPesananAktif }}</h3>
+                    <p>Pesanan Aktif</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <a href="{{ route('pesanan.index') }}" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-        @endif
+        </div>
+        @can('superadmin')
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</h3>
+                        <p>Pendapatan Bulan Ini</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <a href="{{ route('keuangan.index') }}" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        @endcan
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ $totalPelanggan }}</h3>
+                    <p>Total Pelanggan</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <a href="{{ route('pelanggan.index') }}" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ $totalAgendaHariIni }}</h3>
+                    <p>Agenda Hari Ini</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <a href="{{ route('agenda.index') }}" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
     </div>
-
     <div class="row">
         <div class="col-lg-8">
             <div class="card">
@@ -47,6 +70,14 @@
                 </div>
                 <div class="card-body">
                     <canvas id="pesananChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-pie"></i> Status Pesanan</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusPesananChart"></canvas>
                 </div>
             </div>
         </div>
@@ -113,9 +144,29 @@
 
         var ctx = document.getElementById('pesananChart').getContext('2d');
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: chartData,
             options: chartOptions
+        });
+
+        var statusChartData = {
+            labels: @json($pesananStatusLabels),
+            datasets: [{
+                data: @json($pesananStatusData),
+                backgroundColor: @json($pesananStatusColors),
+            }]
+        };
+
+        var statusChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+        };
+
+        var statusCtx = document.getElementById('statusPesananChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'pie',
+            data: statusChartData,
+            options: statusChartOptions
         });
     });
 </script>

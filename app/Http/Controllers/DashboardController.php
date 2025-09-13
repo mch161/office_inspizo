@@ -28,12 +28,35 @@ class DashboardController extends Controller
                                 ->limit(5)
                                 ->get();
 
+        $pesananStatus = Pesanan::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->all();
+
+        $statusLabels = [
+            0 => 'Baru',
+            1 => 'Dikerjakan',
+            2 => 'Selesai',
+            3 => 'Diambil',
+            4 => 'Dibatalkan',
+        ];
+
+        $pesananStatusLabels = [];
+        $pesananStatusData = [];
+        $pesananStatusColors = ['#007bff', '#ffc107', '#28a745', '#17a2b8', '#dc3545'];
+
+        foreach ($statusLabels as $status => $label) {
+            $pesananStatusLabels[] = $label;
+            $pesananStatusData[] = $pesananStatus[$status] ?? 0;
+        }
+
         $pesananData = Pesanan::select(
             DB::raw('count(kd_pesanan) as total'),
-            DB::raw("SUBSTR(tanggal, 7, 4) || '-' || SUBSTR(tanggal, 4, 2) as bulan")
+            DB::raw("DATE_FORMAT(tanggal, '%Y-%m') as bulan")
         )
-        ->where(DB::raw("SUBSTR(tanggal, 7, 4) || '-' || SUBSTR(tanggal, 4, 2) || '-' || SUBSTR(tanggal, 1, 2)"), '>=', Carbon::now()->subMonths(5)->startOfMonth()->toDateString())
+        ->where('tanggal', '>=', Carbon::now()->subMonths(5)->startOfMonth())
         ->groupBy('bulan')
+        ->orderBy('bulan', 'asc')
         ->pluck('total', 'bulan');
 
         $labels = [];
@@ -54,7 +77,10 @@ class DashboardController extends Controller
             'pendapatanBulanIni',
             'agendaTerdekat',
             'labels',
-            'data'
+            'data',
+            'pesananStatusLabels',
+            'pesananStatusData',
+            'pesananStatusColors'
         ));
     }
 }
