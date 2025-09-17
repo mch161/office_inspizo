@@ -90,9 +90,9 @@
                                 <span class="text-muted">Tidak ada foto</span>
                             @endif
                         </td>
-                        <td class="text-left">{{ App\Models\Karyawan::find($item->kd_karyawan)->nama }}</td>
+                        <td class="text-left">{{ App\Models\Karyawan::find($item->kd_karyawan)->nama ?? '-'}}</td>
                         <td class="keterangan-column text-left">{!! $item->keterangan !!}</td>
-                        <td class="text-left">{{ App\Models\Keuangan_Kategori::find($item->kategori)->nama }}</td>
+                        <td class="text-left">{{ App\Models\Keuangan_Kategori::find($item->kategori)->nama ?? '-'}}</td>
                         <td class="text-left">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}</td>
                         <td class="text-left">
                             @if ($item->status == '0')
