@@ -13,7 +13,7 @@
             <div class="card-body">
                 @can('superadmin')
                     <a href="{{ route('surat-perintah.create') }}" class="btn btn-sm btn-primary mb-3 float-right"><i
-                            class="fas fa-plus"></i> Tambah Surat Perintah Kerja</a>
+                            class="fas fa-plus"></i> Buat Surat Perintah Kerja</a>
                 @endcan
                 <table id="suratPerintahTable" class="table table-bordered">
                     <thead>

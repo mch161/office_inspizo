@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\SuratPerintahKerja;
 use Illuminate\Http\Request;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\Agenda;
 use App\Models\Keuangan;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -16,7 +18,8 @@ class DashboardController extends Controller
     public function index()
     {
         $totalPelanggan = Pelanggan::count();
-        $totalPesananAktif = Pesanan::where('status', 0)->count();
+        $totalPesananAktif = Pesanan::where('progres', '>=', 2)->where('status', 0)->count();
+
         $totalAgendaHariIni = Agenda::whereDate('start', Carbon::today())->count();
         $pendapatanBulanIni = Keuangan::where('jenis', 'Masuk')
             ->whereMonth('tanggal', Carbon::now()->month)
@@ -27,6 +30,8 @@ class DashboardController extends Controller
                                 ->orderBy('start', 'asc')
                                 ->limit(5)
                                 ->get();
+
+        $tugas = SuratPerintahKerja::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->where('status', 0)->count();
 
         $pesananStatus = Pesanan::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
@@ -76,6 +81,7 @@ class DashboardController extends Controller
             'totalAgendaHariIni',
             'pendapatanBulanIni',
             'agendaTerdekat',
+            'tugas',
             'labels',
             'data',
             'pesananStatusLabels',

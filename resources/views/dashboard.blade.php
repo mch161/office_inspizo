@@ -20,7 +20,34 @@
                 <div class="icon">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
-                <a href="{{ route('pesanan.index') }}" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="{{ route('pesanan.index') }}" class="small-box-footer">Selengkapnya <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ $totalPelanggan }}</h3>
+                    <p>Total Pelanggan</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <a href="{{ route('pelanggan.index') }}" class="small-box-footer">Selengkapnya <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ $totalAgendaHariIni }}</h3>
+                    <p>Agenda Hari Ini</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <a href="{{ route('agenda.index') }}" class="small-box-footer">Selengkapnya <i
+                        class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         @can('superadmin')
@@ -33,34 +60,26 @@
                     <div class="icon">
                         <i class="fas fa-dollar-sign"></i>
                     </div>
-                    <a href="{{ route('keuangan.index') }}" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                    <a href="{{ route('keuangan.index') }}" class="small-box-footer">Selengkapnya <i
+                            class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
         @endcan
+        @cannot('superadmin')
         <div class="col-lg-3 col-6">
-            <div class="small-box bg-warning">
+            <div class="small-box bg-primary">
                 <div class="inner">
-                    <h3>{{ $totalPelanggan }}</h3>
-                    <p>Total Pelanggan</p>
+                    <h3>{{ $tugas }}</h3>
+                    <p>Tugas</p>
                 </div>
                 <div class="icon">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-clipboard"></i>
                 </div>
-                <a href="{{ route('pelanggan.index') }}" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="{{ route('surat-perintah.index') }}" class="small-box-footer">Selengkapnya <i
+                        class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <div class="col-lg-3 col-6">
-            <div class="small-box bg-danger">
-                <div class="inner">
-                    <h3>{{ $totalAgendaHariIni }}</h3>
-                    <p>Agenda Hari Ini</p>
-                </div>
-                <div class="icon">
-                    <i class="fas fa-calendar-day"></i>
-                </div>
-                <a href="{{ route('agenda.index') }}" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
+        @endcannot
     </div>
     <div class="row">
         <div class="col-lg-8">

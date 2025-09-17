@@ -19,13 +19,23 @@
         <form action="{{ route('surat-perintah.store') }}" method="POST">
             @csrf
             <div class="mt-3">
-                <x-adminlte-select2 name="kd_pesanan" label="Pesanan">
+                @php
+                    $pesanan_config = [
+                        'placeholder' => 'Cari pesanan...',
+                        'allowClear' => true,
+                    ];
+                    $project_config = [
+                        'placeholder' => 'Cari project...',
+                        'allowClear' => true,
+                    ];
+                @endphp
+                <x-adminlte-select2 name="kd_pesanan" label="Pesanan" :config="$pesanan_config">
                     <option class="text-muted" value="" selected disabled>Cari pesanan...</option>
                     @foreach ($pesanan as $item)
                         <option value="{{ $item->kd_pesanan }}">{{ $item->deskripsi_pesanan }}</option>
                     @endforeach
                 </x-adminlte-select2>
-                <x-adminlte-select2 name="kd_project" label="Project">
+                <x-adminlte-select2 name="kd_project" label="Project" :config="$project_config">
                     <option class="text-muted" value="" selected disabled>Cari project...</option>
                     @foreach ($project as $item)
                         <option value="{{ $item->kd_project }}">{{ $item->nama_project }}</option>
