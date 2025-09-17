@@ -24,10 +24,6 @@ class Pesanan extends Model
         'dibuat_oleh',
     ];
 
-    protected $casts = [
-        'tanggal' => 'date:d-m-Y',
-    ];
-
     public function karyawan(): BelongsTo
     {
         return $this->belongsTo(Karyawan::class, 'kd_karyawan', 'kd_karyawan');
