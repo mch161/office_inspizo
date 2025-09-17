@@ -95,7 +95,7 @@
 
 @cannot('superadmin')
     <x-adminlte-modal id="selesaiModal" title="Tandai Selesai" theme="success">
-        <form id="form-selesai" action="{{ route('surat-perintah.update', $item->kd_surat_perintah_kerja) }}" method="POST">
+        <form id="form-selesai" action="{{ route('surat-perintah.update', 0) }}" method="POST">
             @csrf
             @method('PUT')
             <input type="hidden" name="status" value="1">
