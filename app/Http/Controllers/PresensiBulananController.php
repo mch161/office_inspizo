@@ -17,7 +17,11 @@ class PresensiBulananController extends Controller
 {
     public function index(Request $request)
     {
-        $rekapBulanan = PresensiBulanan::orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->get();
+        if (Auth::guard('karyawan')->user()->role !== 'superadmin') {
+            $rekapBulanan = PresensiBulanan::where('kd_karyawan', Auth::user()->kd_karyawan)->orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->get();
+        } else {
+            $rekapBulanan = PresensiBulanan::orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->get();
+        }
         $rekapData = Presensi::get();
         $karyawans = Karyawan::all();
 

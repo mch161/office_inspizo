@@ -22,47 +22,49 @@
 @endsection
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <form action="{{ route('presensi.bulanan.create') }}" method="POST" id="presensiBulananForm">
-            @csrf
-            <div class="row">
-                <div class="col-md-6">
-                    <x-adminlte-select name="kd_karyawan" label="Pilih Karyawan" empty-option="Pilih Karyawan..."
-                        required>
-                        <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()"
-                            empty-option="Pilih Karyawan..."
-                            :selected="old('kd_karyawan')" />
-                    </x-adminlte-select>
+@can('superadmin')
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ route('presensi.bulanan.create') }}" method="POST" id="presensiBulananForm">
+                @csrf
+                <div class="row">
+                    <div class="col-md-6">
+                        <x-adminlte-select name="kd_karyawan" label="Pilih Karyawan" empty-option="Pilih Karyawan..."
+                            required>
+                            <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()"
+                                empty-option="Pilih Karyawan..." :selected="old('kd_karyawan')" />
+                        </x-adminlte-select>
+                    </div>
+                    <div class="col-md-3">
+                        <x-adminlte-select name="bulan" label="Pilih Bulan" required>
+                            <x-adminlte-options :options="[
+                '01' => 'Januari',
+                '02' => 'Februari',
+                '03' => 'Maret',
+                '04' => 'April',
+                '05' => 'Mei',
+                '06' => 'Juni',
+                '07' => 'Juli',
+                '08' => 'Agustus',
+                '09' => 'September',
+                '10' => 'Oktober',
+                '11' => 'November',
+                '12' => 'Desember',
+            ]" empty-option="Pilih Bulan..."
+                                :selected="old('bulan')" />
+                        </x-adminlte-select>
+                    </div>
+                    <div class="col-md-3">
+                        <x-adminlte-input name="tahun" label="Tahun" type="number"
+                            value="{{ old('tahun', date('Y')) }}"></x-adminlte-input>
+                    </div>
+                    <button type="submit" class="btn btn-primary" form="presensiBulananForm">Tambahkan Presensi</button>
                 </div>
-                <div class="col-md-3">
-                    <x-adminlte-select name="bulan" label="Pilih Bulan" required>
-                        <x-adminlte-options :options="[
-        '01' => 'Januari',
-        '02' => 'Februari',
-        '03' => 'Maret',
-        '04' => 'April',
-        '05' => 'Mei',
-        '06' => 'Juni',
-        '07' => 'Juli',
-        '08' => 'Agustus',
-        '09' => 'September',
-        '10' => 'Oktober',
-        '11' => 'November',
-        '12' => 'Desember',
-    ]" empty-option="Pilih Bulan..."
-                        :selected="old('bulan')" />
-                    </x-adminlte-select>
-                </div>
-                <div class="col-md-3">
-                    <x-adminlte-input name="tahun" label="Tahun" type="number"
-                        value="{{ old('tahun', date('Y')) }}"></x-adminlte-input>
-                </div>
-                <button type="submit" class="btn btn-primary" form="presensiBulananForm">Tambahkan Presensi</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+@endcan
+
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Rekap Bulanan</h3>
@@ -87,7 +89,9 @@
                     <th class="text-center">Jumlah Hari Lembur</th>
                     <th class="text-center">Jumlah Jam Lembur</th>
                     <th class="text-center">Status</th>
-                    <th class="text-center" width="150px">Aksi</th>
+                    @can('superadmin')
+                        <th class="text-center" width="150px">Aksi</th>
+                    @endcan
                 </tr>
             </thead>
             <tbody>
@@ -110,23 +114,26 @@
                         <td>{{ $rekap->jumlah_hari_lembur }}</td>
                         <td>{{ $rekap->jumlah_jam_lembur }}</td>
                         <td>{{ $rekap->verifikasi }}</td>
-                        <td>
-                            @if ($rekap->verifikasi == '0')
-                                <form action="{{ route('presensi.bulanan.verify', $rekap) }}" method="POST" style="display: inline">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        <i class="fas fa-check"></i>
+                        @can('superadmin')
+                            <td>
+                                @if ($rekap->verifikasi == '0')
+                                    <form action="{{ route('presensi.bulanan.verify', $rekap) }}" method="POST"
+                                        style="display: inline">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                                <form action="{{ route('presensi.bulanan') }}" method="GET" style="display: inline">
+                                    <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekap->kd_presensi_bulanan }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i>
                                     </button>
                                 </form>
-                            @endif
-                            <form action="{{ route('presensi.bulanan') }}" method="GET" style="display: inline">
-                                <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekap->kd_presensi_bulanan }}">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </form>
-                        </td>
+                            </td>
+                        @endcan
                     </tr>
                 @endforeach
             </tbody>
