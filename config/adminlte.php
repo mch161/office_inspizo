@@ -461,35 +461,37 @@ return [
             'active' => ['surat-perintah*']
         ],
         [
-
+            'text' => 'Reimburse',
+            'route' => 'reimburse.index',
+            'icon' => 'fas fa-fw fa-coins',
+            'can' => 'only-karyawan',
+            'active' => ['reimburse*']
+        ],
+        [
             'text' => 'Keuangan',
             'icon' => 'fas fa-fw fa-coins',
-            'can' => 'access-karyawan',
+            'can' => 'superadmin',
             'submenu' => [
                 [
                     'text' => 'Keuangan',
                     'route' => "keuangan.index",
                     'icon' => 'fas fa-fw fa-money-bill-wave',
-                    'can' => 'superadmin',
                 ],
                 [
                     'text' => 'Data Reimburse',
                     'route' => 'reimburse.index',
                     'icon' => 'fas fa-fw fa-money-check',
-                    'can' => 'access-karyawan',
                     'active' => ['reimburse*']
                 ],
                 [
                     'text' => 'Kotak',
                     'route' => 'kotak.index',
                     'icon' => 'fas fa-fw fa-credit-card',
-                    'can' => 'superadmin',
                 ],
                 [
                     'text' => 'Kategori',
                     'route' => 'kategori.index',
                     'icon' => 'fas fa-fw fa-wallet',
-                    'can' => 'superadmin',
                 ],
             ]
         ],
