@@ -27,9 +27,9 @@ class DashboardController extends Controller
             ->sum('masuk');
 
         $agendaTerdekat = Agenda::where('start', '>=', Carbon::now())
-                                ->orderBy('start', 'asc')
-                                ->limit(5)
-                                ->get();
+            ->orderBy('start', 'asc')
+            ->limit(5)
+            ->get();
 
         $tugas = SuratPerintahKerja::where('kd_karyawan', Auth::guard('karyawan')->user()->kd_karyawan)->where('status', 0)->count();
 
@@ -37,6 +37,17 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status')
             ->all();
+
+        $pesananProgres = Pesanan::select('progres', DB::raw('count(*) as total'))
+            ->where('status', 0)
+            ->groupBy('progres')
+            ->pluck('total', 'progres')
+            ->all();
+
+
+        $pesananStatusLabels = [];
+        $pesananStatusData = [];
+        $pesananStatusColors = ['#007bff', '#ffc107', '#28a745', '#17a2b8', '#dc3545'];
 
         $statusLabels = [
             0 => 'Baru',
@@ -46,32 +57,35 @@ class DashboardController extends Controller
             4 => 'Dibatalkan',
         ];
 
-        $pesananStatusLabels = [];
-        $pesananStatusData = [];
-        $pesananStatusColors = ['#007bff', '#ffc107', '#28a745', '#17a2b8', '#dc3545'];
-
         foreach ($statusLabels as $status => $label) {
             $pesananStatusLabels[] = $label;
-            $pesananStatusData[] = $pesananStatus[$status] ?? 0;
         }
+
+        $pesananStatusData = array_merge([
+            0 => ($pesananProgres[1] ?? 0),
+            1 => ($pesananProgres[3] ?? 0),
+            2 => ($pesananStatus[1] ?? 0),
+            3 => ($pesananProgres[2] ?? 0),
+            4 => ($pesananStatus[2] ?? 0),
+        ], array_fill_keys(range(0, 4), 0));
 
         $pesananData = Pesanan::select(
             DB::raw('count(kd_pesanan) as total'),
-            DB::raw("DATE_FORMAT(tanggal, '%Y-%m') as bulan")
+            DB::raw("SUBSTR(tanggal, 4, 7) as bulan")
         )
-        ->where('tanggal', '>=', Carbon::now()->subMonths(5)->startOfMonth())
-        ->groupBy('bulan')
-        ->orderBy('bulan', 'asc')
-        ->pluck('total', 'bulan');
+            ->where(DB::raw("SUBSTR(tanggal, 4, 7)"), '>=', Carbon::now()->subMonths(5)->startOfMonth()->format('m/Y'))
+            ->groupBy('bulan')
+            ->orderBy('bulan', 'asc')
+            ->pluck('total', 'bulan');
 
         $labels = [];
         $data = [];
         for ($i = 5; $i >= 0; $i--) {
             $carbonDate = Carbon::now()->subMonths($i);
-            $monthKey = $carbonDate->format('Y-m');
-            
+            $monthKey = $carbonDate->format('m/Y');
+
             $labels[] = $carbonDate->format('M Y');
-            
+
             $data[] = $pesananData[$monthKey] ?? 0;
         }
 
