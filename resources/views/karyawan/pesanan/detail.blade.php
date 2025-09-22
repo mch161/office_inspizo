@@ -136,7 +136,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Detail Pesanan</h3>
                     <div class="card-tools float-end">
-                        <a href="{{ route('pesanan.index') }}" class="btn btn-primary">
+                        <a href="{{ $backUrl }}" class="btn btn-primary">
                             <i class="fas fa-arrow-left"></i>
                             Kembali
                         </a>
