@@ -23,7 +23,7 @@
                         <th>Deskripsi Pesanan</th>
                         <th>Tanggal</th>
                         <th width="100px">Status</th>
-                        <th width="100px">Aksi</th>
+                        <th width="150px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,6 +49,10 @@
                             <td>
                                 <a href="{{ route('pesanan.detail', $pesanan->kd_pesanan)}}"
                                     class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
+                                <button data-toggle="modal" data-target="#EditModal" data-id="{{ $pesanan->kd_pesanan }}"
+                                    data-kd_pelanggan="{{ $pesanan->kd_pelanggan }}" data-tanggal="{{ $pesanan->tanggal }}"
+                                    data-deskripsi_pesanan="{{ $pesanan->deskripsi_pesanan }}" data-url="{{ route('pesanan.update', $pesanan->kd_pesanan) }}"
+                                    class="btn btn-sm btn-primary edit-btn"><i class="fas fa-edit"></i></button>
                                 @if ($pesanan->status == 0)
                                     <form action="{{ route('pesanan.update', $pesanan->kd_pesanan) }}" method="POST"
                                         style="display:inline;">
@@ -88,7 +92,7 @@
     <x-adminlte-modal id="PesananModal" title="Buat Pesanan" theme="primary">
         <form id="pesananForm" method="POST" action="{{ route('pesanan.store') }}">
             @csrf
-            <x-adminlte-select name="kd_pelanggan" label="Pelanggan">
+            <x-adminlte-select2 name="kd_pelanggan" label="Pelanggan">
                 <x-slot name="prependSlot">
                     <div class="input-group-text">
                         <i class="fas fa-lg fa-user"></i>
@@ -96,7 +100,7 @@
                 </x-slot>
                 <x-adminlte-options :options="array_column($pelanggan, 'nama_pelanggan', 'kd_pelanggan')"
                     empty-option="Pilih Pelanggan..." />
-            </x-adminlte-select>
+            </x-adminlte-select2>
             @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
             <x-adminlte-input-date name="tanggal" id="tanggal-agenda" :config="$configDate"
                 placeholder="Pilih tanggal..." label="Tanggal Janji Temu" igroup-size="md" required>
@@ -110,6 +114,37 @@
 
             <x-slot name="footerSlot">
                 <button type="submit" class="btn btn-primary" id="saveBtn" form="pesananForm">Buat Pesanan</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            </x-slot>
+        </form>
+    </x-adminlte-modal>
+
+    <x-adminlte-modal id="EditModal" title="Edit Pesanan" theme="primary">
+        <form id="editForm" method="POST" action="">
+            @csrf
+            @method('PUT')
+            <x-adminlte-select2 name="kd_pelanggan" label="Pelanggan" id="kd_pelanggan-edit">
+                <x-slot name="prependSlot">
+                    <div class="input-group-text">
+                        <i class="fas fa-lg fa-user"></i>
+                    </div>
+                </x-slot>
+                <x-adminlte-options :options="array_column($pelanggan, 'nama_pelanggan', 'kd_pelanggan')"
+                    empty-option="Pilih Pelanggan..." />
+            </x-adminlte-select2>
+            @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
+            <x-adminlte-input-date name="tanggal" id="tanggal-edit" :config="$configDate" placeholder="Pilih tanggal..."
+                label="Tanggal Janji Temu" igroup-size="md" required>
+                <x-slot name="appendSlot">
+                    <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
+                </x-slot>
+            </x-adminlte-input-date>
+
+            <label>Deskripsi Pesanan</label>
+            <textarea name="deskripsi_pesanan" id="deskripsi-edit" class="form-control"></textarea>
+
+            <x-slot name="footerSlot">
+                <button type="submit" class="btn btn-primary" id="saveBtn" form="editForm">Simpan</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
             </x-slot>
         </form>
@@ -169,6 +204,23 @@
                 infoFiltered: "(difilter dari _MAX_ total entri)"
             }
         });
+        $('.edit-btn').on('click', function (e) {
+            e.preventDefault();
+            let kd_pesanan = $(this).data('kd_pesanan');
+            let deskripsi_pesanan = $(this).data('deskripsi_pesanan');
+            let tanggal = $(this).data('tanggal');
+            let kd_pelanggan = $(this).data('kd_pelanggan');
+            let updateUrl = $(this).data('url');
+
+            $('#kd_pesanan-edit').val(kd_pesanan);
+            $('#deskripsi-edit').val(deskripsi_pesanan);
+            $('#tanggal-edit').val(tanggal);
+
+            $('#kd_pelanggan-edit').val(kd_pelanggan);
+            $('#kd_pelanggan-edit').trigger('change');
+
+            $('#editForm').attr('action', updateUrl);
+        });
         $('#pesananTable').on('click', '.batalkan-btn, .hapus-btn', function (e) {
             e.preventDefault();
             let form = $(this).closest('form');
@@ -194,6 +246,9 @@
                     form.submit();
                 }
             })
+        });
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
         });
         @if (session()->has('success'))
             const Toast = Swal.mixin({

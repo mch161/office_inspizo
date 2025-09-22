@@ -204,6 +204,15 @@ class PesananController extends Controller
 
             return redirect()->back()->with('success', 'Pesanan berhasil dibatalkan.');
         }
+        if ($request->has('kd_pelanggan', 'tanggal', 'deskripsi_pesanan')) {
+            $pesanan->update([
+                'kd_pelanggan' => $request->kd_pelanggan,
+                'tanggal' => $request->tanggal,
+                'deskripsi_pesanan' => $request->deskripsi_pesanan
+            ]);
+
+            return redirect()->back()->with('success', 'Pesanan berhasil diperbarui.');
+        }
 
         return redirect()->back()->with('error', 'Terjadi kesalahan.');
     }
