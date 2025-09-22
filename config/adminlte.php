@@ -328,6 +328,9 @@ return [
                     'route' => 'pelanggan.index',
                     'icon' => 'fa fas fa-users',
                     'can' => 'access-karyawan',
+                    'active' => [
+                        'pelanggan/*',
+                    ]
                 ],
             ]
         ],
