@@ -14,6 +14,7 @@ use App\Models\PesananProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class PesananController extends Controller
@@ -54,7 +55,7 @@ class PesananController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'deskripsi_pesanan' => 'required',
-            'tanggal' => 'required|date',
+            'tanggal' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -101,7 +102,18 @@ class PesananController extends Controller
         $barang = Barang::get()->all();
         $jasa = Jasa::get()->all();
 
-        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_detail', 'pesanan_barang', 'barang', 'jasa', 'pesanan_jasa'));
+        $previousUrl = URL::previous();
+        $pesananId = $pesanan->kd_pesanan;
+
+        $pattern = '/\/pesanan\/' . $pesananId . '\/.+/';
+
+        if (preg_match($pattern, $previousUrl)) {
+            $backUrl = route('pesanan.index');
+        } else {
+            $backUrl = $previousUrl;
+        }
+
+        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_detail', 'pesanan_barang', 'barang', 'jasa', 'pesanan_jasa', 'backUrl'));
     }
 
     public function agenda(Request $request)
