@@ -60,7 +60,7 @@ class PesananController extends Controller
 
         if ($validator->fails()) {
             return redirect()->back()
-                ->withErrors($validator)
+                ->with('error', $validator->errors()->first())
                 ->withInput();
         }
 
