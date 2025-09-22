@@ -222,6 +222,28 @@ class PesananController extends Controller
      */
     public function destroy(Pesanan $pesanan)
     {
+        $pesananDetail = PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->get();
+        if ($pesananDetail->count()) {
+            $pesananDetail = $pesananDetail->first();
+            if (PesananBarang::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->exists()) {
+                PesananBarang::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
+            }
+
+            if (PesananJasa::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->exists()) {
+                PesananJasa::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
+            }
+        }
+
+        if (PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)->exists()) {
+            $pesananProgress = PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)->get();
+            foreach ($pesananProgress as $progress) {
+                $progress->update(['kd_pesanan' => null]);
+            }
+        }
+
+        if ($pesananDetail->exists()) {
+            $pesananDetail->delete();
+        }
         $pesanan->delete();
 
         return redirect()->back()->with('success', 'Pesanan berhasil dihapus.');
