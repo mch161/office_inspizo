@@ -39,6 +39,7 @@
                         <td>{{ $pelanggan->username ?? '-' }}</td>
                         <td>{{ $pelanggan->email ?? '-' }}</td>
                         <td>
+                            <a href="{{ route('pelanggan.show', $pelanggan->kd_pelanggan) }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
                             <button class="btn btn-primary btn-sm tombol-edit" data-toggle="modal" data-target="#editModal"
                                 data-id="{{ $pelanggan->kd_pelanggan }}"
                                 data-nama_pelanggan="{{ $pelanggan->nama_pelanggan }}"
@@ -46,14 +47,13 @@
                                 data-alamat_pelanggan="{{ $pelanggan->alamat_pelanggan }}"
                                 data-telp_pelanggan="{{ $pelanggan->telp_pelanggan }}" data-nik="{{ $pelanggan->nik }}"
                                 data-username="{{ $pelanggan->username }}" data-email="{{ $pelanggan->email }}"><i
-                                    class="fas fa-edit"></i> Edit
+                                    class="fas fa-edit"></i>
                             </button>
-
                             <form action="{{ route('pelanggan.destroy', $pelanggan->kd_pelanggan) }}" method="POST"
                                 style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus"><i class="fas fa-trash"></i> Hapus</button>
+                                <button type="submit" class="btn btn-danger btn-sm tombol-hapus"><i class="fas fa-trash"></i></button>
                             </form>
                         </td>
                 @endforeach

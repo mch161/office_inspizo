@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
+use App\Models\Pesanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -89,6 +90,13 @@ class PelangganController extends Controller
         else {
             return redirect()->route('pelanggan.index')->with('error', 'Pelanggan gagal diubah.');
         }
+    }
+
+    public function show($id)
+    {
+        $pelanggan = Pelanggan::find($id);
+        $pesanan = Pesanan::where('kd_pelanggan', $id)->get();
+        return view('karyawan.pelanggan.show', compact('pelanggan', 'pesanan'));
     }
 
     public function destroy($id)
