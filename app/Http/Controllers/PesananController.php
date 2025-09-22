@@ -107,7 +107,7 @@ class PesananController extends Controller
 
         $pattern = '/\/pesanan\/' . $pesananId . '\/.+/';
 
-        if (preg_match($pattern, $previousUrl)) {
+        if (preg_match($pattern, $previousUrl) || $previousUrl == route('login')) {
             $backUrl = route('pesanan.index');
         } else {
             $backUrl = $previousUrl;
