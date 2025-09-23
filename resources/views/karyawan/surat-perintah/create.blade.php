@@ -28,6 +28,10 @@
                         'placeholder' => 'Cari project...',
                         'allowClear' => true,
                     ];
+                    $karyawan_config = [
+                        'placeholder' => 'Cari karyawan...',
+                        'allowClear' => true
+                    ];
                 @endphp
                 <x-adminlte-select2 name="kd_pesanan" label="Pesanan" :config="$pesanan_config">
                     <option class="text-muted" value="" selected disabled>Cari pesanan...</option>
@@ -42,8 +46,7 @@
                     @endforeach
                 </x-adminlte-select2>
             </div>
-            <x-adminlte-select2 name="kd_karyawan" label="Karyawan">
-                <option class="text-muted" value="" selected disabled>Cari karyawan...</option>
+            <x-adminlte-select2 name="kd_karyawan[]" id="karyawan" label="Karyawan" :config="$karyawan_config" multiple>
                 @foreach ($karyawan as $item)
                     <option value="{{ $item->kd_karyawan }}">{{ $item->nama }}</option>
                 @endforeach

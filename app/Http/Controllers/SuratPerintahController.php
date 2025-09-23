@@ -47,15 +47,17 @@ class SuratPerintahController extends Controller
             return redirect()->back()->with('error', $validator->errors()->first())->withInput();
         }
 
-        SuratPerintahKerja::create([
-            'kd_pesanan' => $request->kd_pesanan,
-            'kd_project' => $request->kd_project,
-            'kd_karyawan' => $request->kd_karyawan,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'keterangan' => $request->keterangan,
-            'status' => '0',
-            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
-        ]);
+        foreach ($request->kd_karyawan as $karyawan) {
+            SuratPerintahKerja::create([
+                'kd_pesanan' => $request->kd_pesanan,
+                'kd_project' => $request->kd_project,
+                'kd_karyawan' => $karyawan,
+                'tanggal_mulai' => $request->tanggal_mulai,
+                'keterangan' => $request->keterangan,
+                'status' => '0',
+                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+            ]);
+        }
 
         return redirect()->route('surat-perintah.index')->with('success', 'Surat perintah berhasil dibuat.');
     }
