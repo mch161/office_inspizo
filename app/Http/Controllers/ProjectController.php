@@ -36,7 +36,8 @@ class ProjectController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama_project' => 'required|string',
-            'foto' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'kd_pelanggan' => 'nullable|string|exists:pelanggan,kd_pelanggan',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif',
             'lokasi' => 'required|string',
             'tanggal_mulai' => 'required|date',
             'deskripsi' => 'required|string',
@@ -63,6 +64,7 @@ class ProjectController extends Controller
 
         $project = new Project();
         $project->nama_project = $request->nama_project;
+        $project->kd_pelanggan = $request->kd_pelanggan;
         $project->kd_karyawan = Auth::id();
         $project->foto = $imageName;
         $project->tanggal_mulai = $request->tanggal_mulai;

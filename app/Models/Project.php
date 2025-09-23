@@ -12,6 +12,7 @@ class Project extends Model
 
     protected $fillable = [
         'nama_project',
+        'kd_pelanggan',
         'foto',
         'kd_karyawan',
         'lokasi',
@@ -21,4 +22,9 @@ class Project extends Model
         'status',
         'dibuat_oleh',
     ];
+
+    public function pelanggan()
+    {
+        return $this->belongsTo(Pelanggan::class, 'kd_pelanggan', 'kd_pelanggan');
+    }
 }
