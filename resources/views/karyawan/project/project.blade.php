@@ -2,6 +2,8 @@
 
 @section('title', 'Project')
 
+@section('plugins.Select2', true)
+
 @section('content_header')
 <h1>Project</h1>
 @stop
@@ -11,10 +13,27 @@
     <form id="projectForm" action="{{ route('project.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-group">
                     <x-adminlte-input name="nama_project" label="Nama Project" placeholder="Masukkan Nama Project"
                         required />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @php
+                        $pelanggan = App\Models\Pelanggan::all();
+                        $pelanggan_config = [
+                            'placeholder' => 'Pilih Pelanggan...',
+                            'allowClear' => true
+                        ];
+                    @endphp
+                    <x-adminlte-select2 name="kd_pelanggan" label="Pelanggan" :config="$pelanggan_config">
+                        <option class="text-muted" value="" selected disabled>Pilih Pelanggan...</option>
+                        @foreach ($pelanggan as $item)
+                            <option value="{{ $item->kd_pelanggan }}">{{ $item->nama_pelanggan }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
                 </div>
             </div>
             <div class="col-md-12">
@@ -150,8 +169,15 @@
                         class="badge {{ $project->status == 'Belum Selesai' ? 'badge-warning' : 'badge-success' }} float-right">{{ $project->status }}</span>
                 </div>
                 <div class="card-body">
-                    <img src="{{ asset('storage/images/project/' . $project->foto) }}" alt="Foto Project"
-                        class="card-img-top">
+                    @if ($project->foto)
+                        <img src="{{ asset('storage/images/project/' . $project->foto) }}" alt="Foto Project"
+                            class="card-img-top">
+                    @else
+                        <div class="d-flex justify-content-center align-items-center" style="height: 150px;">
+                            <i class="fas fa-camera-retro fa-5x text-muted mb-3"></i>
+                            <p class="text-center text-muted m-1">Tidak ada foto.</p>
+                        </div>
+                    @endif
                     <p>{{ Str::limit($project->deskripsi, 100) }}
                         @if (strlen($project->deskripsi) > 100)
                             <a class="read-more">Baca Selengkapnya</a>
@@ -193,6 +219,9 @@
 
 @section('js')
     <script>
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
         $('.read-more').click(function () {
             $(this).parent('p').hide();
             $(this).parent('p').next('.deskripsi-full').show();

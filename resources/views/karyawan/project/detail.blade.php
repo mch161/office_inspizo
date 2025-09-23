@@ -52,14 +52,24 @@
             </div>
             <div class="card-body row">
                 <div class="col-md-4">
-                    <a class="image-popup" data-toggle="modal" data-target="#imageModal"
-                        data-src="{{ asset('storage/images/project/' . $project->foto) }}">
-                        <img class="img-fluid project-image" src="{{ asset('storage/images/project/' . $project->foto) }}"
-                            alt="Foto Project">
-                    </a>
+                    @if ($project->foto)
+                        <a class="image-popup" data-toggle="modal" data-target="#imageModal"
+                            data-src="{{ asset('storage/images/project/' . $project->foto) }}">
+                            <img class="img-fluid project-image" src="{{ asset('storage/images/project/' . $project->foto) }}"
+                                alt="Foto Project">
+                        </a>
+                    @else
+                        <div class="text-center">
+                            <i class="fas fa-camera-retro fa-5x text-muted mb-3"></i>
+                            <p class="text-center text-muted m-1">Tidak ada foto.</p>
+                        </div>
+                    @endif
                 </div>
                 <div class="col-md-8">
                     <p><strong>Nama Project:</strong> {{ $project->nama_project }}</p>
+                    @if ($project->pelanggan)
+                        <p><strong>Pelanggan:</strong> {{ $project->pelanggan->nama_pelanggan }}</p>
+                    @endif
                     <p><strong>Lokasi:</strong> {{ $project->lokasi }}</p>
                     <p><strong>Tanggal Mulai:</strong> {{ $project->tanggal_mulai }}</p>
                     <p><strong>Deskripsi:</strong> {{ $project->deskripsi }}</p>
