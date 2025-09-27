@@ -54,10 +54,18 @@ class PresensiBulananController extends Controller
     {
         $jumlah_tanggal = Carbon::createFromDate($request->tahun, $request->bulan, 1)->daysInMonth;
 
+        $startDate = Carbon::createFromDate($request->tahun, $request->bulan, 1);
+        $endDate = Carbon::createFromDate($request->tahun, $request->bulan, 1)->endOfMonth();
+
+        $jumlahMinggu = $startDate->diffInDaysFiltered(function (Carbon $date) {
+            return $date->isSunday();
+        }, $endDate);
+
         $jumlah_libur = PresensiLibur::whereYear('tanggal', $request->tahun)
             ->whereMonth('tanggal', $request->bulan)
             ->count() ?? 0;
-        $jumlah_hari_kerja_normal = $jumlah_tanggal - $jumlah_libur;
+
+        $jumlah_hari_kerja_normal = $jumlah_tanggal - $jumlah_libur - $jumlahMinggu;
 
         $jumlah_hari_sakit = Izin::whereYear('tanggal', $request->tahun)
             ->whereMonth('tanggal', $request->bulan)
@@ -190,11 +198,12 @@ class PresensiBulananController extends Controller
         $data['kd_presensi_bulanan'] = $request->kd_presensi_bulanan;
         $data['bulan'] = $request->bulan;
         $data['tahun'] = $request->tahun;
-        $presensiBulanan = PresensiBulanan::where('kd_presensi_bulanan', $request->kd_presensi_bulanan)->first();
-        if (!$presensiBulanan->isDirty($data)) {
-            return redirect()->back()->with('success', 'Tidak ada perubahan pada rekap bulanan.');
+        $presensiBulanan = PresensiBulanan::find($request->kd_presensi_bulanan);
+        $presensiBulanan->fill($data);
+        if (!$presensiBulanan->isDirty()) {
+            return redirect()->route('presensi.bulanan')->with('success', 'Tidak ada perubahan pada rekap bulanan.');
         }
-        $presensiBulanan->update($data);
+        $presensiBulanan->save();
         
         return redirect()->back()->with('success', 'Auto Sync Rekap Bulanan berhasil.');
     }
