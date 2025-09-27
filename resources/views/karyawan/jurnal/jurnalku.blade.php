@@ -164,7 +164,9 @@
                     <div class="date-scroll-inner">
                         @foreach($hariBulanIni as $hari)
                             @if($hari->isFuture())
-                                <button class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn" disabled>
+                                <button
+                                    class="btn btn-outline-{{ $hari->dayOfWeek == 0 ? 'danger' : 'primary' }} btn-sm date-btn"
+                                    disabled>
                                     <div class="day-name">{{ $hari->isoFormat('ddd') }}</div>
                                     <div class="day-number">{{ $hari->day }}</div>
                                 </button>
@@ -199,9 +201,13 @@
                                 data-jam="{{ $jurnal->jam }}" data-isi_jurnal="{{ $jurnal->isi_jurnal }}">
                                 <i class="fas fa-edit"> Edit</i>
                             </button>
-                            <button class="btn btn-xs btn-danger tombol-hapus" data-id="{{ $jurnal->kd_jurnal }}">
-                                <i class="fas fa-trash"> Hapus</i>
-                            </button>
+                            <form action="{{ route('jurnal.destroy', $jurnal) }}"
+                                method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-xs btn-danger tombol-hapus"><i
+                                        class="fas fa-trash"></i> Hapus</button>
+                            </form>
                         </div>
                         <p class="mb-1">{!! $jurnal->isi_jurnal !!}</p>
                         <span class="timeline-time">
@@ -354,23 +360,23 @@
                 form.attr('action', updateUrl);
             });
 
-            $('.tombol-hapus').on('click', function () {
+            $('.tombol-hapus').on('click', function (e) {
                 e.preventDefault();
                 let form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Apakah Anda yakin?',
+                    title: 'Yakin ingin menghapus?',
                     text: "Data yang dihapus tidak dapat dikembalikan!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Ya, hapus!',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit();
                     }
-                });
+                })
             });
 
             @if ($errors->any() && session('invalid_jurnal'))
@@ -433,6 +439,6 @@
                         text: '{{ session('error') }}',
                     });
                 @endif
-                });
+                            });
     </script>
 @endsection
