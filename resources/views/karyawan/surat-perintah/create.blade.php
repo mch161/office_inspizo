@@ -12,7 +12,7 @@
 <div class="card">
     <div class="card-body">
         <div class="float-right">
-            <a href="{{ route('surat-perintah.index') }}" class="btn btn-primary">
+            <a href="{{ $backUrl }}" class="btn btn-primary">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
         </div>
@@ -33,18 +33,25 @@
                         'allowClear' => true
                     ];
                 @endphp
-                <x-adminlte-select2 name="kd_pesanan" label="Pesanan" :config="$pesanan_config">
-                    <option class="text-muted" value="" selected disabled>Cari pesanan...</option>
-                    @foreach ($pesanan as $item)
-                        <option value="{{ $item->kd_pesanan }}">{{ $item->deskripsi_pesanan }}</option>
-                    @endforeach
-                </x-adminlte-select2>
-                <x-adminlte-select2 name="kd_project" label="Project" :config="$project_config">
-                    <option class="text-muted" value="" selected disabled>Cari project...</option>
-                    @foreach ($project as $item)
-                        <option value="{{ $item->kd_project }}">{{ $item->nama_project }}</option>
-                    @endforeach
-                </x-adminlte-select2>
+                @if ($kd_pesanan != null)
+                    <x-adminlte-select2 name="kd_pesanan" label="Pesanan" readonly>
+                        <option value="{{ $kd_pesanan }}">{{ $deskripsi_pesanan }}</option>
+                    </x-adminlte-select2>
+                @endif
+                @if ($kd_pesanan == null)
+                    <x-adminlte-select2 name="kd_pesanan" label="Pesanan" :config="$pesanan_config">
+                        <option class="text-muted" value="" selected disabled>Cari pesanan...</option>
+                        @foreach ($pesanan as $item)
+                            <option value="{{ $item->kd_pesanan }}">{{ $item->deskripsi_pesanan }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
+                    <x-adminlte-select2 name="kd_project" label="Project" :config="$project_config">
+                        <option class="text-muted" value="" selected disabled>Cari project...</option>
+                        @foreach ($project as $item)
+                            <option value="{{ $item->kd_project }}">{{ $item->nama_project }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
+                @endif
             </div>
             <x-adminlte-select2 name="kd_karyawan[]" id="karyawan" label="Karyawan" :config="$karyawan_config" multiple>
                 @foreach ($karyawan as $item)
@@ -60,8 +67,7 @@
                     <div class="input-group-text bg-gray"><i class="fas fa-calendar-day"></i></div>
                 </x-slot>
             </x-adminlte-input-date>
-            <x-adminlte-textarea name="keterangan" label="Keterangan"
-                placeholder="Keterangan..."></x-adminlte-textarea>
+            <x-adminlte-textarea name="keterangan" label="Keterangan" placeholder="Keterangan..."></x-adminlte-textarea>
             <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Kirim</button>
         </form>
     </div>

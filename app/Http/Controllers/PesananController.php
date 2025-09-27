@@ -11,6 +11,7 @@ use App\Models\PesananBarang;
 use App\Models\PesananDetail;
 use App\Models\PesananJasa;
 use App\Models\PesananProgress;
+use App\Models\SuratPerintahKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -101,6 +102,7 @@ class PesananController extends Controller
         $pesanan_jasa = PesananJasa::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         $barang = Barang::get()->all();
         $jasa = Jasa::get()->all();
+        $surat_perintah = SuratPerintahKerja::where('kd_pesanan', $pesanan->kd_pesanan)->get();
 
         $previousUrl = URL::previous();
         $pesananId = $pesanan->kd_pesanan;
@@ -113,7 +115,7 @@ class PesananController extends Controller
             $backUrl = $previousUrl;
         }
 
-        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_detail', 'pesanan_barang', 'barang', 'jasa', 'pesanan_jasa', 'backUrl'));
+        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_detail', 'pesanan_barang', 'barang', 'jasa', 'pesanan_jasa', 'surat_perintah', 'backUrl'));
     }
 
     public function agenda(Request $request)

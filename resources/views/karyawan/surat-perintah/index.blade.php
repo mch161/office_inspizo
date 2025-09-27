@@ -93,28 +93,26 @@
     </div>
 </div>
 
-@cannot('superadmin')
-    <x-adminlte-modal id="selesaiModal" title="Tandai Selesai" theme="success">
-        <form id="form-selesai" action="{{ route('surat-perintah.update', 0) }}" method="POST">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="status" value="1">
-            @php
-                $config = ['format' => 'DD-MM-YYYY'];
-            @endphp
-            <x-adminlte-input-date name="tanggal_selesai" value="{{ old('tanggal', date('d-m-Y')) }}" :config="$config"
-                placeholder="Pilih tanggal..." label="Tanggal Selesai" igroup-size="md">
-                <x-slot name="appendSlot">
-                    <div class="input-group-text bg-gray"><i class="fas fa-calendar-day"></i></div>
-                </x-slot>
-            </x-adminlte-input-date>
-            <x-slot name="footerSlot">
-                <button type="submit" form="form-selesai" class="btn btn-success">Tandai Selesai</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+<x-adminlte-modal id="selesaiModal" title="Tandai Selesai" theme="success">
+    <form id="form-selesai" action="{{ route('surat-perintah.update', 0) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="status" value="1">
+        @php
+            $config = ['format' => 'DD-MM-YYYY'];
+        @endphp
+        <x-adminlte-input-date name="tanggal_selesai" value="{{ old('tanggal', date('d-m-Y')) }}" :config="$config"
+            placeholder="Pilih tanggal..." label="Tanggal Selesai" igroup-size="md">
+            <x-slot name="appendSlot">
+                <div class="input-group-text bg-gray"><i class="fas fa-calendar-day"></i></div>
             </x-slot>
-        </form>
-    </x-adminlte-modal>
-@endcannot
+        </x-adminlte-input-date>
+        <x-slot name="footerSlot">
+            <button type="submit" form="form-selesai" class="btn btn-success">Tandai Selesai</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+        </x-slot>
+    </form>
+</x-adminlte-modal>
 
 @stop
 

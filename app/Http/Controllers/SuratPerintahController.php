@@ -9,6 +9,7 @@ use App\Models\SuratPerintahKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class SuratPerintahController extends Controller
@@ -17,20 +18,30 @@ class SuratPerintahController extends Controller
     {
         if (Auth::user()->role == 'superadmin') {
             $surat_perintah = SuratPerintahKerja::all();
-        }
-        else {
+        } else {
             $surat_perintah = SuratPerintahKerja::where('kd_karyawan', Auth::user()->kd_karyawan)->get();
         }
-        
+
         return view('karyawan.surat-perintah.index', compact('surat_perintah'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $pesanan = Pesanan::get()->all();
         $project = Project::get()->all();
         $karyawan = Karyawan::get()->all();
-        return view('karyawan.surat-perintah.create', compact('pesanan', 'project', 'karyawan'));
+        $kd_pesanan = $request->pesanan;
+        $deskripsi_pesanan = Pesanan::where('kd_pesanan', $kd_pesanan)->first()->deskripsi_pesanan ?? null;
+
+        $previousUrl = URL::previous();
+
+        if ($previousUrl == route('login') || $previousUrl == route('surat-perintah.create', ['pesanan' => $kd_pesanan])) {
+            $backUrl = route('surat-perintah.index');
+        } else {
+            $backUrl = $previousUrl;
+        }
+
+        return view('karyawan.surat-perintah.create', compact('pesanan', 'project', 'karyawan', 'kd_pesanan', 'deskripsi_pesanan', 'backUrl'));
     }
 
     public function store(Request $request)

@@ -175,6 +175,55 @@
         <div class="col-md-12">
             <div class="card mt-4">
                 <div class="card-header">
+                    <h3 class="card-title">Surat Perintah</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <a href="{{ route('surat-perintah.create', ['pesanan' => $pesanan->kd_pesanan]) }}"
+                        class="btn btn-primary mb-2">Buat Surat Perintah</a>
+                    <table id="suratPerintahTable" class="table table-centered table-nowrap mb-0 rounded">
+                        <thead class="thead-light">
+                            <tr>
+                                <th width="5%">No</th>
+                                <th>Nama</th>
+                                <th>Tanggal</th>
+                                <th>Keterangan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($surat_perintah as $suratPerintah)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $suratPerintah->karyawan->nama }}</td>
+                                    <td>{{ $suratPerintah->tanggal_mulai }}</td>
+                                    <td>{{ $suratPerintah->keterangan }}</td>
+                                    <td>
+                                        <form
+                                            action="{{ route('surat-perintah.destroy', $suratPerintah->kd_surat_perintah_kerja) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash tombol-hapus"></i>
+                                                Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-4">
+                <div class="card-header">
                     <h3 class="card-title">Barang</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -237,7 +286,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <div class="row">
@@ -338,7 +386,7 @@
 @section('js')
     <script>
         $(document).ready(function () {
-            $('#barangTable').DataTable({
+            $('#suratPerintahTable, #barangTable').DataTable({
                 scrollX: true,
                 paging: false,
                 scrollCollapse: true,
@@ -352,7 +400,7 @@
                     infoFiltered: "(difilter dari _MAX_ total entri)"
                 }
             });
-            $('#barangTable, #jasaTable').on('click', '.tombol-hapus', function (e) {
+            $('#suratPerintahTable, #barangTable, #jasaTable').on('click', '.tombol-hapus', function (e) {
                 e.preventDefault();
                 let form = $(this).closest('form');
                 Swal.fire({
