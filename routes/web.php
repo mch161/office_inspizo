@@ -14,6 +14,23 @@ Route::get('/', function () {
 require __DIR__ . '/auth.php';
 
 
+Route::middleware(['can:superadmin'])->group(function () {
+    ##Jurnal
+    Route::get('jurnal_kita', [App\Http\Controllers\JurnalController::class, 'jurnal_kita'])->name('jurnal_kita');
+
+    ##Presensi Bulanan
+    Route::post('presensi/bulanan/create', [App\Http\Controllers\PresensiBulananController::class, 'create'])->name('presensi.bulanan.create');
+    Route::put('presensi/bulanan/{kd_presensi_bulanan}/sync', [App\Http\Controllers\PresensiBulananController::class, 'sync'])->name('presensi.bulanan.sync');
+    Route::put('presensi/bulanan/{kd_presensi_bulanan}/update', [App\Http\Controllers\PresensiBulananController::class, 'update'])->name('presensi.bulanan.update');
+    Route::put('presensi/bulanan/{kd_presensi_bulanan}/verify', [App\Http\Controllers\PresensiBulananController::class, 'verify'])->name('presensi.bulanan.verify');
+
+    ##Izin
+    Route::put('lembur/approve', [App\Http\Controllers\LemburController::class, 'approve'])->name('lembur.approve');
+
+    ##User
+    Route::resource('users', App\Http\Controllers\Auth\UserController::class);
+});
+
 Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('pelanggan', App\Http\Controllers\PelangganController::class);
@@ -87,21 +104,4 @@ Route::middleware(['auth:karyawan'])->group(function () {
     ## PDF
     Route::get('/download-card', [App\Http\Controllers\PDFController::class, 'card'])->name('downloadCard');
     Route::get('/view-card', [App\Http\Controllers\PDFController::class, 'index'])->name('viewCard');
-});
-
-Route::middleware(['can:superadmin'])->group(function () {
-    ##Jurnal
-    Route::get('jurnal_kita', [App\Http\Controllers\JurnalController::class, 'jurnal_kita'])->name('jurnal_kita');
-
-    ##Presensi Bulanan
-    Route::post('presensi/bulanan/create', [App\Http\Controllers\PresensiBulananController::class, 'create'])->name('presensi.bulanan.create');
-    Route::put('presensi/bulanan/{kd_presensi_bulanan}/sync', [App\Http\Controllers\PresensiBulananController::class, 'sync'])->name('presensi.bulanan.sync');
-    Route::put('presensi/bulanan/{kd_presensi_bulanan}/update', [App\Http\Controllers\PresensiBulananController::class, 'update'])->name('presensi.bulanan.update');
-    Route::put('presensi/bulanan/{kd_presensi_bulanan}/verify', [App\Http\Controllers\PresensiBulananController::class, 'verify'])->name('presensi.bulanan.verify');
-
-    ##Izin
-    Route::put('lembur/approve', [App\Http\Controllers\LemburController::class, 'approve'])->name('lembur.approve');
-
-    ##User
-    Route::resource('users', App\Http\Controllers\Auth\UserController::class);
 });
