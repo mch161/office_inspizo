@@ -355,6 +355,19 @@ return [
                         'pesanan/*/*',
                     ],
                 ],
+                [
+                    'text' => 'Project',
+                    'icon' => 'fas fa-fw fa-project-diagram',
+                    'can' => 'access-karyawan',
+                    'route' => 'project.index'
+                ],
+                [
+                    'text' => 'Surat Perintah',
+                    'icon' => 'fas fa-fw fa-scroll',
+                    'can' => 'access-karyawan',
+                    'route' => 'surat-perintah.index',
+                    'active' => ['surat-perintah*']
+                ],
             ]
         ],
         [
@@ -444,19 +457,6 @@ return [
             'icon' => 'fas fa-fw fa-dollar-sign',
             'can' => 'access-karyawan',
             'route' => 'jasa.index'
-        ],
-        [
-            'text' => 'Project',
-            'icon' => 'fas fa-fw fa-project-diagram',
-            'can' => 'access-karyawan',
-            'route' => 'project.index'
-        ],
-        [
-            'text' => 'Surat Perintah',
-            'icon' => 'fas fa-fw fa-scroll',
-            'can' => 'access-karyawan',
-            'route' => 'surat-perintah.index',
-            'active' => ['surat-perintah*']
         ],
         [
             'text' => 'Reimburse',
