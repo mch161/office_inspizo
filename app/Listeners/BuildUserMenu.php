@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\Pesanan;
 use App\Support\HtmlString;
 use Illuminate\Support\Facades\Auth;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
@@ -63,5 +64,19 @@ class BuildUserMenu
                 'icon' => 'fas fa-fw fa-users',
             ]);
         }
+        $pesananYangBelumDisetujui = $this->getPesananYangBelumDisetujui();
+        $event->menu->addAfter('pesanan', [
+            'text' => 'Pesanan yang belum disetujui',
+            'route' => 'pesanan.permintaan',
+            'icon' => 'fa fas fa-clipboard-list',
+            'label' => $pesananYangBelumDisetujui,
+            'label_color' => 'danger',
+            'can' => 'access-karyawan',
+        ]);
+    }
+
+    private function getPesananYangBelumDisetujui()
+    {
+        return count(Pesanan::where('progres', '1')->where('status', '!=', '1')->get());
     }
 }

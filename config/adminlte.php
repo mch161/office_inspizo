@@ -335,7 +335,7 @@ return [
             ]
         ],
         [
-            'text' => 'Pesanan & Agenda',
+            'text' => 'Agenda & Pesanan',
             'icon' => 'fas fa-fw fa-calendar-alt',
             'can' => 'access-karyawan',
             'submenu' => [
@@ -346,6 +346,7 @@ return [
                     'can' => 'access-karyawan'
                 ],
                 [
+                    'key' => 'pesanan',
                     'text' => 'Pesanan',
                     'route' => 'pesanan.index',
                     'icon' => 'fa fas fa-clipboard-list',
@@ -354,12 +355,6 @@ return [
                         'pesanan/*/*',
                     ],
                 ],
-                [
-                    'text' => 'Pesanan yang belum disetujui',
-                    'route' => 'pesanan.permintaan',
-                    'icon' => 'fa fas fa-clipboard-list',
-                    'can' => 'access-karyawan',
-                ]
             ]
         ],
         [
