@@ -68,6 +68,12 @@
                                     @endif
                                 </td>
                                 <td>
+                                    @if (Auth::guard('karyawan')->user()->kd_karyawan == $item->kd_karyawan && $item->status == '0')
+                                        <button data-toggle="modal" data-target="#selesaiModal"
+                                            data-id="{{ $item->kd_surat_perintah_kerja }}"
+                                            class="btn btn-sm btn-success tombol-selesai"><i class="fas fa-check"></i>
+                                            Tandai Selesai</button>
+                                    @endif
                                     @can('superadmin')
                                         <form action="{{ route('surat-perintah.destroy', $item->kd_surat_perintah_kerja) }}"
                                             method="POST" class="d-inline">
@@ -77,12 +83,6 @@
                                                     class="fas fa-trash"></i> Hapus</button>
                                         </form>
                                     @endcan
-                                    @if (Auth::guard('karyawan')->user()->kd_karyawan == $item->kd_karyawan && $item->status == '0')
-                                        <button data-toggle="modal" data-target="#selesaiModal"
-                                            data-id="{{ $item->kd_surat_perintah_kerja }}"
-                                            class="btn btn-sm btn-success tombol-selesai"><i class="fas fa-check"></i>
-                                            Tandai Selesai</button>
-                                    @endif
                                 </td>
                             </tr>
                         @endforeach
