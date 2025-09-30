@@ -319,6 +319,7 @@ return [
             'icon' => 'fas fa-fw fa-home',
         ],
         [
+            'key' => 'pelanggan',
             'text' => 'Pelanggan',
             'icon' => 'fas fa-fw fa-user',
             'can' => 'access-karyawan',
@@ -331,42 +332,6 @@ return [
                     'active' => [
                         'pelanggan/*',
                     ]
-                ],
-            ]
-        ],
-        [
-            'text' => 'Agenda & Pesanan',
-            'icon' => 'fas fa-fw fa-calendar-alt',
-            'can' => 'access-karyawan',
-            'submenu' => [
-                [
-                    'text' => 'Agenda',
-                    'icon' => 'fa fas fa-calendar-alt',
-                    'route' => 'agenda.index',
-                    'can' => 'access-karyawan'
-                ],
-                [
-                    'key' => 'pesanan',
-                    'text' => 'Pesanan',
-                    'route' => 'pesanan.index',
-                    'icon' => 'fa fas fa-clipboard-list',
-                    'can' => 'access-karyawan',
-                    'active' => [
-                        'pesanan/*/*',
-                    ],
-                ],
-                [
-                    'text' => 'Project',
-                    'icon' => 'fas fa-fw fa-project-diagram',
-                    'can' => 'access-karyawan',
-                    'route' => 'project.index'
-                ],
-                [
-                    'text' => 'Surat Perintah',
-                    'icon' => 'fas fa-fw fa-scroll',
-                    'can' => 'access-karyawan',
-                    'route' => 'surat-perintah.index',
-                    'active' => ['surat-perintah*']
                 ],
             ]
         ],

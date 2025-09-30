@@ -65,18 +65,55 @@ class BuildUserMenu
             ]);
         }
         $pesananYangBelumDisetujui = $this->getPesananYangBelumDisetujui();
-        $event->menu->addAfter('pesanan', [
-            'text' => 'Pesanan yang belum disetujui',
-            'route' => 'pesanan.permintaan',
-            'icon' => 'fa fas fa-clipboard-list',
-            'label' => $pesananYangBelumDisetujui,
-            'label_color' => 'danger',
+        $event->menu->addAfter('pelanggan', [
+            'text' => 'Agenda & Pesanan',
+            'icon' => 'fas fa-fw fa-calendar-alt',
             'can' => 'access-karyawan',
+            'label' => $pesananYangBelumDisetujui > 0 ? $pesananYangBelumDisetujui : '',
+            'label_color' => $pesananYangBelumDisetujui > 0 ? 'danger' : '',
+            'submenu' => [
+                [
+                    'text' => 'Agenda',
+                    'icon' => 'fa fas fa-calendar-alt',
+                    'route' => 'agenda.index',
+                    'can' => 'access-karyawan'
+                ],
+                [
+                    'text' => 'Pesanan',
+                    'route' => 'pesanan.index',
+                    'icon' => 'fa fas fa-clipboard-list',
+                    'can' => 'access-karyawan',
+                    'active' => [
+                        'pesanan/*/*',
+                    ],
+                ],
+                [
+                    'text' => 'Pesanan yang belum disetujui',
+                    'route' => 'pesanan.permintaan',
+                    'icon' => 'fa fas fa-clipboard-list',
+                    'label' => $pesananYangBelumDisetujui > 0 ? $pesananYangBelumDisetujui : '',
+                    'label_color' => $pesananYangBelumDisetujui > 0 ? 'danger' : '',
+                    'can' => 'access-karyawan',
+                ],
+                [
+                    'text' => 'Project',
+                    'icon' => 'fas fa-fw fa-project-diagram',
+                    'can' => 'access-karyawan',
+                    'route' => 'project.index'
+                ],
+                [
+                    'text' => 'Surat Perintah',
+                    'icon' => 'fas fa-fw fa-scroll',
+                    'can' => 'access-karyawan',
+                    'route' => 'surat-perintah.index',
+                    'active' => ['surat-perintah*']
+                ],
+            ],
         ]);
     }
 
     private function getPesananYangBelumDisetujui()
     {
-        return count(Pesanan::where('progres', '1')->where('status', '!=', '1')->get());
+        return count(Pesanan::where('progres', '1')->where('status', '=', '0')->get());
     }
 }
