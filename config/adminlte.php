@@ -336,48 +336,6 @@ return [
             ]
         ],
         [
-            'text' => 'Presensi',
-            'icon' => 'fas fa-fw fa-address-card',
-            'can' => 'access-karyawan',
-            'submenu' => [
-                [
-                    'text' => 'Fingerprint',
-                    'route' => 'presensi.index',
-                    'icon' => 'fa fas fa-fingerprint',
-                    'can' => 'access-karyawan',
-                    'active' => [
-                        'presensi*',
-                    ]
-                ],
-                [
-                    'text' => 'Izin',
-                    'icon' => 'fa fas fa-envelope-open',
-                    'route' => 'izin.index',
-                    'can' => 'access-karyawan',
-                    'active' => ['izin*']
-                ],
-                [
-                    'text' => 'Lembur',
-                    'route' => 'lembur.index',
-                    'icon' => 'fa fas fa-clipboard-list',
-                    'can' => 'access-karyawan',
-                    'active' => ['form/lembur*']
-                ],
-                [
-                    'text' => 'Hari Libur',
-                    'route' => 'libur.index',
-                    'icon' => 'fa fas fa-calendar-alt',
-                    'can' => 'access-karyawan',
-                ],
-                [
-                    'text' => 'Rekap Bulanan',
-                    'route' => 'presensi.bulanan',
-                    'icon' => 'fa fas fa-calendar',
-                    'can' => 'access-karyawan',
-                ]
-            ]
-        ],
-        [
             'text' => 'Jurnal',
             'icon' => 'fas fa-fw fa-book',
             'can' => 'access-karyawan',

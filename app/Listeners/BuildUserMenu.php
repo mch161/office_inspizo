@@ -2,7 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Models\Izin;
 use App\Models\Pesanan;
+use App\Models\PresensiLembur;
 use App\Support\HtmlString;
 use Illuminate\Support\Facades\Auth;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
@@ -66,6 +68,7 @@ class BuildUserMenu
         }
         $pesananYangBelumDisetujui = $this->getPesananYangBelumDisetujui();
         $event->menu->addAfter('pelanggan', [
+            'key' => 'pesanan',
             'text' => 'Agenda & Pesanan',
             'icon' => 'fas fa-fw fa-calendar-alt',
             'can' => 'access-karyawan',
@@ -110,10 +113,70 @@ class BuildUserMenu
                 ],
             ],
         ]);
+        $izin = $this->getIzin();
+        $lembur = $this->getLembur();
+        $event->menu->addAfter('pesanan', [
+            'text' => 'Presensi',
+            'icon' => 'fas fa-fw fa-address-card',
+            'can' => 'access-karyawan',
+            'label' => $izin + $lembur > 0 ? $izin + $lembur : '',
+            'label_color' => $izin + $lembur > 0 ? 'danger' : '',
+            'submenu' => [
+                [
+                    'text' => 'Fingerprint',
+                    'route' => 'presensi.index',
+                    'icon' => 'fa fas fa-fingerprint',
+                    'can' => 'access-karyawan',
+                    'active' => [
+                        'presensi*',
+                    ]
+                ],
+                [
+                    'text' => 'Izin',
+                    'icon' => 'fa fas fa-envelope-open',
+                    'route' => 'izin.index',
+                    'can' => 'access-karyawan',
+                    'label' => $izin > 0 ? $izin : '',
+                    'label_color' => $izin > 0 ? 'danger' : '',
+                    'active' => ['izin*']
+                ],
+                [
+                    'text' => 'Lembur',
+                    'route' => 'lembur.index',
+                    'icon' => 'fa fas fa-clipboard-list',
+                    'can' => 'access-karyawan',
+                    'label' => $lembur > 0 ? $lembur : '',
+                    'label_color' => $lembur > 0 ? 'danger' : '',
+                    'active' => ['form/lembur*']
+                ],
+                [
+                    'text' => 'Hari Libur',
+                    'route' => 'libur.index',
+                    'icon' => 'fa fas fa-calendar-alt',
+                    'can' => 'access-karyawan',
+                ],
+                [
+                    'text' => 'Rekap Bulanan',
+                    'route' => 'presensi.bulanan',
+                    'icon' => 'fa fas fa-calendar',
+                    'can' => 'access-karyawan',
+                ]
+            ]
+        ]);
     }
 
     private function getPesananYangBelumDisetujui()
     {
         return count(Pesanan::where('progres', '1')->where('status', '=', '0')->get());
+    }
+
+    private function getIzin()
+    {
+        return count(Izin::where('status', '0')->get());
+    }
+
+    private function getLembur()
+    {
+        return count(PresensiLembur::where('verifikasi', '0')->get());
     }
 }
