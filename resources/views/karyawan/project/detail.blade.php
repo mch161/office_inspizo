@@ -46,6 +46,8 @@
             <div class="card-header">
                 <h3 class="card-title">Detail Project</h3>
                 <div class="card-tools float-end">
+                    <button type="button" class="btn btn-success tombol-edit" data-toggle="modal"
+                        data-target="#editModal"><i class="fas fa-edit"></i> Edit</button>
                     <a href="{{ route('project.index') }}" class="btn btn-primary"><i class="fas fa-arrow-left"></i>
                         Kembali</a>
                 </div>
@@ -55,8 +57,8 @@
                     @if ($project->foto)
                         <a class="image-popup" data-toggle="modal" data-target="#imageModal"
                             data-src="{{ asset('storage/images/project/' . $project->foto) }}">
-                            <img class="img-fluid project-image" src="{{ asset('storage/images/project/' . $project->foto) }}"
-                                alt="Foto Project">
+                            <img class="img-fluid project-image"
+                                src="{{ asset('storage/images/project/' . $project->foto) }}" alt="Foto Project">
                         </a>
                     @else
                         <div class="text-center">
@@ -78,6 +80,71 @@
         </div>
     </div>
 </div>
+
+<x-adminlte-modal id="editModal" title="Edit Project" theme="success" icon="fas fa-edit" size='md'>
+    <form id="editForm" action="" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <x-adminlte-input value="{{ $project->nama_project }}" name="nama_project" label="Nama Project"
+                        placeholder="Masukkan Nama Project" required />
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <label>Foto Saat Ini</label>
+                        <label style="margin-left: auto;display:none;" id="label_foto_baru">Foto Baru</label>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <img id="current_foto_preview" src="{{ asset('storage/images/project/' . $project->foto) }}" alt="Foto Saat Ini"
+                            style="max-width: 100px; max-height: 100px; margin-bottom: 10px;">
+                        <img id="preview_edit" src="" alt="Image preview"
+                            style="max-width: 20%; display: block; padding: 5px;display:none;">
+                    </div>
+                    <div class="mb-3">
+                        @error('image')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <x-adminlte-input-file id="edit_foto" name="foto"
+                        label="Upload Foto Baru (Kosongkan jika tidak ingin ganti)" placeholder="Pilih file"
+                        onchange="document.getElementById('preview_edit').src = window.URL.createObjectURL(this.files[0]);document.getElementById('preview_edit').style.display = 'block';document.getElementById('label_foto_baru').style.display = 'block';" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @php $config = ['format' => 'YYYY-MM-DD']; @endphp
+                    <x-adminlte-input-date  name="tanggal_mulai" value="{{ $project->tanggal_mulai ?? date('Y-m-d') }}"
+                        :config="$config" placeholder="Pilih tanggal..." label="Tanggal Mulai" igroup-size="md"
+                        required>
+                        <x-slot name="appendSlot">
+                            <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
+                        </x-slot>
+                    </x-adminlte-input-date>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <x-adminlte-input value="{{ $project->lokasi }}" name="lokasi" label="Lokasi" placeholder="Masukkan Lokasi"
+                        required />
+                </div>
+            </div>
+            <div class="col-md-12">
+                <x-adminlte-textarea id="edit_deskripsi" name="deskripsi" label="Deskripsi"
+                    placeholder="Tuliskan deskripsi project disini...">{{ $project->deskripsi }}</x-adminlte-textarea>
+            </div>
+        </div>
+        <x-slot name="footerSlot">
+            <x-adminlte-button theme="success" label="Simpan" type="submit" form="editForm" />
+            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+        </x-slot>
+    </form>
+</x-adminlte-modal>
 
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
     aria-hidden="true">
