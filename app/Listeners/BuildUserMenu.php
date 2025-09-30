@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Models\Izin;
 use App\Models\Pesanan;
 use App\Models\PresensiLembur;
+use App\Models\SuratPerintahKerja;
 use App\Support\HtmlString;
 use Illuminate\Support\Facades\Auth;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
@@ -67,13 +68,14 @@ class BuildUserMenu
             ]);
         }
         $pesananYangBelumDisetujui = $this->getPesananYangBelumDisetujui();
+        $suratPerintahBelumSelesai = $this->getSuratPerintahBelumSelesai();
         $event->menu->addAfter('pelanggan', [
             'key' => 'pesanan',
             'text' => 'Agenda & Pesanan',
             'icon' => 'fas fa-fw fa-calendar-alt',
             'can' => 'access-karyawan',
-            'label' => $pesananYangBelumDisetujui > 0 ? $pesananYangBelumDisetujui : '',
-            'label_color' => $pesananYangBelumDisetujui > 0 ? 'danger' : '',
+            'label' => $pesananYangBelumDisetujui + $suratPerintahBelumSelesai > 0 ? $pesananYangBelumDisetujui + $suratPerintahBelumSelesai : '',
+            'label_color' => $pesananYangBelumDisetujui + $suratPerintahBelumSelesai > 0 ? 'danger' : '',
             'submenu' => [
                 [
                     'text' => 'Agenda',
@@ -109,6 +111,8 @@ class BuildUserMenu
                     'icon' => 'fas fa-fw fa-scroll',
                     'can' => 'access-karyawan',
                     'route' => 'surat-perintah.index',
+                    'label' => $suratPerintahBelumSelesai > 0 ? $suratPerintahBelumSelesai : '',
+                    'label_color' => $suratPerintahBelumSelesai > 0 ? 'danger' : '',
                     'active' => ['surat-perintah*']
                 ],
             ],
@@ -168,6 +172,11 @@ class BuildUserMenu
     private function getPesananYangBelumDisetujui()
     {
         return count(Pesanan::where('progres', '1')->where('status', '=', '0')->get());
+    }
+
+    private function getSuratPerintahBelumSelesai()
+    {
+        return count(SuratPerintahKerja::where('kd_karyawan', Auth::user()->kd_karyawan)->where('status', '0')->get());
     }
 
     private function getIzin()
