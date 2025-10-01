@@ -194,7 +194,7 @@
             scrollX: true,
             paging: false,
             scrollCollapse: true,
-            scrollY: '200px',
+            scrollY: '50vh',
             searching: false,
             language: {
                 lengthMenu: "Tampilkan _MENU_ entri",
