@@ -65,13 +65,6 @@ class PesananController extends Controller
                 ->withInput();
         }
 
-        $appointmentDate = Carbon::createFromFormat('d/m/Y', $request->tanggal);
-        if ($appointmentDate->isPast() && !$appointmentDate->isToday()) {
-            return redirect()->back()
-                ->with('error', 'Tanggal temu tidak boleh kurang dari hari ini.')
-                ->withInput();
-        }
-
         $pesanan = Pesanan::create([
             'kd_pelanggan' => $request->kd_pelanggan,
             'deskripsi_pesanan' => $request->deskripsi_pesanan,
