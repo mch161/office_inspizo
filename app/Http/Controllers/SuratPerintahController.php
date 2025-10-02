@@ -27,6 +27,9 @@ class SuratPerintahController extends Controller
 
     public function create(Request $request)
     {
+        if (Auth::user()->role != 'superadmin') {
+            abort(403, 'Access denied');
+        }
         $pesanan = Pesanan::get()->all();
         $project = Project::get()->all();
         $karyawan = Karyawan::get()->all();

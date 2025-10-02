@@ -183,8 +183,10 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    @can('superadmin')
                     <a href="{{ route('surat-perintah.create', ['pesanan' => $pesanan->kd_pesanan]) }}"
                         class="btn btn-primary mb-2">Buat Surat Perintah</a>
+                    @endcan
                     <table id="suratPerintahTable" class="table table-centered table-nowrap mb-0 rounded">
                         <thead class="thead-light">
                             <tr>
