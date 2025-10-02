@@ -84,6 +84,7 @@ class BarangController extends Controller
         $barang->barcode = $request->barcode;
         $barang->klasifikasi = $request->klasifikasi;
         $barang->dijual = $request->dijual;
+        $barang->kategori = $request->kategori;
         $barang->kondisi = $request->kondisi;
         $barang->keterangan = $request->keterangan;
         $barang->kode = $request->kode;
@@ -166,6 +167,7 @@ class BarangController extends Controller
         $barang->barcode = $request->barcode;
         $barang->klasifikasi = $request->klasifikasi;
         $barang->dijual = $request->dijual;
+        $barang->kategori = $request->kategori;
         $barang->kondisi = $request->edit_kondisi;
         $barang->keterangan = $request->edit_keterangan;
         $barang->kode = $request->edit_kode;

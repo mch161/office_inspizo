@@ -17,6 +17,7 @@ class Barang extends Model
         'foto',
         'klasifikasi',
         'dijual',
+        'kategori',
         'kondisi',
         'keterangan',
         'kode',

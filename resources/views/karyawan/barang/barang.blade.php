@@ -196,6 +196,22 @@
                         <option value="2">Rusak Sebagian</option>
                     </select>
                 </div>
+                <div class="form-group col-md-6">
+                    @php
+                        $config = [
+                            "placeholder" => "Cari atau ketik kategori baru...",
+                            "allowClear" => true,
+                            "tags" => true,
+                            "dropdownParent" => "#modalTambah",
+                        ];
+                    @endphp
+                    <x-adminlte-select2 name="kategori" label="Kategori" :config="$config" id="kategori">
+                        <option value="" disabled selected>Pilih Kategori</option>
+                        @foreach ($barang->unique('kategori')->sortBy('kategori') as $data)
+                            <option value="{{ $data->kategori }}">{{ $data->kategori }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
+                </div>
                 <div class="form-group col-md-12" id="keterangan-form">
                     <label for="keterangan">Keterangan</label>
                     <textarea name="keterangan" id="keterangan" class="form-control" placeholder="Masukkan Keterangan"
@@ -283,6 +299,22 @@
                         <option value="0">Rusak / Mati Total</option>
                         <option value="2">Rusak Sebagian</option>
                     </select>
+                </div>
+                <div class="form-group col-md-6">
+                    @php
+                        $config = [
+                            "placeholder" => "Cari atau ketik kategori baru...",
+                            "allowClear" => true,
+                            "tags" => true,
+                            "dropdownParent" => "#modalEdit",
+                        ];
+                    @endphp
+                    <x-adminlte-select2 name="kategori" label="Kategori" :config="$config" id="edit_kategori">
+                        <option value="" disabled selected>Pilih Kategori</option>
+                        @foreach ($barang->unique('kategori')->sortBy('kategori') as $data)
+                            <option value="{{ $data->kategori }}">{{ $data->kategori }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
                 </div>
                 <div class="form-group col-md-12" id="edit_keterangan-form">
                     <label for="keterangan">Keterangan</label>
@@ -398,18 +430,24 @@
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="1">Dijual</button>
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="0">Tidak Dijual</button>
         </div>
-        <div class="mb-2 text-center col-md-12">
+        <div class="mb-2 text-center col-md-4">
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3 active" data-filter="all">Semua</button>
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="1">Normal</button>
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="0">Rusak</button>
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="2">Rusak Sebagian</button>
+        </div>
+        <div class="mb-2 text-center col-md-8">
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group4 active" data-filter="all">Semua</button>
+            @foreach ($barang->whereNotNull('kategori')->unique('kategori')->sortBy('kategori')->pluck('kategori') as $kategori)
+                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group4" data-filter="{{ $kategori }}">{{ $kategori }}</button>
+            @endforeach
         </div>
     </div>
 
     <!-- Container -->
     <div class="barang-container">
         @forelse ($barang as $b)
-            <div class="barang-card" data-kode="{{ $b->kode }}" data-dijual="{{ $b->dijual }}" data-kondisi="{{ $b->kondisi }}">
+            <div class="barang-card" data-kode="{{ $b->kode }}" data-dijual="{{ $b->dijual }}" data-kondisi="{{ $b->kondisi }}" data-kategori="{{ $b->kategori }}">
                 <div class="dropdown">
                     <button class="btn btn-link dropdown-toggle no-arrow" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" style="color: #6c757d;">
@@ -418,10 +456,10 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item edit-btn" href="#" data-toggle="modal" data-target="#modalEdit"
                             data-id="{{ $b->id }}" data-kode="{{ $b->kode }}" data-nama="{{ $b->nama_barang }}"
-                            data-dijual="{{ $b->dijual }}" data-klasifikasi="{{ $b->klasifikasi }}"
-                            data-barcode="{{ $b->barcode }}" data-kondisi="{{ $b->kondisi }}"
-                            data-keterangan="{{ $b->keterangan }}" data-hpp="{{ $b->hpp }}" data-harga="{{ $b->harga_jual }}"
-                            data-foto="{{ asset('storage/images/barang/' . $b->foto) }}"
+                            data-dijual="{{ $b->dijual }}" data-kategori="{{ $b->kategori }}"
+                            data-klasifikasi="{{ $b->klasifikasi }}" data-barcode="{{ $b->barcode }}"
+                            data-kondisi="{{ $b->kondisi }}" data-keterangan="{{ $b->keterangan }}" data-hpp="{{ $b->hpp }}"
+                            data-harga="{{ $b->harga_jual }}" data-foto="{{ asset('storage/images/barang/' . $b->foto) }}"
                             data-url="{{ route('barang.update', $b->kd_barang) }}">
                             <i class="fas fa-edit fa-fw mr-2 text-info"></i>Edit
                         </a>
@@ -537,6 +575,20 @@
                     $('.barang-card[data-kondisi="' + filterValue + '"]').fadeIn();
                 }
             });
+
+            $('.btn-filter-group4').on('click', function () {
+                $('.btn-filter-group4').removeClass('active');
+                $(this).addClass('active');
+
+                const filterValue = $(this).data('filter');
+
+                if (filterValue === 'all') {
+                    $('.barang-card').fadeIn();
+                } else {
+                    $('.barang-card').fadeOut('fast');
+                    $('.barang-card[data-kategori="' + filterValue + '"]').fadeIn();
+                }
+            });
         });
         $(document).ready(function () {
             $('#dijual').on('change', function () {
@@ -605,6 +657,7 @@
                 const id = $(this).data('id');
                 const nama = $(this).data('nama');
                 const dijual = $(this).data('dijual');
+                const kategori = $(this).data('kategori');
                 const klasifikasi = $(this).data('klasifikasi');
                 const barcode = $(this).data('barcode');
                 const kondisi = $(this).data('kondisi');
@@ -623,6 +676,9 @@
                 $('#edit_klasifikasi').trigger('change');
                 $('#kode2').val(kode);
                 $('#kode2').trigger('change');
+
+                $('#edit_kategori').val(kategori);
+                $('#edit_kategori').trigger('change');
 
                 $('#edit_kondisi').val(kondisi);
                 $('#edit_kondisi').trigger('change');
