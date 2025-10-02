@@ -454,6 +454,7 @@
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ route('barang.show', $b->kd_barang) }}"><i class="fas fa-info fa-fw mr-2 text-info"></i>Detail</a>
                         <a class="dropdown-item edit-btn" href="#" data-toggle="modal" data-target="#modalEdit"
                             data-id="{{ $b->id }}" data-kode="{{ $b->kode }}" data-nama="{{ $b->nama_barang }}"
                             data-dijual="{{ $b->dijual }}" data-kategori="{{ $b->kategori }}"

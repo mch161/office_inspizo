@@ -70,9 +70,6 @@ class PesananBarangController extends Controller
     {
         $barang_stok = Barang::find($request->kd_barang);
 
-        Barang::where('kd_barang', $request->kd_barang)->update([
-            'stok' => Barang::where('kd_barang', $request->kd_barang)->first()->stok + (PesananBarang::find($id)->jumlah - $request->jumlah)
-        ]);
 
         $barang = PesananBarang::find($id);
         $barang->laba = $request->harga_jual - $barang->hpp;
@@ -82,6 +79,9 @@ class PesananBarangController extends Controller
         if ($barang->isDirty('jumlah') && $request->jumlah > $barang_stok->stok) {
             return redirect()->back()->with('error', 'Stok barang tidak cukup. Stok tersedia: ' . $barang_stok->stok);
         }
+        Barang::where('kd_barang', $request->kd_barang)->update([
+            'stok' => Barang::where('kd_barang', $request->kd_barang)->first()->stok + (PesananBarang::find($id)->jumlah - $request->jumlah)
+        ]);
 
         $barang->subtotal = $request->harga_jual * $request->jumlah;
         $barang->save();

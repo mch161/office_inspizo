@@ -119,7 +119,10 @@ class BarangController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $barang = Barang::find($id);
+        $stok = Stok::where('kd_barang', $barang->kd_barang)->orderBy('created_at', 'desc')->get();
+
+        return view('karyawan.barang.detail', compact('barang', 'stok'));
     }
 
     /**
