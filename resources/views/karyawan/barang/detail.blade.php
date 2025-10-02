@@ -41,6 +41,12 @@
                         <p><strong>Stok:</strong> {{ $barang->stok }}</p>
                         <p><strong>Kategori:</strong> {{ $barang->kategori ?? '-' }}</p>
                         <p><strong>Harga:</strong> Rp{{ number_format($barang->harga_jual, 2, ',', '.') }}</p>
+                        <p><strong>HPP:</strong> Rp{{ number_format($barang->hpp, 2, ',', '.') }}</p>
+                        <p><strong>Kode:</strong> {{ $barang->kode ?? '-' }}</p>
+                        @if (!is_null($barang->barcode))
+                            <p><strong>Barcode:</strong> {{ $barang->barcode }}</p>
+                            {!! $barcodeIMG !!}
+                        @endif
                     </div>
                 </div>
             </div>

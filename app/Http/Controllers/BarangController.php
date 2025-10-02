@@ -122,7 +122,16 @@ class BarangController extends Controller
         $barang = Barang::find($id);
         $stok = Stok::where('kd_barang', $barang->kd_barang)->orderBy('created_at', 'desc')->get();
 
-        return view('karyawan.barang.detail', compact('barang', 'stok'));
+        $barcodeIMG = null;
+        if ($barang->barcode) {
+            $barcode = (new \Picqer\Barcode\Types\TypeEan13 ())->getBarcode($barang->barcode);
+
+            // Output the barcode as HTML in the browser with a HTML Renderer
+            $renderer = new \Picqer\Barcode\Renderers\HtmlRenderer();
+            $barcodeIMG = $renderer->render($barcode, 450.20, 75);
+        }
+
+        return view('karyawan.barang.detail', compact('barang', 'stok', 'barcodeIMG'));
     }
 
     /**
