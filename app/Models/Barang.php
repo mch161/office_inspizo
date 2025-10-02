@@ -13,11 +13,16 @@ class Barang extends Model
         'kd_kategori',
         'kd_karyawan',
         'nama_barang',
+        'barcode',
+        'foto',
+        'klasifikasi',
+        'dijual',
+        'kondisi',
+        'keterangan',
         'kode',
-        'stok',
         'hpp',
         'harga_jual',
-        'foto',
+        'stok',
         'dibuat_oleh'
     ];
     public function karyawan()

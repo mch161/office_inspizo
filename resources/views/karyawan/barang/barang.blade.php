@@ -171,11 +171,8 @@
                         placeholder="Masukkan Nama Barang" required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="Dijual">Dijual?</label>
-                    <select name="dijual" id="dijual" class="form-control">
-                        <option value="1">Ya</option>
-                        <option value="0">Tidak</option>
-                    </select>
+                    <label for="Barcode">Barcode</label>
+                    <input type="text" class="form-control" id="barcode" name="barcode" placeholder="Masukkan Barcode">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="klasifikasi">Klasifikasi</label>
@@ -185,8 +182,24 @@
                     </select>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="Barcode">Barcode</label>
-                    <input type="text" class="form-control" id="barcode" name="barcode" placeholder="Masukkan Barcode">
+                    <label for="Dijual">Dijual?</label>
+                    <select name="dijual" id="dijual" class="form-control">
+                        <option value="1">Ya</option>
+                        <option value="0">Tidak</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Status_Kondisi">Kondisi</label>
+                    <select name="kondisi" id="kondisi" class="form-control">
+                        <option value="1">Normal</option>
+                        <option value="0">Rusak / Mati Total</option>
+                        <option value="2">Rusak Sebagian</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-12" id="keterangan-form">
+                    <label for="keterangan">Keterangan</label>
+                    <textarea name="keterangan" id="keterangan" class="form-control" placeholder="Masukkan Keterangan"
+                        rows="2"></textarea>
                 </div>
                 <div class="col-md-12">
                     @php
@@ -246,11 +259,8 @@
                     <input type="text" class="form-control" id="edit_nama_barang" name="nama_barang" required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="edit_dijual">Dijual?</label>
-                    <select name="dijual" id="edit_dijual" class="form-control">
-                        <option value="1">Ya</option>
-                        <option value="0">Tidak</option>
-                    </select>
+                    <label for="edit_barcode">Barcode</label>
+                    <input type="text" class="form-control" id="edit_barcode" name="barcode">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="edit_klasifikasi">Klasifikasi</label>
@@ -260,8 +270,24 @@
                     </select>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="edit_barcode">Barcode</label>
-                    <input type="text" class="form-control" id="edit_barcode" name="barcode">
+                    <label for="edit_dijual">Dijual?</label>
+                    <select name="dijual" id="edit_dijual" class="form-control">
+                        <option value="1">Ya</option>
+                        <option value="0">Tidak</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Status_Kondisi">Kondisi</label>
+                    <select name="edit_kondisi" id="edit_kondisi" class="form-control">
+                        <option value="1">Normal</option>
+                        <option value="0">Rusak / Mati Total</option>
+                        <option value="2">Rusak Sebagian</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-12" id="edit_keterangan-form">
+                    <label for="keterangan">Keterangan</label>
+                    <textarea name="edit_keterangan" id="edit_keterangan" class="form-control"
+                        placeholder="Masukkan Keterangan" rows="2"></textarea>
                 </div>
                 <div class="col-md-12">
                     @php
@@ -356,13 +382,15 @@
             </div>
         </div>
     </form>
+
+    <!-- Filter -->
     <div class="row">
         <div class="mb-2 text-center col-md-8">
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1 active" data-filter="all">Semua</button>
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1"
-                data-filter="">  -  </button>
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1" data-filter=""> - </button>
             @foreach($barang->whereNotNull('kode')->unique('kode')->sortBy('kode')->pluck('kode') as $kode)
-                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1" data-filter="{{ $kode }}">{{ $kode }}</button>
+                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1"
+                    data-filter="{{ $kode }}">{{ $kode }}</button>
             @endforeach
         </div>
         <div class="mb-2 text-center col-md-4">
@@ -370,10 +398,18 @@
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="1">Dijual</button>
             <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="0">Tidak Dijual</button>
         </div>
+        <div class="mb-2 text-center col-md-12">
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3 active" data-filter="all">Semua</button>
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="1">Normal</button>
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="0">Rusak</button>
+            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="2">Rusak Sebagian</button>
+        </div>
     </div>
+
+    <!-- Container -->
     <div class="barang-container">
         @forelse ($barang as $b)
-            <div class="barang-card" data-kode="{{ $b->kode }}" data-dijual="{{ $b->dijual }}">
+            <div class="barang-card" data-kode="{{ $b->kode }}" data-dijual="{{ $b->dijual }}" data-kondisi="{{ $b->kondisi }}">
                 <div class="dropdown">
                     <button class="btn btn-link dropdown-toggle no-arrow" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" style="color: #6c757d;">
@@ -383,7 +419,8 @@
                         <a class="dropdown-item edit-btn" href="#" data-toggle="modal" data-target="#modalEdit"
                             data-id="{{ $b->id }}" data-kode="{{ $b->kode }}" data-nama="{{ $b->nama_barang }}"
                             data-dijual="{{ $b->dijual }}" data-klasifikasi="{{ $b->klasifikasi }}"
-                            data-barcode="{{ $b->barcode }}" data-hpp="{{ $b->hpp }}" data-harga="{{ $b->harga_jual }}"
+                            data-barcode="{{ $b->barcode }}" data-kondisi="{{ $b->kondisi }}"
+                            data-keterangan="{{ $b->keterangan }}" data-hpp="{{ $b->hpp }}" data-harga="{{ $b->harga_jual }}"
                             data-foto="{{ asset('storage/images/barang/' . $b->foto) }}"
                             data-url="{{ route('barang.update', $b->kd_barang) }}">
                             <i class="fas fa-edit fa-fw mr-2 text-info"></i>Edit
@@ -486,6 +523,20 @@
                     $('.barang-card[data-dijual="' + filterValue + '"]').fadeIn();
                 }
             });
+
+            $('.btn-filter-group3').on('click', function () {
+                $('.btn-filter-group3').removeClass('active');
+                $(this).addClass('active');
+
+                const filterValue = $(this).data('filter');
+
+                if (filterValue === 'all') {
+                    $('.barang-card').fadeIn();
+                } else {
+                    $('.barang-card').fadeOut('fast');
+                    $('.barang-card[data-kondisi="' + filterValue + '"]').fadeIn();
+                }
+            });
         });
         $(document).ready(function () {
             $('#dijual').on('change', function () {
@@ -506,6 +557,22 @@
                 } else {
                     $('#edit-harga-form').hide();
                     $('#edit-hpp-form').hide();
+                }
+            })
+            $('#keterangan-form').hide();
+            $('#kondisi').on('change', function () {
+                if ($(this).val() === '2') {
+                    $('#keterangan-form').show();
+                } else {
+                    $('#keterangan-form').hide();
+                }
+            })
+            $('#edit_keterangan-form').hide();
+            $('#edit_kondisi').on('change', function () {
+                if ($(this).val() === '2') {
+                    $('#edit_keterangan-form').show();
+                } else {
+                    $('#edit_keterangan-form').hide();
                 }
             })
         })
@@ -540,6 +607,8 @@
                 const dijual = $(this).data('dijual');
                 const klasifikasi = $(this).data('klasifikasi');
                 const barcode = $(this).data('barcode');
+                const kondisi = $(this).data('kondisi');
+                const keterangan = $(this).data('keterangan');
                 const kode = $(this).data('kode');
                 const hpp = $(this).data('hpp');
                 const harga = $(this).data('harga');
@@ -554,6 +623,10 @@
                 $('#edit_klasifikasi').trigger('change');
                 $('#kode2').val(kode);
                 $('#kode2').trigger('change');
+
+                $('#edit_kondisi').val(kondisi);
+                $('#edit_kondisi').trigger('change');
+                $('#edit_keterangan').val(keterangan);
 
                 $('#edit_barcode').val(barcode);
                 $('#edit_hpp').val(hpp);
