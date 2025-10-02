@@ -67,6 +67,13 @@ class PresensiBulananController extends Controller
 
         $jumlah_hari_kerja_normal = $jumlah_tanggal - $jumlah_libur - $jumlahMinggu;
 
+        $jumlahCuti = Izin::whereYear('tanggal', $request->tahun)
+            ->whereMonth('tanggal', $request->bulan)
+            ->where('kd_karyawan', $request->kd_karyawan)
+            ->where('jenis', 'Cuti')
+            ->where('status', '1')
+            ->count() ?? 0;
+
         $jumlah_hari_sakit = Izin::whereYear('tanggal', $request->tahun)
             ->whereMonth('tanggal', $request->bulan)
             ->where('kd_karyawan', $request->kd_karyawan)
@@ -148,7 +155,9 @@ class PresensiBulananController extends Controller
         return [
             'jumlah_tanggal' => $jumlah_tanggal,
             'jumlah_libur' => $jumlah_libur,
+            'jumlah_hari_cuti' => $jumlahCuti,
             'jumlah_hari_kerja_normal' => $jumlah_hari_kerja_normal,
+            'jumlah_hari_minggu' => $jumlahMinggu,
             'jumlah_hari_sakit' => $jumlah_hari_sakit,
             'jumlah_hari_izin' => $jumlah_hari_izin,
             'jumlah_fingerprint' => $jumlah_fingerprint,
@@ -222,7 +231,9 @@ class PresensiBulananController extends Controller
         $validator = Validator::make($request->all(), [
             'jumlah_tanggal' => 'required|numeric',
             'jumlah_libur' => 'required|numeric',
+            'jumlah_hari_cuti' => 'required|numeric',
             'jumlah_hari_kerja_normal' => 'required|numeric',
+            'jumlah_hari_minggu' => 'required|numeric',
             'jumlah_hari_sakit' => 'required|numeric',
             'jumlah_hari_izin' => 'required|numeric',
             'jumlah_fingerprint' => 'required|numeric',
@@ -242,17 +253,7 @@ class PresensiBulananController extends Controller
         }
 
         $rekapBulanan = PresensiBulanan::find($request->kd_presensi_bulanan);
-        $rekapBulanan->jumlah_tanggal = $request->jumlah_tanggal;
-        $rekapBulanan->jumlah_libur = $request->jumlah_libur;
-        $rekapBulanan->jumlah_hari_kerja_normal = $request->jumlah_hari_kerja_normal;
-        $rekapBulanan->jumlah_hari_sakit = $request->jumlah_hari_sakit;
-        $rekapBulanan->jumlah_hari_izin = $request->jumlah_hari_izin;
-        $rekapBulanan->jumlah_fingerprint = $request->jumlah_fingerprint;
-        $rekapBulanan->jumlah_alpha = $request->jumlah_alpha;
-        $rekapBulanan->jumlah_terlambat = $request->jumlah_terlambat;
-        $rekapBulanan->jumlah_jam_izin = $request->jumlah_jam_izin;
-        $rekapBulanan->jumlah_hari_lembur = $request->jumlah_hari_lembur;
-        $rekapBulanan->jumlah_jam_lembur = $request->jumlah_jam_lembur;
+        $rekapBulanan->fill($request->all());
         if (!$rekapBulanan->isDirty()) {
             return redirect()->route('presensi.bulanan')->with('success', 'Tidak ada perubahan pada rekap bulanan.');
         }

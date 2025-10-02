@@ -79,7 +79,9 @@
                     <th class="text-center">Nama Karyawan</th>
                     <th class="text-center">Jumlah Tanggal</th>
                     <th class="text-center">Jumlah Libur</th>
+                    <th class="text-center">Jumlah Cuti</th>
                     <th class="text-center">Jumlah Hari Kerja</th>
+                    <th class="text-center">Jumlah Hari Minggu</th>
                     <th class="text-center">Jumlah Hari Sakit</th>
                     <th class="text-center">Jumlah Hari Izin</th>
                     <th class="text-center">Jumlah Fingerprint</th>
@@ -104,7 +106,9 @@
                         <td>{{ $karyawans->where('kd_karyawan', $rekap->kd_karyawan)->first()->nama }}</td>
                         <td>{{ $rekap->jumlah_tanggal }}</td>
                         <td>{{ $rekap->jumlah_libur }}</td>
+                        <td>{{ $rekap->jumlah_hari_cuti }}</td>
                         <td>{{ $rekap->jumlah_hari_kerja_normal }}</td>
+                        <td>{{ $rekap->jumlah_hari_minggu }}</td>
                         <td>{{ $rekap->jumlah_hari_sakit }}</td>
                         <td>{{ $rekap->jumlah_hari_izin }}</td>
                         <td>{{ $rekap->jumlah_fingerprint }}</td>
@@ -180,6 +184,18 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4">
+                            <label for="Jumlah Hari Cuti">Jumlah Hari Cuti:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" class="editable" name="jumlah_hari_cuti"
+                                value="{{ $dataBulanan->jumlah_hari_cuti }}">
+                        </div>
+                        <div class="col-md-4">
+                            <span>{{ $dataBulanan->jumlah_hari_cuti }}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
                             <label for="Jumlah Hari Kerja Normal">Jumlah Hari Kerja Normal:</label>
                         </div>
                         <div class="col-md-4">
@@ -188,6 +204,18 @@
                         </div>
                         <div class="col-md-4">
                             <span>{{ $dataBulanan->jumlah_hari_kerja_normal }}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="Jumlah Hari Minggu">Jumlah Hari Minggu:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" class="editable" name="jumlah_hari_minggu"
+                                value="{{ $dataBulanan->jumlah_hari_minggu }}">
+                        </div>
+                        <div class="col-md-4">
+                            <span>{{ $dataBulanan->jumlah_hari_minggu }}</span>
                         </div>
                     </div>
                     <div class="row">
