@@ -97,7 +97,7 @@ public function handle()
                 $jamKeluar = null;
             }
 
-            $jamMasukStandar = $date->copy()->setTime(8, 0);
+            $jamMasukStandar = $date->copy()->setTimeFromTimeString($karyawan->jam_masuk ?? '08:00:00');
             $jamKeluarStandar = $date->copy()->setTime($date->isSaturday() ? 16 : 17, 0);
 
             $terlambat = $jamMasuk->isAfter($jamMasukStandar) ? $jamMasukStandar->diff($jamMasuk)->format('%H jam %i mnt') : 'Tidak';

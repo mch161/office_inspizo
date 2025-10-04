@@ -30,6 +30,7 @@ class UserController extends Controller
             'finger_id' => 'nullable|string|max:20',
             'email' => 'required|string|email|max:255|unique:karyawan,email',
             'password' => 'required|string|min:8|confirmed',
+            'jam_masuk' => 'nullable|date_format:H:i',
         ], [
             'nama.required' => 'Nama lengkap wajib diisi.',
             'username.required' => 'Username wajib diisi.',
@@ -42,6 +43,7 @@ class UserController extends Controller
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal harus terdiri dari :min karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'jam_masuk.date_format' => 'Format waktu harus dalam format HH:mm.',
         ]);
 
         if ($validator->fails()) {
@@ -62,6 +64,7 @@ class UserController extends Controller
             'id_finger' => $request->finger_id,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'jam_masuk' => $request->jam_masuk,
             'status' => 1,
         ]);
 
@@ -98,6 +101,7 @@ class UserController extends Controller
             'edit-finger_id' => 'nullable|string',
             'edit-email' => ['required', 'string', 'email', 'max:255', Rule::unique('karyawan', 'email')->ignore($user->kd_karyawan, 'kd_karyawan')],
             'edit-password' => 'nullable|string|min:8|confirmed',
+            'edit-jam_masuk' => 'nullable|date_format:H:i',
         ], [
             'edit-nama.required' => 'Nama lengkap wajib diisi.',
             'edit-username.required' => 'Username wajib diisi.',
@@ -109,6 +113,7 @@ class UserController extends Controller
             'edit-email.unique' => 'Email ini sudah terdaftar pada akun lain.',
             'edit-password.min' => 'Password minimal harus terdiri dari :min karakter.',
             'edit-password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'edit-jam_masuk.date_format' => 'Format waktu harus dalam format HH:mm.',
         ]);
 
         if ($validator->fails()) {
@@ -131,6 +136,7 @@ class UserController extends Controller
         $user->status = $request->input('edit-status');
         $user->finger_id = $request->input('edit-finger_id');
         $user->email = $request->input('edit-email');
+        $user->jam_masuk = $request->input('edit-jam_masuk');
         if ($request->filled('edit-password')) {
             $user->password = Hash::make($request->input('edit-password'));
         }

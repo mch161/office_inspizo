@@ -176,7 +176,7 @@ class BuildUserMenu
 
     private function getSuratPerintahBelumSelesai()
     {
-        return count(SuratPerintahKerja::where('kd_karyawan', Auth::user()->kd_karyawan)->where('status', '0')->get());
+        return count(SuratPerintahKerja::whereNotNull('kd_karyawan')->where('kd_karyawan', Auth::user()->kd_karyawan ?? null)->where('status', '0')->get());
     }
 
     private function getIzin()

@@ -82,6 +82,9 @@ class Karyawan extends Authenticatable
         'username',
         'password',
         'role',
+        'foto',
+        'finger_id',
+        'jam_masuk',
         'status',
     ];
 

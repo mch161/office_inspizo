@@ -11,19 +11,19 @@
 
 @section('css')
 
-<style>
-    /* Chrome, Safari, Edge, Opera */
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
+    <style>
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
 
-    /* Firefox */
-    input[type=number] {
-        -moz-appearance: textfield;
-    }
-</style>
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -52,7 +52,15 @@
             <option value="karyawan">Karyawan</option>
             <option value="magang">Magang</option>
         </x-adminlte-select>
-        <x-adminlte-input name="finger_id" label="ID Fingerprint" placeholder="0" type="number" value="{{ old('finger_id') }}" />
+        @php $config = ['format' => 'HH:mm']; @endphp
+        <x-adminlte-input-date name="jam_masuk" id="jam_masuk" :config="$config" placeholder="Pilih jam..."
+            label="Jam Masuk" igroup-size="md" required>
+            <x-slot name="appendSlot">
+                <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
+            </x-slot>
+        </x-adminlte-input-date>
+        <x-adminlte-input name="finger_id" label="ID Fingerprint" placeholder="0" type="number"
+            value="{{ old('finger_id') }}" />
         <x-adminlte-input name="email" label="Email" placeholder="Email" value="{{ old('email') }}" />
         <x-adminlte-input name="password" label="Password" type="password" placeholder="Password"
             value="{{ old('password') }}" />
@@ -88,14 +96,21 @@
             <option value="karyawan">Karyawan</option>
             <option value="magang">Magang</option>
         </x-adminlte-select>
+        @php $config = ['format' => 'HH:mm']; @endphp
+        <x-adminlte-input-date name="edit-jam_masuk" id="edit-jam_masuk" :config="$config" placeholder="Pilih jam..."
+            label="Jam Masuk" igroup-size="md" required>
+            <x-slot name="appendSlot">
+                <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
+            </x-slot>
+        </x-adminlte-input-date>
         <x-adminlte-select name="edit-status" id="edit-status" label="Status" empty-option="Pilih status..."
             value="{{ old('edit-status') }}">
             <option value="" disabled>Pilih status...</option>
             <option value="1">Aktif</option>
             <option value="0">Tidak Aktif</option>
         </x-adminlte-select>
-        <x-adminlte-input name="edit-finger_id" id="edit-finger_id" label="ID Fingerprint" placeholder="0"
-            type="number" value="{{ old('edit-finger_id') }}" />
+        <x-adminlte-input name="edit-finger_id" id="edit-finger_id" label="ID Fingerprint" placeholder="0" type="number"
+            value="{{ old('edit-finger_id') }}" />
         <x-adminlte-input name="edit-email" id="edit-email" label="Email" placeholder="Email"
             value="{{ old('edit-email') }}" />
         <x-adminlte-input name="edit-password" id="edit-password" label="Password" type="password"
@@ -122,6 +137,7 @@
             <th width="150px" class="dt-left">NIK</th>
             <th width="150px">Email</th>
             <th width="50px">Role</th>
+            <th width="50px">Jam Masuk</th>
             <th width="50px">ID Finger</th>
             <th width="50px">Status</th>
             <th width="150px">Aksi</th>
@@ -139,6 +155,7 @@
                 <td class="dt-left">{{ $u->nik ?? '-' }}</td>
                 <td>{{ $u->email ?? '-' }}</td>
                 <td>{{ $u->role ?? '-' }}</td>
+                <td>{{ $u->jam_masuk ?? '-' }}</td>
                 <td>{{ $u->finger_id ?? '-' }}</td>
                 <td>
                     @if ($u->status == '1')
@@ -152,8 +169,9 @@
                         data-id="{{ $u->kd_karyawan }}" data-nama="{{ $u->nama }}" data-username="{{ $u->username }}"
                         data-telp="{{ $u->telp }}" data-alamat="{{ $u->alamat }}" data-nip="{{ $u->nip }}"
                         data-nik="{{ $u->nik }}" data-email="{{ $u->email }}" data-role="{{ $u->role }}"
-                        data-finger="{{ $u->finger_id }}" data-password="{{ $u->password }}" data-status="{{ $u->status }}">
-                        <i class="fas fa-edit   "></i>
+                        data-jam_masuk="{{ $u->jam_masuk }}" data-finger="{{ $u->finger_id }}"
+                        data-password="{{ $u->password }}" data-status="{{ $u->status }}">
+                        <i class="fas fa-edit"></i>
                     </button>
                     <form action="{{ route('downloadCard') }}" method="GET" style="display: inline">
                         <input type="hidden" name="id" value="{{ $u->kd_karyawan }}">
@@ -167,143 +185,145 @@
 @stop
 
 @section('js')
-<script>
-    $(document).ready(function () {
-        $.fn.dataTable.ext.search.push(
-            function (settings, data, dataIndex) {
-                if ($('#TampilkanSemuaUser').is(':checked')) {
-                    return true;
+    <script>
+        $(document).ready(function () {
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    if ($('#TampilkanSemuaUser').is(':checked')) {
+                        return true;
+                    }
+                    var status = $(settings.aoData[dataIndex].nTr).data('status');
+                    return status == '1';
                 }
-                var status = $(settings.aoData[dataIndex].nTr).data('status');
-                return status == '1';
-            }
-        );
+            );
 
-        var table = $('#usersTable').DataTable({
-            scrollX: true,
-            paging: false,
-            columnDefs: [{
-                "searchable": false,
-                "orderable": false,
-                "targets": 0
-            }],
-            language: {
-                lengthMenu: "Tampilkan _MENU_ entri",
-                zeroRecords: "Tidak ada data yang ditemukan",
-                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                infoEmpty: "Tidak ada data yang tersedia",
-                infoFiltered: "(difilter dari _MAX_ total entri)",
-                search: "Cari:",
-                searchPlaceholder: "Cari data..."
-            }
-        });
+            var table = $('#usersTable').DataTable({
+                scrollX: true,
+                paging: false,
+                columnDefs: [{
+                    "searchable": false,
+                    "orderable": false,
+                    "targets": 0
+                }],
+                language: {
+                    lengthMenu: "Tampilkan _MENU_ entri",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    info: "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    infoEmpty: "Tidak ada data yang tersedia",
+                    infoFiltered: "(difilter dari _MAX_ total entri)",
+                    search: "Cari:",
+                    searchPlaceholder: "Cari data..."
+                }
+            });
 
-        table.on('draw.dt', function () {
-            var PageInfo = table.page.info();
-            table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1 + PageInfo.start;
+            table.on('draw.dt', function () {
+                var PageInfo = table.page.info();
+                table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + PageInfo.start;
+                });
+            });
+
+            table.draw();
+
+            $('#TampilkanSemuaUser').change(function () {
+                table.draw();
             });
         });
 
-        table.draw();
+        $('#usersTable').on('click', '.tombol-edit', function () {
+            const kd_karyawan = $(this).data('id');
+            const nama = $(this).data('nama');
+            const username = $(this).data('username');
+            const telp = $(this).data('telp');
+            const alamat = $(this).data('alamat');
+            const nip = $(this).data('nip');
+            const nik = $(this).data('nik');
+            const finger = $(this).data('finger');
+            const email = $(this).data('email');
+            const role = $(this).data('role');
+            const jam_masuk = $(this).data('jam_masuk');
+            const status = $(this).data('status');
 
-        $('#TampilkanSemuaUser').change(function () {
-            table.draw();
-        });
-    });
+            $('#edit-nama').val(nama);
+            $('#edit-username').val(username);
+            $('#edit-telp').val(telp);
+            $('#edit-alamat').val(alamat);
+            $('#edit-nip').val(nip);
+            $('#edit-nik').val(nik);
+            $('#edit-finger_id').val(finger);
+            $('#edit-email').val(email);
+            $('#edit-role').val(role);
+            $('#edit-jam_masuk').val(jam_masuk);
+            $('#edit-status').val(status);
 
-    $('#usersTable').on('click', '.tombol-edit', function () {
-        const kd_karyawan = $(this).data('id');
-        const nama = $(this).data('nama');
-        const username = $(this).data('username');
-        const telp = $(this).data('telp');
-        const alamat = $(this).data('alamat');
-        const nip = $(this).data('nip');
-        const nik = $(this).data('nik');
-        const finger = $(this).data('finger');
-        const email = $(this).data('email');
-        const role = $(this).data('role');
-        const status = $(this).data('status');
-
-        $('#edit-nama').val(nama);
-        $('#edit-username').val(username);
-        $('#edit-telp').val(telp);
-        $('#edit-alamat').val(alamat);
-        $('#edit-nip').val(nip);
-        $('#edit-nik').val(nik);
-        $('#edit-finger_id').val(finger);
-        $('#edit-email').val(email);
-        $('#edit-role').val(role);
-        $('#edit-status').val(status);
-
-        let form = $('#form-edit-user');
-        let updateUrl = "{{ route('users.update', ':id') }}";
-        updateUrl = updateUrl.replace(':id', kd_karyawan);
-        form.attr('action', updateUrl);
-    })
-    @if (session()->has('success'))
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-        Toast.fire({
-            icon: 'success',
-            text: '{{ session('success') }}',
+            let form = $('#form-edit-user');
+            let updateUrl = "{{ route('users.update', ':id') }}";
+            updateUrl = updateUrl.replace(':id', kd_karyawan);
+            form.attr('action', updateUrl);
         })
-    @endif
-    @if (session()->has('error'))
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-        Toast.fire({
-            icon: 'error',
-            text: '{{ session('error') }}',
-        })
-    @endif
-    @if (session()->has('invalid'))
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-        Toast.fire({
-            icon: 'error',
-            text: '{{ session('invalid') }}',
-        })
-        @if ($errors->any() && session('invalid') == 'User gagal diubah.')
-            const errorUserId = "{{ session('error_user_id') }}";
-
-            if (errorUserId) {
-                let form = $('#form-edit-user');
-                let updateUrl = "{{ url('users') }}/" + errorUserId;
-                form.attr('action', updateUrl);
-            }
-
-            $('#modalEdit').modal('show');
-        @elseif ($errors->any() && session('invalid') == 'User gagal ditambahkan.')
-            $('#modalTambah').modal('show');
+        @if (session()->has('success'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                text: '{{ session('success') }}',
+            })
         @endif
-    @endif
-</script>
+            @if (session()->has('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                })
+            @endif
+            @if (session()->has('invalid'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('invalid') }}',
+                })
+                @if ($errors->any() && session('invalid') == 'User gagal diubah.')
+                    const errorUserId = "{{ session('error_user_id') }}";
+
+                    if (errorUserId) {
+                        let form = $('#form-edit-user');
+                        let updateUrl = "{{ url('users') }}/" + errorUserId;
+                        form.attr('action', updateUrl);
+                    }
+
+                    $('#modalEdit').modal('show');
+                @elseif ($errors->any() && session('invalid') == 'User gagal ditambahkan.')
+                    $('#modalTambah').modal('show');
+                @endif
+            @endif
+    </script>
 @endsection
