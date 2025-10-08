@@ -36,22 +36,48 @@
                             </div>
                         @endif
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-3">
                         <p><strong>Nama Barang:</strong> {{ $barang->nama_barang }}</p>
                         <p><strong>Stok:</strong> {{ $barang->stok }}</p>
+                        <p><strong>Status:</strong> {{ $barang->status == 1 ? 'Dijual' : 'Tidak Dijual' }}</p>
+                        <p><strong>Klasifikasi:</strong> {{ $barang->klasifikasi ?? '-' }}</p>
+                        <p><strong>Kondisi:</strong>
+                            @if ($barang->kondisi == '1')
+                                Normal
+                            @elseif ($barang->kondisi == '2')
+                                Rusak Sebagian
+                            @elseif ($barang->kondisi == '0')
+                                Rusak
+                            @endif
+                        </p>
                         <p><strong>Kategori:</strong> {{ $barang->kategori ?? '-' }}</p>
+                        <p><strong>Kode:</strong> {{ $barang->kode ?? '-' }}</p>
                         <p><strong>Harga:</strong> Rp{{ number_format($barang->harga_jual, 2, ',', '.') }}</p>
                         <p><strong>HPP:</strong> Rp{{ number_format($barang->hpp, 2, ',', '.') }}</p>
-                        <p><strong>Kode:</strong> {{ $barang->kode ?? '-' }}</p>
+                    </div>
+                    <div class="col-md-5">
                         @if (!is_null($barang->barcode))
-                            <p><strong>Barcode:</strong> {{ $barang->barcode }}</p>
+                            <p><strong>Barcode:</strong> </p>
                             {!! $barcodeIMG !!}
+                            <p class="text-center" style="width: 450px; height: 20px;">{{ $barang->barcode }}</p>
                         @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    @if ($barang->kondisi == '2')
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Kondisi Barang</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Keterangan:</strong> {{ $barang->keterangan ?? '-' }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="col-12">
         <div class="card">
             <div class="card-header">
