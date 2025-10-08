@@ -117,8 +117,14 @@ class BuildUserMenu
                 ],
             ],
         ]);
-        $izin = $this->getIzin();
-        $lembur = $this->getLembur();
+        if (Auth::guard('karyawan')->check() && Auth::guard('karyawan')->user()->role == 'superadmin') {
+            $izin = $this->getIzin();
+            $lembur = $this->getLembur();
+        } else {
+            $izin = 0;
+            $lembur = 0;
+        }
+
         $event->menu->addAfter('pesanan', [
             'text' => 'Presensi',
             'icon' => 'fas fa-fw fa-address-card',
