@@ -16,13 +16,49 @@ class BarangController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('s');
+        $query = Barang::query();
 
-        if ($search) {
-            $barang = Barang::where('status', 1)->where('nama_barang', 'like', '%' . $search . '%')->get();
-        } else {
-            $barang = Barang::where('status', 1)->get();
+        $query->when($request->filled('s'), function ($q) use ($request) {
+            return $q->where('nama_barang', 'LIKE', "%" . $request->input('s') . "%");
+        });
+
+        $query->when($request->filled('status'), function ($q) use ($request) {
+            return $q->where('dijual', $request->input('status'));
+        });
+
+        $query->when($request->filled('kondisi'), function ($q) use ($request) {
+            return $q->where('kondisi', $request->input('kondisi'));
+        });
+
+        $query->when($request->filled('kategori'), function ($q) use ($request) {
+            return $q->where('kategori', $request->input('kategori'));
+        });
+
+        $query->when($request->filled('kode'), function ($q) use ($request) {
+            return $q->where('kode', $request->input('kode'));
+        });
+
+        $query->when($request->filled('klasifikasi'), function ($q) use ($request) {
+            return $q->where('klasifikasi', $request->input('klasifikasi'));
+        });
+
+        $sort = $request->input('sort', 'asc');
+        switch ($sort) {
+            case 'desc':
+                $query->orderBy('nama_barang', 'desc');
+                break;
+            case 'price-asc':
+                $query->orderBy('harga_jual', 'asc');
+                break;
+            case 'price-desc':
+                $query->orderBy('harga_jual', 'desc');
+                break;
+            default:
+                $query->orderBy('nama_barang', 'asc');
+                break;
         }
+
+        $barang = $query->paginate(10);
 
         return view('karyawan.barang.barang', compact('barang'));
     }
@@ -124,7 +160,7 @@ class BarangController extends Controller
 
         $barcodeIMG = null;
         if ($barang->barcode) {
-            $barcode = (new \Picqer\Barcode\Types\TypeEan13 ())->getBarcode($barang->barcode);
+            $barcode = (new \Picqer\Barcode\Types\TypeEan13())->getBarcode($barang->barcode);
 
             // Output the barcode as HTML in the browser with a HTML Renderer
             $renderer = new \Picqer\Barcode\Renderers\HtmlRenderer();

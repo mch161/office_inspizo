@@ -199,6 +199,7 @@
                 <div class="form-group col-md-6">
                     @php
                         $config = [
+                            $kategoris = App\Models\Barang::select('kategori')->whereNotNull('kategori')->distinct()->pluck('kategori'),
                             "placeholder" => "Cari atau ketik kategori baru...",
                             "allowClear" => true,
                             "tags" => true,
@@ -207,8 +208,8 @@
                     @endphp
                     <x-adminlte-select2 name="kategori" label="Kategori" :config="$config" id="kategori">
                         <option value="" disabled selected>Pilih Kategori</option>
-                        @foreach ($barang->unique('kategori')->sortBy('kategori') as $data)
-                            <option value="{{ $data->kategori }}">{{ $data->kategori }}</option>
+                        @foreach ($kategoris as $data)
+                            <option value="{{ $data }}">{{ $data }}</option>
                         @endforeach
                     </x-adminlte-select2>
                 </div>
@@ -220,6 +221,7 @@
                 <div class="col-md-12">
                     @php
                         $config = [
+                            $kode = App\Models\Barang::select('kode')->whereNotNull('kode')->distinct()->pluck('kode'),
                             "placeholder" => "Cari atau ketik kode barang baru...",
                             "allowClear" => true,
                             "tags" => true,
@@ -228,8 +230,8 @@
                     @endphp
                     <x-adminlte-select2 name="kode" label="Kode" :config="$config" id="kode">
                         <option value="" disabled selected>Pilih Kode Barang</option>
-                        @foreach ($barang->unique('kode')->sortBy('kode') as $data)
-                            <option value="{{ $data->kode }}">{{ $data->kode }}</option>
+                        @foreach ($kode as $data)
+                            <option value="{{ $data }}">{{ $data }}</option>
                         @endforeach
                     </x-adminlte-select2>
                 </div>
@@ -303,6 +305,7 @@
                 <div class="form-group col-md-6">
                     @php
                         $config = [
+                            $kategoris = App\Models\Barang::select('kategori')->whereNotNull('kategori')->distinct()->pluck('kategori'),
                             "placeholder" => "Cari atau ketik kategori baru...",
                             "allowClear" => true,
                             "tags" => true,
@@ -311,8 +314,8 @@
                     @endphp
                     <x-adminlte-select2 name="kategori" label="Kategori" :config="$config" id="edit_kategori">
                         <option value="" disabled selected>Pilih Kategori</option>
-                        @foreach ($barang->unique('kategori')->sortBy('kategori') as $data)
-                            <option value="{{ $data->kategori }}">{{ $data->kategori }}</option>
+                        @foreach ($kategoris as $kategori)
+                            <option value="{{ $kategori }}">{{ $kategori }}</option>
                         @endforeach
                     </x-adminlte-select2>
                 </div>
@@ -324,6 +327,7 @@
                 <div class="col-md-12">
                     @php
                         $config2 = [
+                            $kodes = App\Models\Barang::select('kode')->whereNotNull('kode')->distinct()->pluck('kode'),
                             "placeholder" => "Cari atau ketik kode barang baru...",
                             "allowClear" => true,
                             "tags" => true,
@@ -332,8 +336,8 @@
                     @endphp
                     <x-adminlte-select2 name="edit_kode" label="Kode" :config="$config2" id="kode2">
                         <option value="" disabled selected>Pilih Kode Barang"></option>
-                        @foreach ($barang->unique('kode')->sortBy('kode') as $data)
-                            <option value="{{ $data->kode }}">{{ $data->kode }}</option>
+                        @foreach ($kodes as $data)
+                            <option value="{{ $data }}">{{ $data }}</option>
                         @endforeach
                     </x-adminlte-select2>
                 </div>
@@ -406,55 +410,131 @@
         <x-adminlte-button label="Tambahkan Barang" class="mb-2 bg-blue" data-toggle="modal" data-target="#modalTambah" />
     </div>
     <hr>
-    <form action="{{ route('barang.index') }}" method="GET" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="s" class="form-control" placeholder="Cari nama barang..." value="{{ request('s') }}">
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">Cari</button>
+    <form action="{{ route('barang.index') }}" method="GET" class="mb-4" id="filterForm">
+        <div class="row">
+            <div class="input-group col-md-12 mb-2">
+                <input type="text" name="s" class="form-control" placeholder="Cari nama barang..."
+                    value="{{ request('s') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Cari</button>
+                </div>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="sort" class="m-auto">Urutkan: </label>
+                <select name="sort" id="sort" class="form-control auto-submit-filter">
+                    <option value="asc" {{ request('sort', 'asc') == 'asc' ? ' selected' : '' }}>Urutkan A-Z</option>
+                    <option value="desc" {{ request('sort') == 'desc' ? ' selected' : '' }}>Urutkan Z-A</option>
+                    <option value="price-asc" {{ request('sort') == 'price-asc' ? ' selected' : '' }}>Urutkan Harga Terendah
+                    </option>
+                    <option value="price-desc" {{ request('sort') == 'price-desc' ? ' selected' : '' }}>Urutkan Harga
+                        Tertinggi</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="status" class="m-auto">Status: </label>
+                <select name="status" id="status" class="form-control auto-submit-filter">
+                    <option value="">Semua</option>
+                    <option value="1" {{ request('status') == '1' ? ' selected' : '' }}>Dijual</option>
+                    <option value="0" {{ request('status') == '0' ? ' selected' : '' }}>Tidak Dijual</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="klasifikasi" class="m-auto">Klasifikasi: </label>
+                <select name="klasifikasi" id="klasifikasi" class="form-control auto-submit-filter">
+                    <option value="">Semua</option>
+                    <option value="Baru" {{ request('klasifikasi') == 'Baru' ? ' selected' : '' }}>Baru</option>
+                    <option value="Second" {{ request('klasifikasi') == 'Second' ? ' selected' : '' }}>Second</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="kondisi" class="m-auto">Kondisi: </label>
+                <select name="kondisi" id="kondisi" class="form-control auto-submit-filter">
+                    <option value="">Semua</option>
+                    <option value="1" {{ request('kondisi') == '1' ? ' selected' : '' }}>Normal</option>
+                    <option value="0" {{ request('kondisi') == '0' ? ' selected' : '' }}>Rusak / Mati Total</option>
+                    <option value="2" {{ request('kondisi') == '2' ? ' selected' : '' }}>Rusak Sebagian</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="kategori" class="m-auto">Kategori: </label>
+                @php
+                    $kategoris = App\Models\Barang::select('kategori')->whereNotNull('kategori')->distinct()->pluck('kategori');
+                @endphp
+                <x-adminlte-select2 name="kategori" id="kategori-filter" class="auto-submit-filter">
+                    <option value="">Semua</option>
+                    @foreach ($kategoris as $kategori)
+                        <option value="{{ $kategori }}" {{ request('kategori') == $kategori ? ' selected' : '' }}>
+                            {{ $kategori }}
+                        </option>
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="kode" class="m-auto">Kode: </label>
+                @php
+                    $kodes = App\Models\Barang::select('kode')->whereNotNull('kode')->distinct()->pluck('kode');
+                @endphp
+                <x-adminlte-select2 name="kode" id="kode-filter" class="auto-submit-filter">
+                    <option value="">Semua</option>
+                    @foreach ($kodes as $kode)
+                        <option value="{{ $kode }}" {{ request('kode') == $kode ? ' selected' : '' }}>
+                            {{ $kode }}
+                        </option>
+                    @endforeach
+                </x-adminlte-select2>
             </div>
         </div>
     </form>
 
-    <!-- Filter -->
-    <div class="row">
-        <div class="mb-2 text-center col-md-8">
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1 active" data-filter="all">Semua</button>
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1" data-filter=""> - </button>
-            @foreach($barang->whereNotNull('kode')->unique('kode')->sortBy('kode')->pluck('kode') as $kode)
-                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1"
-                    data-filter="{{ $kode }}">{{ $kode }}</button>
-            @endforeach
-        </div>
-        <div class="mb-2 text-center col-md-4">
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2 active" data-filter="all">Semua</button>
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="1">Dijual</button>
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="0">Tidak Dijual</button>
-        </div>
-        <div class="mb-2 text-center col-md-4">
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3 active" data-filter="all">Semua</button>
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="1">Normal</button>
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="0">Rusak</button>
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="2">Rusak Sebagian</button>
-        </div>
-        <div class="mb-2 text-center col-md-8">
-            <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group4 active" data-filter="all">Semua</button>
-            @foreach ($barang->whereNotNull('kategori')->unique('kategori')->sortBy('kategori')->pluck('kategori') as $kategori)
-                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group4" data-filter="{{ $kategori }}">{{ $kategori }}</button>
-            @endforeach
-        </div>
-    </div>
+    <!-- Old Filter -->
+    <!-- <div class="row">
+                                            <div class="mb-2 text-center col-md-8">
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1 active" data-filter="all">Semua</button>
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1" data-filter=""> - </button>
+                                                @foreach($barang->whereNotNull('kode')->unique('kode')->sortBy('kode')->pluck('kode') as $kode)
+                                                    <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1"
+                                                        data-filter="{{ $kode }}">{{ $kode }}</button>
+                                                @endforeach
+                                            </div>
+                                            <div class="mb-2 text-center col-md-4">
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2 active" data-filter="all">Semua</button>
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="1">Dijual</button>
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="0">Tidak Dijual</button>
+                                            </div>
+                                            <div class="mb-2 text-center col-md-4">
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3 active" data-filter="all">Semua</button>
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="1">Normal</button>
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="0">Rusak</button>
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="2">Rusak Sebagian</button>
+                                            </div>
+                                            <div class="mb-2 text-center col-md-8">
+                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group4 active" data-filter="all">Semua</button>
+                                                @foreach ($barang->whereNotNull('kategori')->unique('kategori')->sortBy('kategori')->pluck('kategori') as $kategori)
+                                                    <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group4"
+                                                        data-filter="{{ $kategori }}">{{ $kategori }}</button>
+                                                @endforeach
+                                            </div>
+                                        </div> -->
 
     <!-- Container -->
     <div class="barang-container">
         @forelse ($barang as $b)
-            <div class="barang-card" data-kode="{{ $b->kode }}" data-dijual="{{ $b->dijual }}" data-kondisi="{{ $b->kondisi }}" data-kategori="{{ $b->kategori }}">
+            <div class="barang-card" data-kode="{{ $b->kode }}" data-dijual="{{ $b->dijual }}" data-kondisi="{{ $b->kondisi }}"
+                data-kategori="{{ $b->kategori }}">
                 <div class="dropdown">
                     <button class="btn btn-link dropdown-toggle no-arrow" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" style="color: #6c757d;">
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ route('barang.show', $b->kd_barang) }}"><i class="fas fa-info fa-fw mr-2 text-info"></i>Detail</a>
+                        <a class="dropdown-item" href="{{ route('barang.show', $b->kd_barang) }}"><i
+                                class="fas fa-info fa-fw mr-2 text-info"></i>Detail</a>
                         <a class="dropdown-item edit-btn" href="#" data-toggle="modal" data-target="#modalEdit"
                             data-id="{{ $b->id }}" data-kode="{{ $b->kode }}" data-nama="{{ $b->nama_barang }}"
                             data-dijual="{{ $b->dijual }}" data-kategori="{{ $b->kategori }}"
@@ -534,6 +614,34 @@
 
 @section('js')
     <script>
+        $(function () {
+            const $form = $('#filterForm');
+
+            const handleFormSubmit = (event) => {
+                event.preventDefault();
+
+                const actionUrl = $form.attr('action');
+
+                const formData = $form.serializeArray();
+
+                const params = new URLSearchParams();
+
+                $.each(formData, function (index, field) {
+                    if (field.value && !(field.name === 'sort' && field.value === 'asc')) {
+                        params.append(field.name, field.value);
+                    }
+                });
+
+                const queryString = params.toString();
+                const newUrl = queryString ? `${actionUrl}?${queryString}` : actionUrl;
+
+                window.location.href = newUrl;
+            };
+
+            $form.on('submit', handleFormSubmit);
+
+            $('.auto-submit-filter').on('change', handleFormSubmit);
+        });
         $(document).ready(function () {
             $('.btn-filter-group1').on('click', function () {
                 $('.btn-filter-group1').removeClass('active');
