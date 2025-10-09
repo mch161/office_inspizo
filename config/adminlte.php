@@ -321,24 +321,21 @@ return [
         [
             'key' => 'pelanggan',
             'text' => 'Pelanggan',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-users',
+            'route' => 'pelanggan.index',
             'can' => 'access-karyawan',
-            'submenu' => [
-                [
-                    'text' => 'Data Pelanggan',
-                    'route' => 'pelanggan.index',
-                    'icon' => 'fa fas fa-users',
-                    'can' => 'access-karyawan',
-                    'active' => [
-                        'pelanggan/*',
-                    ]
-                ],
-            ]
+            'active' => ['pelanggan*'],
+        ],
+        [
+            'text' => 'Jurnal',
+            'route' => 'jurnalku',
+            'icon' => 'fas fa-fw fa-book-open',
+            'can' => 'only-karyawan',
         ],
         [
             'text' => 'Jurnal',
             'icon' => 'fas fa-fw fa-book',
-            'can' => 'access-karyawan',
+            'can' => 'superadmin',
             'submenu' => [
                 [
                     'text' => 'Jurnalku',
