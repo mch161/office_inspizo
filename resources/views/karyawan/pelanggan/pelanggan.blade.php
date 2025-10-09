@@ -136,9 +136,9 @@
     $(document).ready(function () {
         $('#pelangganTable').DataTable({
             scrollX: true,
+            paging: false,
             scrollCollapse: true,
-            pageLength: 10,
-            lengthChange: false,
+            scrollY: '50vh',
             language: {
                 lengthMenu: "Tampilkan _MENU_ entri",
                 zeroRecords: "Tidak ada data yang ditemukan",

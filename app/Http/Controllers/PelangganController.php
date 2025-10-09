@@ -13,7 +13,7 @@ class PelangganController extends Controller
 {
     public function index(Request $request)
     {
-        $pelanggan = Pelanggan::all();
+        $pelanggan = Pelanggan::all()->sortBy('nama_pelanggan');
         return view('karyawan.pelanggan.pelanggan', compact('pelanggan'));
     }
 
