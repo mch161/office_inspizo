@@ -138,7 +138,8 @@ class BuildUserMenu
                     'icon' => 'fa fas fa-fingerprint',
                     'can' => 'access-karyawan',
                     'active' => [
-                        'presensi*',
+                        'presensi',
+                        'presensi/view',
                     ]
                 ],
                 [
