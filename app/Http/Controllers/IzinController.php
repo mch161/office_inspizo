@@ -64,7 +64,7 @@ class IzinController extends Controller
                 }
             });
         }
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput($validator->validated());
         }
 
@@ -74,15 +74,19 @@ class IzinController extends Controller
             $imageName = time() . '.' . $request->file('foto')->extension();
             $request->file('foto')->move(public_path('storage/images/izin'), $imageName);
         }
+        
+        $tanggal = Carbon::parse($request->tanggal);
+        $jam_masuk = !is_null(Auth::guard('karyawan')->user()->jam_masuk) ? Carbon::parse(Auth::guard('karyawan')->user()->jam_masuk)->format('H:i') : '08:00';
+        $jam_pulang = $tanggal->isSaturday() ? '16:00' : '17:00';
 
-        if ($request->jenis === 'Izin Terlambat'){
-            $request->jam = '08:00';
+        if ($request->jenis === 'Izin Terlambat') {
+            $request->jam = $jam_masuk;
         }
 
         if ($request->jenis === 'Izin Terlambat' || $request->jenis === 'Izin Keluar Kantor') {
             $jam = $request->jam . ' - ' . $request->jam2;
         } else {
-            $jam = 'Full Day';
+            $jam = $jam_masuk . ' - ' . $jam_pulang;
         }
 
         Izin::create([

@@ -320,6 +320,7 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="kd_presensi_bulanan" value="{{ $dataBulanan->kd_presensi_bulanan }}">
+                    <input type="hidden" name="kd_karyawan" value="{{ $dataBulanan->kd_karyawan }}">
                     <input type="hidden" name="bulan" value="{{ $dataBulanan->bulan }}">
                     <input type="hidden" name="tahun" value="{{ $dataBulanan->tahun }}">
                     <button type="submit" class="btn btn-info"><i class="fas fa-sync"></i>Auto Sync</button>

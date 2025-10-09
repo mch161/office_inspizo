@@ -109,19 +109,8 @@ class PresensiBulananController extends Controller
             ->get()
             ->sum(function ($izin) {
                 $times = explode(' - ', $izin->jam);
-                if (count($times) !== 2 || strtolower($times[0]) === 'Full Day') {
-                    $date = Carbon::createFromFormat('Y-m-d', $izin->tanggal);
-                    if ($date->isSaturday()) {
-                        $waktu_mulai = Carbon::createFromFormat('H:i', '08:00');
-                        $waktu_selesai = Carbon::createFromFormat('H:i', '16:00');
-                    } else {
-                        $waktu_mulai = Carbon::createFromFormat('H:i', '08:00');
-                        $waktu_selesai = Carbon::createFromFormat('H:i', '17:00');
-                    }
-                } else {
-                    $waktu_mulai = Carbon::createFromFormat('H:i', trim($times[0]));
-                    $waktu_selesai = Carbon::createFromFormat('H:i', trim($times[1]));
-                }
+                $waktu_mulai = Carbon::createFromFormat('H:i', trim($times[0]));
+                $waktu_selesai = Carbon::createFromFormat('H:i', trim($times[1]));
                 return $waktu_mulai->diffInMinutes($waktu_selesai);
             });
 
@@ -205,6 +194,7 @@ class PresensiBulananController extends Controller
     {
         $data = $this->check($request);
         $data['kd_presensi_bulanan'] = $request->kd_presensi_bulanan;
+        $data['kd_karyawan'] = $request->kd_karyawan;
         $data['bulan'] = $request->bulan;
         $data['tahun'] = $request->tahun;
         $presensiBulanan = PresensiBulanan::find($request->kd_presensi_bulanan);
@@ -213,7 +203,7 @@ class PresensiBulananController extends Controller
             return redirect()->route('presensi.bulanan')->with('success', 'Tidak ada perubahan pada rekap bulanan.');
         }
         $presensiBulanan->save();
-        
+
         return redirect()->back()->with('success', 'Auto Sync Rekap Bulanan berhasil.');
     }
 
