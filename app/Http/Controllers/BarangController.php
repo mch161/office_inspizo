@@ -48,10 +48,10 @@ class BarangController extends Controller
                 $query->orderBy('nama_barang', 'desc');
                 break;
             case 'price-asc':
-                $query->orderBy('harga_jual', 'asc');
+                $query->orderByRaw("CAST(harga_jual AS UNSIGNED) ASC");
                 break;
             case 'price-desc':
-                $query->orderBy('harga_jual', 'desc');
+                $query->orderByRaw("CAST(harga_jual AS UNSIGNED) DESC");
                 break;
             default:
                 $query->orderBy('nama_barang', 'asc');

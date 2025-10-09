@@ -25,7 +25,10 @@ class PesananController extends Controller
      */
     public function index()
     {
-        $pesanan = Pesanan::where('progres', '>=', '2')->orderBy('created_at', 'desc')->get();
+        $pesanan = Pesanan::where('progres', '>=', 2)
+            ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
+            ->get();
+            
         $pelanggan = Pelanggan::get()->all();
         return view('karyawan.pesanan.pesanan', [
             "pesanan" => $pesanan,
