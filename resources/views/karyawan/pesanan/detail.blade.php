@@ -128,6 +128,35 @@
         </form>
     </x-adminlte-modal>
     {{-- /jasa modal --}}
+    <x-adminlte-modal id="agendaModal" title="Agendakan Pesanan" theme="primary">
+        <form id="agendaForm" method="POST" action="{{ route('pesanan.agenda') }}">
+            @csrf
+            <input type="hidden" name="kd_pesanan" id="kd_pesanan" value="{{ $pesanan->kd_pesanan }}">
+            <label for="title">Nama</label>
+            <input class="form-control" type="text" name="title" id="title" placeholder="Nama Agenda" required>
+
+            @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
+            <x-adminlte-input-date name="tanggal" id="tanggal-agenda" value="{{ $pesanan->tanggal }}" :config="$configDate"
+                placeholder="Pilih tanggal..." label="Tanggal Janji Temu" igroup-size="md" required>
+                <x-slot name="appendSlot">
+                    <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
+                </x-slot>
+            </x-adminlte-input-date>
+
+            @php $configTime = ['format' => 'HH:mm']; @endphp
+            <x-adminlte-input-date name="jam" id="jam-agenda" :config="$configTime" placeholder="Pilih jam..."
+                label="Jam Janji Temu" igroup-size="md" required>
+                <x-slot name="appendSlot">
+                    <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
+                </x-slot>
+            </x-adminlte-input-date>
+
+            <x-slot name="footerSlot">
+                <button type="submit" class="btn btn-primary" id="saveBtn" form="agendaForm">Simpan</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            </x-slot>
+        </form>
+    </x-adminlte-modal>
 
     <!-- CARD -->
     <div class="row">
@@ -149,6 +178,7 @@
                             <p><strong>Nama Pelanggan:</strong> {{ $pesanan->pelanggan->nama_pelanggan }}</p>
                             <p><strong>Alamat:</strong> {{ $pesanan->pelanggan->alamat }}</p>
                             <p><strong>Telepon:</strong> {{ $pesanan->pelanggan->telepon }}</p>
+                            <p><strong>Deskripsi Pesanan: </strong> {{ $pesanan->deskripsi_pesanan }}</p>
                         </div>
                         <a href="{{ route('galeri.index', ['pesanan' => $pesanan->kd_pesanan]) }}"
                             class="btn btn-primary mr-2 mb-2"><i class="fas fa-images"></i> Galeri</a>
@@ -159,13 +189,16 @@
                                 href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
                                     class="fas fa-chart-line"></i> Progress</a>
                         @endif
+                        @if ($pesanan->status == 0 && $pesanan->progres == 2)
+                            <a class="btn btn-warning mr-2 mb-2" data-toggle="modal" data-target="#agendaModal">
+                                <i class="fas fa-calendar-day"></i> Agendakan</a>
+                        @endif
                         @if ($pesanan->status == '0' && $pesanan->progres >= '3')
                             <form action="{{ route('pesanan.complete', ['pesanan' => $pesanan->kd_pesanan]) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Selesaikan</button>
                             </form>
                         @endif
-
                     </div>
                 </div>
             </div>
@@ -184,8 +217,8 @@
                 </div>
                 <div class="card-body">
                     @can('superadmin')
-                    <a href="{{ route('surat-perintah.create', ['pesanan' => $pesanan->kd_pesanan]) }}"
-                        class="btn btn-primary mb-2">Buat Surat Perintah</a>
+                        <a href="{{ route('surat-perintah.create', ['pesanan' => $pesanan->kd_pesanan]) }}"
+                            class="btn btn-primary mb-2">Buat Surat Perintah</a>
                     @endcan
                     <table id="suratPerintahTable" class="table table-centered table-nowrap mb-0 rounded">
                         <thead class="thead-light">
@@ -210,7 +243,8 @@
                                             method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash tombol-hapus"></i>
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="fas fa-trash tombol-hapus"></i>
                                                 Delete</button>
                                         </form>
                                     </td>
