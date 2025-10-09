@@ -195,7 +195,6 @@
             paging: false,
             scrollCollapse: true,
             scrollY: '50vh',
-            searching: false,
             language: {
                 lengthMenu: "Tampilkan _MENU_ entri",
                 zeroRecords: "Tidak ada data yang ditemukan",
