@@ -29,22 +29,16 @@ class PesananController extends Controller
             ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
             ->get();
 
+        $permintaan = Pesanan::where('progres', '1')
+            ->where('status', '!=', '1')
+            ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
+            ->get();
+
         $pelanggan = Pelanggan::get()->all();
         return view('karyawan.pesanan.pesanan', [
             "pesanan" => $pesanan,
             "pelanggan" => $pelanggan,
-        ]);
-    }
-
-    public function permintaan()
-    {
-        $pesanan = Pesanan::where('progres', '1')
-            ->where('status', '!=', '1')
-            ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
-            ->get();
-            
-        return view('karyawan.pesanan.permintaan', [
-            "pesanan" => $pesanan
+            "permintaan" => $permintaan
         ]);
     }
     /**
