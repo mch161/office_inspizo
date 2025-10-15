@@ -87,24 +87,12 @@ class BuildUserMenu
                     'text' => 'Pesanan',
                     'route' => 'pesanan.index',
                     'icon' => 'fa fas fa-clipboard-list',
+                    'label' => $pesananYangBelumDisetujui > 0 ? $pesananYangBelumDisetujui : '',
+                    'label_color' => $pesananYangBelumDisetujui > 0 ? 'danger' : '',
                     'can' => 'access-karyawan',
                     'active' => [
                         'pesanan/*/*',
                     ],
-                ],
-                [
-                    'text' => 'Pesanan yang belum disetujui',
-                    'route' => 'pesanan.permintaan',
-                    'icon' => 'fa fas fa-clipboard-list',
-                    'label' => $pesananYangBelumDisetujui > 0 ? $pesananYangBelumDisetujui : '',
-                    'label_color' => $pesananYangBelumDisetujui > 0 ? 'danger' : '',
-                    'can' => 'access-karyawan',
-                ],
-                [
-                    'text' => 'Project',
-                    'icon' => 'fas fa-fw fa-project-diagram',
-                    'can' => 'access-karyawan',
-                    'route' => 'project.index'
                 ],
                 [
                     'text' => 'Surat Perintah',
