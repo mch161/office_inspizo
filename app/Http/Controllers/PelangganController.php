@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kunjungan;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use Illuminate\Http\Request;
@@ -96,7 +97,8 @@ class PelangganController extends Controller
     {
         $pelanggan = Pelanggan::find($id);
         $pesanan = Pesanan::where('kd_pelanggan', $id)->get();
-        return view('karyawan.pelanggan.show', compact('pelanggan', 'pesanan'));
+        $kunjungan = Kunjungan::where('kd_pelanggan', $id)->get();
+        return view('karyawan.pelanggan.show', compact('pelanggan', 'pesanan', 'kunjungan'));
     }
 
     public function destroy($id)

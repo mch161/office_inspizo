@@ -79,12 +79,43 @@
         </table>
     </div>
 </div>
+
+<div class="card">
+    <div class="card-body">
+        <table id="kunjunganTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th width="5%">No</th>
+                    <th>Tanggal Kunjungan</th>
+                    <th>Keterangan</th>
+                    <th width="100px">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($kunjungan as $kunjungan)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $kunjungan->tanggal }}</td>
+                        <td>{!! $kunjungan->keterangan !!}</td>
+                        <td class="text-center">
+                            @if ($kunjungan->status == 1)
+                                <span class="badge bg-success">Selesai</span>
+                            @elseif ($kunjungan->status == 0)
+                                <span class="badge bg-warning">Belum Selesai</span>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @stop
 
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#pesananTable').DataTable({
+        $('#pesananTable, #kunjunganTable').DataTable({
             scrollX: true,
             paging: false,
             scrollCollapse: true,
