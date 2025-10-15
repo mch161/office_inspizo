@@ -351,6 +351,30 @@ return [
             ]
         ],
         [
+            'text' => 'Manajemen Pekerjaan',
+            'icon' => 'fas fa-fw fa-briefcase',
+            'can' => 'access-karyawan',
+            'submenu' => [
+                [
+                    'text' => 'Project',
+                    'icon' => 'fas fa-fw fa-project-diagram',
+                    'can' => 'access-karyawan',
+                    'route' => 'project.index'
+                ],
+                [
+                    'text' => 'Pekerjaan',
+                    'icon' => 'fas fa-fw fa-list',
+                    'can' => 'access-karyawan',
+
+                ],
+                [
+                    'text' => 'Tugas',
+                    'icon' => 'fas fa-fw fa-tasks',
+                    'can' => 'access-karyawan',
+                ]
+            ]
+        ],
+        [
             'text' => 'Barang',
             'icon' => 'fas fa-fw fa-warehouse',
             'can' => 'access-karyawan',
