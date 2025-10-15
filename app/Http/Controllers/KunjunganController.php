@@ -33,7 +33,7 @@ class KunjunganController extends Controller
             'kd_pelanggan' => $request->kd_pelanggan,
             'kd_pesanan' => $request->kd_pesanan,
             'kd_karyawan' => auth()->user()->kd_karyawan,
-            'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
+            'tanggal' => Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d'),
             'keterangan' => $request->keterangan,
             'status' => $request->status,
             'dibuat_oleh' => auth()->user()->nama
@@ -62,7 +62,7 @@ class KunjunganController extends Controller
         $kunjungan->update([
             'kd_pelanggan' => $request->kd_pelanggan,
             'kd_pesanan' => $request->kd_pesanan,
-            'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
+            'tanggal' => Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d'),
             'keterangan' => $request->keterangan,
             'status' => $request->status
         ]);
