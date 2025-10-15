@@ -94,6 +94,13 @@ Route::middleware(['auth:karyawan'])->group(function () {
     ## Surat Perintah
     Route::resource('surat-perintah', App\Http\Controllers\SuratPerintahController::class);
 
+    ## Kunjungan
+    Route::resource('kunjungan', App\Http\Controllers\KunjunganController::class);
+    Route::get('/get-pesanan-by-pelanggan/{kd_pelanggan}', [App\Http\Controllers\KunjunganController::class, 'getByPelanggan'])->name('pesanan.getByPelanggan');
+    Route::patch('/kunjungan/{kunjungan}/update-status', [App\Http\Controllers\KunjunganController::class, 'updateStatus'])->name('kunjungan.updateStatus');
+    Route::post('/kunjungan/upload-image', [App\Http\Controllers\KunjunganController::class, 'uploadImage'])->name('kunjungan.uploadImage');
+    Route::post('/kunjungan/delete-image', [App\Http\Controllers\KunjunganController::class, 'deleteImage'])->name('kunjungan.deleteImage');
+
     ## Keuangan
     Route::resource('keuangan', App\Http\Controllers\KeuanganController::class);
     Route::resource('kotak', App\Http\Controllers\KotakKeuanganController::class);

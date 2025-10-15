@@ -115,6 +115,12 @@ class BuildUserMenu
                     'label_color' => $suratPerintahBelumSelesai > 0 ? 'danger' : '',
                     'active' => ['surat-perintah*']
                 ],
+                [
+                    'text' => 'Data Kunjungan',
+                    'route' => 'kunjungan.index',
+                    'icon' => 'fas fa-fw fa-newspaper',
+                    'can' => 'access-karyawan'
+                ]
             ],
         ]);
         if (Auth::guard('karyawan')->check() && Auth::guard('karyawan')->user()->role == 'superadmin') {
