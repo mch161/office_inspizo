@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kunjungan;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -98,7 +99,8 @@ class PelangganController extends Controller
         $pelanggan = Pelanggan::find($id);
         $pesanan = Pesanan::where('kd_pelanggan', $id)->get();
         $kunjungan = Kunjungan::where('kd_pelanggan', $id)->get();
-        return view('karyawan.pelanggan.show', compact('pelanggan', 'pesanan', 'kunjungan'));
+        $project = Project::where('kd_pelanggan', $id)->get();
+        return view('karyawan.pelanggan.show', compact('pelanggan', 'pesanan', 'kunjungan', 'project'));
     }
 
     public function destroy($id)

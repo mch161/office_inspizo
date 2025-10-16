@@ -13,7 +13,8 @@
     <div class="card-header">
         <h3 class="card-title">Detail Pelanggan</h3>
         <div class="card-tools float-end">
-            <a href="{{ route('pelanggan.index') }}" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Kembali</a>
+            <a href="{{ route('pelanggan.index') }}" class="btn btn-primary"><i class="fas fa-arrow-left"></i>
+                Kembali</a>
         </div>
     </div>
     <div class="card-body">
@@ -81,28 +82,71 @@
 </div>
 
 <div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Riwayat Kunjungan</h3 </div>
+        <div class="card-body">
+            Total Kunjungan: {{ $kunjungan->count() }}
+            <table id="kunjunganTable" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th width="5%">No</th>
+                        <th>Tanggal Kunjungan</th>
+                        <th>Keterangan</th>
+                        <th width="100px">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($kunjungan as $kunjungan)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $kunjungan->tanggal }}</td>
+                            <td>{!! $kunjungan->keterangan !!}</td>
+                            <td class="text-center">
+                                @if ($kunjungan->status == 1)
+                                    <span class="badge bg-success">Selesai</span>
+                                @elseif ($kunjungan->status == 0)
+                                    <span class="badge bg-warning">Belum Selesai</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Riwayat Project</h3>
+    </div>
     <div class="card-body">
-        <table id="kunjunganTable" class="table table-bordered table-striped">
+        Total Project: {{ $project->count() }}
+        <table id="projectTable" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th width="5%">No</th>
-                    <th>Tanggal Kunjungan</th>
-                    <th>Keterangan</th>
+                    <th>Nama Project</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Selesai</th>
                     <th width="100px">Status</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($kunjungan as $kunjungan)
+                @foreach ($project as $project)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $kunjungan->tanggal }}</td>
-                        <td>{!! $kunjungan->keterangan !!}</td>
+                        <td>{{ $project->nama_project }}</td>
+                        <td>{{ $project->tanggal_mulai }}</td>
+                        <td>{{ $project->tanggal_selesai ?? '-' }}</td>
                         <td class="text-center">
-                            @if ($kunjungan->status == 1)
-                                <span class="badge bg-success">Selesai</span>
-                            @elseif ($kunjungan->status == 0)
-                                <span class="badge bg-warning">Belum Selesai</span>
-                            @endif
+                            <span
+                                class="badge {{ $project->status == 'Belum Selesai' ? 'badge-warning' : 'badge-success' }} float-right">{{ $project->status }}</span>
+                        </td>
+                        <td>
+                            <a href="{{ route('project.detail', $project->kd_project)}}"
+                                class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
                         </td>
                     </tr>
                 @endforeach
@@ -115,7 +159,7 @@
 @section('js')
 <script>
     $(document).ready(function () {
-        $('#pesananTable, #kunjunganTable').DataTable({
+        $('#pesananTable, #kunjunganTable, #projectTable').DataTable({
             scrollX: true,
             paging: false,
             scrollCollapse: true,
