@@ -58,7 +58,7 @@ class BarangController extends Controller
                 break;
         }
 
-        $barang = $query->paginate(10);
+        $barang = $query->distinct()->get();
 
         return view('karyawan.barang.barang', compact('barang'));
     }
