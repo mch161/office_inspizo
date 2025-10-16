@@ -3,7 +3,7 @@
 @section('title', 'Barang')
 
 @section('content_header')
-<h1>Barang</h1>
+    <h1>Barang</h1>
 @stop
 
 @section('plugins.Sweetalert2', true)
@@ -14,7 +14,6 @@
         .barang-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            /* 4 columns on desktop */
             gap: 32px;
             justify-items: center;
         }
@@ -37,20 +36,16 @@
             }
         }
 
-        /* Fix for dropdown menu on the right edge */
         .barang-card .dropdown-menu {
-            /* Ensures the menu aligns with the button */
             transform: translateX(-85%);
         }
 
-        /* For 4 columns on desktop */
         .barang-container .barang-card:nth-child(4n) .dropdown-menu {
             left: auto;
             right: 0;
             transform: translateX(0);
         }
 
-        /* For 3 columns on tablets */
         @media (max-width: 1200px) {
             .barang-container .barang-card:nth-child(4n) .dropdown-menu {
                 left: 0;
@@ -65,7 +60,6 @@
             }
         }
 
-        /* For 2 columns on small tablets */
         @media (max-width: 900px) {
             .barang-container .barang-card:nth-child(3n) .dropdown-menu {
                 left: 0;
@@ -80,7 +74,6 @@
             }
         }
 
-        /* For 1 column on mobile, reset all */
         @media (max-width: 600px) {
 
             .barang-container .barang-card:nth-child(2n) .dropdown-menu,
@@ -91,14 +84,12 @@
             }
         }
 
-        /* Chrome, Safari, Edge, Opera */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
-        /* Firefox */
         input[type=number] {
             -moz-appearance: textfield;
         }
@@ -164,6 +155,7 @@
     <x-adminlte-modal id="modalTambah" title="Tambahkan Barang" theme="success" icon="fas fa-box" size='lg'>
         <form action="{{ route('barang.store') }}" method="POST" id="barangForm" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="_query_string" value="{{ request()->getQueryString() }}">
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="nama_barang">Nama Barang</label>
@@ -267,10 +259,12 @@
             </x-slot>
         </form>
     </x-adminlte-modal>
+    
     <x-adminlte-modal id="modalEdit" title="Edit Barang" theme="warning" icon="fas fa-edit" size='lg'>
         <form method="POST" id="editBarangForm" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            <input type="hidden" name="_query_string" value="{{ request()->getQueryString() }}">
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="edit_nama_barang">Nama Barang</label>
@@ -379,6 +373,7 @@
     <x-adminlte-modal id="modalTambahStok" title="Tambahkan Stok" theme="success" icon="fas fa-plus-circle" size='md'>
         <form action="{{ route('stok.store') }}" method="POST" id="stokFormTambah">
             @csrf
+            <input type="hidden" name="_query_string" value="{{ request()->getQueryString() }}">
             <input type="hidden" name="kd_barang" id="tambah_kd_barang">
             <input type="hidden" name="klasifikasi" value="Stok Masuk">
             <x-adminlte-input name="jumlah" label="Jumlah yang Ditambahkan" type="number" min="1" required />
@@ -394,6 +389,7 @@
     <x-adminlte-modal id="modalKurangiStok" title="Kurangi Stok" theme="danger" icon="fas fa-minus-circle" size='md'>
         <form action="{{ route('stok.store') }}" method="POST" id="stokFormKurang">
             @csrf
+            <input type="hidden" name="_query_string" value="{{ request()->getQueryString() }}">
             <input type="hidden" name="kd_barang" id="kurang_kd_barang">
             <input type="hidden" name="klasifikasi" value="Stok Keluar">
             <x-adminlte-input name="jumlah" label="Jumlah yang Dikurangi" type="number" min="1" required />
@@ -429,6 +425,7 @@
                     </option>
                     <option value="price-desc" {{ request('sort') == 'price-desc' ? ' selected' : '' }}>Urutkan Harga
                         Tertinggi</option>
+                    <option value="latest" {{ request('sort') == 'latest' ? ' selected' : '' }}>Terbaru</option>
                 </select>
             </div>
 
@@ -492,37 +489,6 @@
         </div>
     </form>
 
-    <!-- Old Filter -->
-    <!-- <div class="row">
-                                            <div class="mb-2 text-center col-md-8">
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1 active" data-filter="all">Semua</button>
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1" data-filter=""> - </button>
-                                                @foreach($barang->whereNotNull('kode')->unique('kode')->sortBy('kode')->pluck('kode') as $kode)
-                                                    <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group1"
-                                                        data-filter="{{ $kode }}">{{ $kode }}</button>
-                                                @endforeach
-                                            </div>
-                                            <div class="mb-2 text-center col-md-4">
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2 active" data-filter="all">Semua</button>
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="1">Dijual</button>
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group2" data-filter="0">Tidak Dijual</button>
-                                            </div>
-                                            <div class="mb-2 text-center col-md-4">
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3 active" data-filter="all">Semua</button>
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="1">Normal</button>
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="0">Rusak</button>
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group3" data-filter="2">Rusak Sebagian</button>
-                                            </div>
-                                            <div class="mb-2 text-center col-md-8">
-                                                <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group4 active" data-filter="all">Semua</button>
-                                                @foreach ($barang->whereNotNull('kategori')->unique('kategori')->sortBy('kategori')->pluck('kategori') as $kategori)
-                                                    <button class="mb-1 mr-1 btn btn-outline-primary btn-filter-group4"
-                                                        data-filter="{{ $kategori }}">{{ $kategori }}</button>
-                                                @endforeach
-                                            </div>
-                                        </div> -->
-
-    <!-- Container -->
     <div class="barang-container">
         @forelse ($barang as $b)
             <div class="barang-card" data-kode="{{ $b->kode }}" data-dijual="{{ $b->dijual }}" data-kondisi="{{ $b->kondisi }}"
@@ -553,6 +519,7 @@
                         <form action="{{ route('barang.destroy', $b->kd_barang) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
+                            <input type="hidden" name="_query_string" value="{{ request()->getQueryString() }}">
                             <button type="submit" class="dropdown-item btn-danger tombol-hapus">
                                 <i class="fas fa-trash fa-fw mr-2 text-danger"></i>Hapus
                             </button>
@@ -616,39 +583,28 @@
     <script>
         $(function () {
             const $form = $('#filterForm');
-
             const handleFormSubmit = (event) => {
                 event.preventDefault();
-
                 const actionUrl = $form.attr('action');
-
                 const formData = $form.serializeArray();
-
                 const params = new URLSearchParams();
-
                 $.each(formData, function (index, field) {
                     if (field.value && !(field.name === 'sort' && field.value === 'asc')) {
                         params.append(field.name, field.value);
                     }
                 });
-
                 const queryString = params.toString();
                 const newUrl = queryString ? `${actionUrl}?${queryString}` : actionUrl;
-
                 window.location.href = newUrl;
             };
-
             $form.on('submit', handleFormSubmit);
-
             $('.auto-submit-filter').on('change', handleFormSubmit);
         });
         $(document).ready(function () {
             $('.btn-filter-group1').on('click', function () {
                 $('.btn-filter-group1').removeClass('active');
                 $(this).addClass('active');
-
                 const filterValue = $(this).data('filter');
-
                 if (filterValue === 'all') {
                     $('.barang-card').fadeIn();
                 } else {
@@ -656,13 +612,10 @@
                     $('.barang-card[data-kode="' + filterValue + '"]').fadeIn();
                 }
             });
-
             $('.btn-filter-group2').on('click', function () {
                 $('.btn-filter-group2').removeClass('active');
                 $(this).addClass('active');
-
                 const filterValue = $(this).data('filter');
-
                 if (filterValue === 'all') {
                     $('.barang-card').fadeIn();
                 } else {
@@ -670,13 +623,10 @@
                     $('.barang-card[data-dijual="' + filterValue + '"]').fadeIn();
                 }
             });
-
             $('.btn-filter-group3').on('click', function () {
                 $('.btn-filter-group3').removeClass('active');
                 $(this).addClass('active');
-
                 const filterValue = $(this).data('filter');
-
                 if (filterValue === 'all') {
                     $('.barang-card').fadeIn();
                 } else {
@@ -684,13 +634,10 @@
                     $('.barang-card[data-kondisi="' + filterValue + '"]').fadeIn();
                 }
             });
-
             $('.btn-filter-group4').on('click', function () {
                 $('.btn-filter-group4').removeClass('active');
                 $(this).addClass('active');
-
                 const filterValue = $(this).data('filter');
-
                 if (filterValue === 'all') {
                     $('.barang-card').fadeIn();
                 } else {
@@ -762,7 +709,6 @@
             });
             $('.barang-container').on('click', '.edit-btn', function (e) {
                 e.preventDefault();
-
                 const id = $(this).data('id');
                 const nama = $(this).data('nama');
                 const dijual = $(this).data('dijual');
@@ -778,21 +724,17 @@
                 const updateUrl = $(this).data('url');
 
                 $('#edit_nama_barang').val(nama);
-
                 $('#edit_dijual').val(dijual);
                 $('#edit_dijual').trigger('change');
                 $('#edit_klasifikasi').val(klasifikasi);
                 $('#edit_klasifikasi').trigger('change');
                 $('#kode2').val(kode);
                 $('#kode2').trigger('change');
-
                 $('#edit_kategori').val(kategori);
                 $('#edit_kategori').trigger('change');
-
                 $('#edit_kondisi').val(kondisi);
                 $('#edit_kondisi').trigger('change');
                 $('#edit_keterangan').val(keterangan);
-
                 $('#edit_barcode').val(barcode);
                 $('#edit_hpp').val(hpp);
                 $('#edit_harga').val(harga);
@@ -821,7 +763,6 @@
             })
         })
         @if (session()->has('success'))
-
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -833,30 +774,27 @@
                     toast.addEventListener('mouseleave', Swal.resumeTimer)
                 }
             });
-
             Toast.fire({
                 icon: 'success',
                 text: '{{ session('success') }}',
             })
         @endif
-            @if (session()->has('error'))
-
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                });
-
-                Toast.fire({
-                    icon: 'error',
-                    text: '{{ session('error') }}',
-                })
-            @endif
+        @if (session()->has('error'))
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            Toast.fire({
+                icon: 'error',
+                text: '{{ session('error') }}',
+            })
+        @endif
     </script>
 @endsection

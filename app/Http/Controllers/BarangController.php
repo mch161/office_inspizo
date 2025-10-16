@@ -53,6 +53,9 @@ class BarangController extends Controller
             case 'price-desc':
                 $query->orderByRaw("CAST(harga_jual AS UNSIGNED) DESC");
                 break;
+            case 'latest':
+                $query->orderBy('created_at', 'desc');
+                break;
             default:
                 $query->orderBy('nama_barang', 'asc');
                 break;
@@ -78,17 +81,11 @@ class BarangController extends Controller
         return response()->json($response);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), ([
@@ -106,7 +103,6 @@ class BarangController extends Controller
         if ($request->foto) {
             $image = $request->foto;
             $imageName = time() . '.' . $request->foto->extension();
-
             $path = public_path('storage/images/barang');
             $img = Image::read($image->path());
             $img->scale(width: 480)->save($path . '/' . $imageName);
@@ -131,56 +127,34 @@ class BarangController extends Controller
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
 
-        // $stok = new Stok();
-        // $stok->kd_barang = $barang->kd_barang;
-        // $stok->kd_karyawan = Auth::id();
-        // $stok->stok_masuk = $request->stok ?? 1;
-        // $stok->stok_keluar = 0;
-        // $stok->klasifikasi = 'Stok Awal';
-        // $stok->keterangan = 'Stok awal saat barang dibuat.';
-        // $stok->dibuat_oleh = Auth::user()->nama;
-        // $stok->save();
+        $queryString = $request->_query_string ? '?' . $request->_query_string : '';
+        $redirectUrl = route('barang.index') . $queryString;
 
         if ($barang) {
-            return redirect()->route('barang.index')
-                ->with('success', 'Barang berhasil dibuat.');
+            return redirect()->to($redirectUrl)->with('success', 'Barang berhasil dibuat.');
         } else {
-            return redirect()->route('barang.index')
-                ->with('error', 'Barang gagal dibuat.');
+            return redirect()->to($redirectUrl)->with('error', 'Barang gagal dibuat.');
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $barang = Barang::find($id);
         $stok = Stok::where('kd_barang', $barang->kd_barang)->orderBy('created_at', 'desc')->get();
-
         $barcodeIMG = null;
         if ($barang->barcode) {
             $barcode = (new \Picqer\Barcode\Types\TypeEan13())->getBarcode($barang->barcode);
-
-            // Output the barcode as HTML in the browser with a HTML Renderer
             $renderer = new \Picqer\Barcode\Renderers\HtmlRenderer();
             $barcodeIMG = $renderer->render($barcode, 450.20, 75);
         }
-
         return view('karyawan.barang.detail', compact('barang', 'stok', 'barcodeIMG'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Barang $barang)
     {
         $validate = Validator::make($request->all(), ([
@@ -191,18 +165,15 @@ class BarangController extends Controller
         ]));
 
         if ($validate->fails()) {
-            return redirect()->route('barang.index')
-                ->with('error', $validate->errors()->first());
+            return redirect()->route('barang.index')->with('error', $validate->errors()->first());
         }
 
         if ($request->foto) {
             $image = $request->foto;
             $imageName = time() . '.' . $request->foto->extension();
-
             if (Storage::disk('public')->exists('images/barang/' . $barang->foto)) {
                 Storage::disk('public')->delete('images/barang/' . $barang->foto);
             }
-
             $path = public_path('storage/images/barang');
             $img = Image::read($image->path());
             $img->scale(width: 480)->save($path . '/' . $imageName);
@@ -225,58 +196,34 @@ class BarangController extends Controller
         $barang->dibuat_oleh = Auth::user()->nama;
         $barang->save();
 
+        $queryString = $request->_query_string ? '?' . $request->_query_string : '';
+        $redirectUrl = route('barang.index') . $queryString;
 
         if ($barang) {
-            return redirect()->back()
-                ->with('success', 'Barang berhasil diupdate.');
+            return redirect()->to($redirectUrl)->with('success', 'Barang berhasil diupdate.');
         } else {
-            return redirect()->back()
-                ->with('error', 'Barang gagal diupdate.');
+            return redirect()->to($redirectUrl)->with('error', 'Barang gagal diupdate.');
         }
     }
 
     public function updateStok(Request $request, $id)
     {
-        $barang = Barang::findOrFail($id);
-
-        $request->validate([
-            'tambah_stok' => 'nullable|numeric|min:0',
-            'kurangi_stok' => 'nullable|numeric|min:0',
-        ]);
-
-        if ($request->has('tambah_stok') && $request->tambah_stok > 0) {
-            $barang->stok += $request->tambah_stok;
-            $barang->save();
-            return redirect()->back()->with('success', 'Stok berhasil ditambahkan.');
-        }
-
-        if ($request->has('kurangi_stok') && $request->kurangi_stok > 0) {
-            if ($barang->stok < $request->kurangi_stok) {
-                return redirect()->back()->with('error', 'Stok tidak mencukupi untuk dikurangi.');
-            }
-            $barang->stok -= $request->kurangi_stok;
-            $barang->save();
-            return redirect()->back()->with('success', 'Stok berhasil dikurangi.');
-        }
-
-        return redirect()->back()->with('error', 'Tidak ada perubahan stok yang dilakukan.');
+        //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $barang = Barang::findOrFail($id);
         $barang->status = 0;
         $barang->save();
+        
+        $queryString = $request->_query_string ? '?' . $request->_query_string : '';
+        $redirectUrl = route('barang.index') . $queryString;
 
         if ($barang) {
-            return redirect()->back()
-                ->with('success', 'Barang berhasil dihapus.');
+            return redirect()->to($redirectUrl)->with('success', 'Barang berhasil dihapus.');
         } else {
-            return redirect()->back()
-                ->with('error', 'Barang gagal dihapus.');
+            return redirect()->to($redirectUrl)->with('error', 'Barang gagal dihapus.');
         }
     }
 }
