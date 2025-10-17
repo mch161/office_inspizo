@@ -365,7 +365,7 @@ return [
                     'text' => 'Pekerjaan',
                     'icon' => 'fas fa-fw fa-list',
                     'can' => 'access-karyawan',
-
+                    'route' => 'pekerjaan.index'
                 ],
                 [
                     'text' => 'Tugas',

@@ -91,6 +91,9 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('project', App\Http\Controllers\ProjectController::class);
     Route::get('project/{project}/detail', [App\Http\Controllers\ProjectController::class, 'detail'])->name('project.detail');
 
+    ## Pekerjaan
+    Route::resource('pekerjaan', App\Http\Controllers\PekerjaanController::class);
+
     ## Surat Perintah
     Route::resource('surat-perintah', App\Http\Controllers\SuratPerintahController::class);
 
