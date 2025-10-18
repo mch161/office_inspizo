@@ -79,16 +79,6 @@ class TugasController extends Controller
             'status' => $request->status
         ]);
 
-        if ($request->status == 'Selesai') {
-            Jurnal::create([
-                'kd_karyawan' => Auth::user()->kd_karyawan,
-                'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
-                'jam' => Carbon::now()->format('H:i:s'),
-                'isi_jurnal' => 'Menyelesaikan: ' . $tugas->pekerjaan->pekerjaan,
-                'dibuat_oleh' => Auth::user()->nama
-            ]);
-        return response()->json(['success' => 'Data tugas berhasil disimpan dan jurnal berhasil dibuat.']);
-        }
 
         return response()->json(['success' => 'Data tugas berhasil disimpan.']);
     }
