@@ -33,18 +33,41 @@ class AppServiceProvider extends ServiceProvider
 
         Karyawan::observe(\App\Observers\KaryawanObserver::class);
 
-        Gate::define('access', function ($user = null) {
-            return Auth::guard('pelanggan')->check() || Auth::guard('karyawan')->check();
-        });
-
         Gate::define('access-karyawan', function ($user = null) {
             return Auth::guard('karyawan')->check();
         });
-        Gate::define('only-karyawan', function ($user = null) {
-            return Auth::guard('karyawan')->check() && Auth::guard('karyawan')->user()->role !== 'superadmin';
-        });
+
+        // Gate untuk hak akses SUPERADMIN.
         Gate::define('superadmin', function ($user = null) {
-            return Auth::guard('karyawan')->check() && Auth::guard('karyawan')->user()->role == 'superadmin';
+            if (!Auth::guard('karyawan')->check()) {
+                return false;
+            }
+            // Akan true HANYA JIKA: rolenya 'superadmin' DAN TIDAK sedang dalam mode 'view_as_karyawan'.
+            return Auth::guard('karyawan')->user()->role == 'superadmin' && !session('view_as_karyawan');
+        });
+
+        Gate::define('session-view-as-karyawan', function ($user = null) {
+            return session('view_as_karyawan');
+        });
+
+        // Gate untuk hak akses KARYAWAN BIASA.
+        Gate::define('only-karyawan', function ($user = null) {
+            if (!Auth::guard('karyawan')->check()) {
+                return false;
+            }
+            $authedUser = Auth::guard('karyawan')->user();
+
+            // Akan true jika rolenya BUKAN 'superadmin'.
+            if ($authedUser->role !== 'superadmin') {
+                return true;
+            }
+
+            // Akan true juga jika rolenya 'superadmin' TETAPI sedang dalam mode 'view_as_karyawan'.
+            if ($authedUser->role === 'superadmin' && session('view_as_karyawan')) {
+                return true;
+            }
+
+            return false;
         });
     }
 }

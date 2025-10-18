@@ -29,6 +29,12 @@ Route::middleware(['can:superadmin'])->group(function () {
 
     ##User
     Route::resource('users', App\Http\Controllers\Auth\UserController::class);
+
+    Route::get('/view-as-user', [App\Http\Controllers\ViewController::class, 'switchToUserView'])->name('view.as_user');
+});
+
+Route::middleware(['can:session-view-as-karyawan'])->group(function () {
+    Route::get('/view-as-admin', [App\Http\Controllers\ViewController::class, 'switchToAdminView'])->name('view.as_admin');
 });
 
 Route::middleware(['auth:karyawan'])->group(function () {

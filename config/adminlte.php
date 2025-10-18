@@ -301,6 +301,20 @@ return [
     'menu' => [
         // Navbar items:
         [
+            'text' => 'Lihat Sebagai Karyawan',
+            'route' => 'view.as_user',
+            'icon' => 'fas fa-user',
+            'topnav_right' => true,
+            'can' => 'superadmin',
+        ],
+        [
+            'text' => 'Lihat Sebagai Admin',
+            'route' => 'view.as_admin',
+            'icon' => 'fas fa-user',
+            'topnav_right' => true,
+            'can' => 'session-view-as-karyawan'
+        ],
+        [
             'text' => '',
             'route' => 'chats',
             'icon' => 'fas fa-comments',
@@ -371,6 +385,7 @@ return [
                     'text' => 'Tugas',
                     'icon' => 'fas fa-fw fa-tasks',
                     'can' => 'access-karyawan',
+                    'route' => 'tugas.index'
                 ]
             ]
         ],
