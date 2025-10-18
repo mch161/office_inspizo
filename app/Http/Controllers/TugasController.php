@@ -34,16 +34,16 @@ class TugasController extends Controller
             ->editColumn('tanggal', function ($row) {
                 return Carbon::parse($row->tanggal)->format('d-m-Y');
             })
-            ->editColumn('status', function($row){
+            ->editColumn('status', function ($row) {
                 $statusMap = [
                     'Akan Dikerjakan' => 'info',
-                    'Dalam Proses'    => 'primary',
-                    'Ditunda'         => 'secondary',
-                    'Dilanjutkan'     => 'primary',
-                    'Selesai'         => 'success',
+                    'Dalam Proses' => 'primary',
+                    'Ditunda' => 'secondary',
+                    'Dilanjutkan' => 'primary',
+                    'Selesai' => 'success',
                 ];
                 $badgeColor = $statusMap[$row->status] ?? 'warning';
-                return '<span class="badge badge-'.$badgeColor.'">'.$row->status.'</span>';
+                return '<span class="badge badge-' . $badgeColor . '">' . $row->status . '</span>';
             })
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-id="' . $row->kd_tugas . '" class="edit btn btn-primary btn-sm editTugas">Edit</a> ';
@@ -79,6 +79,26 @@ class TugasController extends Controller
             'status' => $request->status
         ]);
 
+        $tugas->load('pekerjaan');
+        $isiJurnal = 'Menyelesaikan tugas: ' . ($tugas->pekerjaan->pekerjaan ?? 'N/A');
+
+        if ($tugas->status == 'Selesai') {
+            Jurnal::updateOrCreate(
+                ['kd_tugas' => $tugas->kd_tugas],
+                [
+                    'kd_karyawan' => $tugas->kd_karyawan,
+                    'tanggal' => $tugas->tanggal,
+                    'jam' => Carbon::now()->format('H:i:s'),
+                    'isi_jurnal' => $isiJurnal,
+                    'dibuat_oleh' => Auth::user()->nama,
+                ]
+            );
+        } else {
+            $jurnal = Jurnal::where('kd_tugas', $tugas->kd_tugas)->first();
+            if ($jurnal) {
+                $jurnal->delete();
+            }
+        }
 
         return response()->json(['success' => 'Data tugas berhasil disimpan.']);
     }

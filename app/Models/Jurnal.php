@@ -23,6 +23,15 @@ class Jurnal extends Model
      */
     protected $primaryKey = 'kd_jurnal';
 
+    protected $fillable = [
+        'kd_karyawan',
+        'kd_tugas',
+        'tanggal',
+        'jam',
+        'isi_jurnal',
+        'dibuat_oleh',
+    ];
+
     /**
      * Define the relationship to the Karyawan model.
      * Assumes you have a Karyawan model.
