@@ -308,7 +308,7 @@ return [
             'can' => 'superadmin',
         ],
         [
-            'text' => 'Lihat Sebagai Admin',
+            'text' => 'Kembali Sebagai Admin',
             'route' => 'view.as_admin',
             'icon' => 'fas fa-user',
             'topnav_right' => true,
