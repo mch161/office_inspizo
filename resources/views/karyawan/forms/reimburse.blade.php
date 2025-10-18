@@ -79,7 +79,8 @@
                             $kategori = App\Models\Keuangan_Kategori::all();
                             $select2 = [
                                 'placeholder' => 'Pilih kategori...',
-                                'allowClear' => true
+                                'allowClear' => true,
+                                'tags' => true
                             ]
                         @endphp
                         <x-adminlte-select2 name="kategori" :config="$select2" label="Kategori" required>
