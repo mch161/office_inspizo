@@ -61,7 +61,7 @@ class BarangController extends Controller
                 break;
         }
 
-        $barang = $query->distinct()->get();
+        $barang = $query->where('status', '1')->distinct()->get();
 
         return view('karyawan.barang.barang', compact('barang'));
     }
