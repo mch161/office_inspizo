@@ -100,6 +100,9 @@ Route::middleware(['auth:karyawan'])->group(function () {
     ## Pekerjaan
     Route::resource('pekerjaan', App\Http\Controllers\PekerjaanController::class);
 
+    ## Tugas
+    Route::resource('tugas', App\Http\Controllers\TugasController::class);
+
     ## Surat Perintah
     Route::resource('surat-perintah', App\Http\Controllers\SuratPerintahController::class);
 
