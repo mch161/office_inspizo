@@ -75,7 +75,7 @@ class ReimburseController extends Controller
             'nominal' => $request->nominal,
             'foto' => $imageName,
             'keterangan' => $request->keterangan,
-            'kategori' => $request->kategori,
+            'kategori' => $request->kategori ?? null,
             'status' => 0,
             'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
         ]);
