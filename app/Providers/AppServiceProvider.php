@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Barang;
 use App\Models\Karyawan;
 use App\Models\Stok;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +70,9 @@ class AppServiceProvider extends ServiceProvider
 
             return false;
         });
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
 
