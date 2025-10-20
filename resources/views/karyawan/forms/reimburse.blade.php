@@ -74,7 +74,7 @@
                             </x-slot>
                         </x-adminlte-input>
                     </div>
-                    <!-- <div class="form-group col-md-6">
+                    <div class="form-group col-md-6">
                         @php
                             $kategori = App\Models\Keuangan_Kategori::all();
                             $select2 = [
@@ -89,7 +89,7 @@
                                 <option value="{{ $item->kd_kategori }}">{{ $item->nama }}</option>
                             @endforeach
                         </x-adminlte-select2>
-                    </div> -->
+                    </div>
                     <div class="form-group col-md-12">
                         <x-adminlte-textarea name="keterangan" label="Keterangan"
                             placeholder="Tuliskan keterangan reimburse Anda di sini..."></x-adminlte-textarea>

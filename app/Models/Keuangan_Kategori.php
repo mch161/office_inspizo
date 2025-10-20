@@ -10,6 +10,11 @@ class Keuangan_Kategori extends Model
 
     protected $primaryKey = 'kd_kategori';
 
+    protected $fillable = [
+        'nama',
+        'dibuat_oleh',
+    ];
+
     /**
      * Get the keuangan associated with the Keuangan_Kotak
      *

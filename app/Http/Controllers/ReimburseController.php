@@ -13,9 +13,6 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class ReimburseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         if (Auth::guard('karyawan')->user()->role == 'superadmin') {
@@ -33,17 +30,11 @@ class ReimburseController extends Controller
         return view('karyawan.forms.reimburse', compact('kategori'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), ([
@@ -52,7 +43,7 @@ class ReimburseController extends Controller
             'foto' => 'image|mimes:jpg,jpeg,png|max:2048',
             'keterangan' => 'required|string',
             'nominal' => 'required|numeric',
-            'kategori' => 'nullable|string'
+            'kategori' => 'required|string'
         ]));
 
         if ($validate->fails()) {
@@ -68,6 +59,23 @@ class ReimburseController extends Controller
             $imageName = null;
         }
 
+        $kategori = Keuangan_Kategori::find($request->kategori);
+        $kategori_id = null;
+
+        if ($kategori) {
+            $kategori_id = $kategori->kd_kategori;
+        } else {
+            $newKategori = Keuangan_Kategori::firstOrCreate(
+                [
+                    'nama' => $request->kategori
+                ],
+                [
+                    'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+                ]
+            );
+            $kategori_id = $newKategori->kd_kategori;
+        }
+
         $reimburse = new Reimburse([
             'kd_karyawan' => Auth::guard('karyawan')->user()->kd_karyawan,
             'tanggal' => $request->tanggal,
@@ -75,7 +83,7 @@ class ReimburseController extends Controller
             'nominal' => $request->nominal,
             'foto' => $imageName,
             'keterangan' => $request->keterangan,
-            'kategori' => $request->kategori ?? null,
+            'kategori' => $kategori_id,
             'status' => 0,
             'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
         ]);
@@ -87,45 +95,22 @@ class ReimburseController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
             'status' => 'required|in:0,1',
             'kotak' => 'nullable|string|exists:keuangan_kotak,kd_kotak',
         ]);
-
-        // if (Reimburse::findOrFail($id)->status == 0) {
-        //     $reimburse = Reimburse::findOrFail($id);
-        //     Keuangan::create([
-        //         'kd_karyawan' => $reimburse->kd_karyawan,
-        //         'jenis' => 'Keluar',
-        //         'keluar' => $reimburse->nominal,
-        //         'kd_kotak' => $request->kotak,
-        //         'kd_kategori' => $reimburse->kategori,
-        //         'keterangan' => 'Reimburse: ' . $reimburse->keterangan,
-        //         'tanggal' => $reimburse->tanggal,
-        //         'dibuat_oleh' => $reimburse->dibuat_oleh
-        //     ]);
-        // }
 
         if ($request->hasFile('foto')) {
             $image = $request->file('foto');
@@ -158,9 +143,6 @@ class ReimburseController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
