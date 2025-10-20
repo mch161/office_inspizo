@@ -10,14 +10,61 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
+use Yajra\DataTables\Facades\DataTables;
 
 
 class KunjunganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kunjungan = Kunjungan::latest()->get();
-        return view('karyawan.kunjungan.index', compact('kunjungan'));
+        if ($request->ajax()) {
+            $data = Kunjungan::with(['pelanggan', 'pesanan', 'karyawans'])->latest();
+            
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('karyawan', function ($row) {
+                    return $row->karyawans ? $row->karyawans->pluck('nama')->implode(', ') : 'N/A';
+                })
+                ->addColumn('pelanggan', function ($row) {
+                    return $row->pelanggan ? $row->pelanggan->nama_pelanggan : 'N/A';
+                })
+                ->addColumn('pesanan', function ($row) {
+                    return $row->pesanan ? $row->pesanan->deskripsi_pesanan : 'N/A';
+                })
+                ->addColumn('status', function ($row) {
+                    if ($row->status == 1) {
+                        return '<span id="status-' . $row->kd_kunjungan . '" class="badge badge-success">Selesai</span>';
+                    } else {
+                        return '<span id="status-' . $row->kd_kunjungan . '" class="badge badge-warning">Belum</span>';
+                    }
+                })
+                ->addColumn('action', function ($row) {
+                    $btnSelesai = '';
+                    if ($row->status == 0) {
+                        $btnSelesai = ' <a href="javascript:void(0)" class="btn btn-success btn-sm tombol-selesai" 
+                                          data-id="' . $row->kd_kunjungan . '" 
+                                          data-url="' . route('kunjungan.updateStatus', $row->kd_kunjungan) . '">
+                                          <i class="fas fa-check"></i> Selesai
+                                       </a>';
+                    }
+
+                    $btnHapus = ' <a href="javascript:void(0)" class="btn btn-danger btn-sm tombol-hapus" 
+                                      data-id="' . $row->kd_kunjungan . '" 
+                                      data-url="' . route('kunjungan.destroy', $row->kd_kunjungan) . '">
+                                      <i class="fas fa-trash"></i> Hapus
+                                   </a>';
+                    
+                    $btnEdit = ' <a href="' . route('kunjungan.edit', $row->kd_kunjungan) . '" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                 </a>';
+
+                    return $btnEdit . $btnSelesai . $btnHapus;
+                })
+                ->rawColumns(['action', 'status', 'keterangan'])
+                ->make(true);
+        }
+
+        return view('karyawan.kunjungan.index');
     }
 
     public function create()

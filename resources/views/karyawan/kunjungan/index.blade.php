@@ -15,7 +15,7 @@
             <div class="card-body">
                 <a href="{{ route('kunjungan.create') }}" class="btn btn-sm btn-primary mb-3 float-right"><i
                         class="fas fa-plus"></i> Tambah Kunjungan</a>
-                <table id="kunjunganTable" class="table table-bordered">
+                <table class="table table-bordered data-table">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -29,42 +29,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($kunjungan as $kunjungan)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>
-                                    {{ $kunjungan->karyawans->pluck('nama')->implode(', ') }}
-                                </td>
-                                <td>{{ $kunjungan->pelanggan->nama_pelanggan }}</td>
-                                <td>{{ $kunjungan->pesanan->deskripsi_pesanan ?? '-' }}</td>
-                                <td>{!! $kunjungan->keterangan ?? '-' !!}</td>
-                                <td>{{ \Carbon\Carbon::parse($kunjungan->tanggal)->format('d-m-Y') }}</td>
-                                <td id="status-{{ $kunjungan->kd_kunjungan }}">
-                                    @if ($kunjungan->status == '0')
-                                        <span class="badge badge-warning">Belum Selesai</span>
-                                    @else
-                                        <span class="badge badge-success">Selesai</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($kunjungan->karyawans->contains(Auth::user()->kd_karyawan))
-                                        @if ($kunjungan->status == '0')
-                                            <a href="javascript:void(0)" class="btn btn-sm btn-success tombol-selesai"
-                                                data-url="{{ route('kunjungan.updateStatus', $kunjungan->kd_kunjungan) }}"
-                                                data-id="{{ $kunjungan->kd_kunjungan }}">
-                                                <i class="fas fa-check"></i>
-                                            </a>
-                                        @endif
-                                        <a href="{{ route('kunjungan.edit', $kunjungan->kd_kunjungan) }}"
-                                            class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
-                                        <a href="javascript:void(0)" class="btn btn-sm btn-danger tombol-hapus"
-                                            data-url="{{ route('kunjungan.destroy', $kunjungan->kd_kunjungan) }}">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -75,24 +39,32 @@
 
 @section('js')
 <script>
-    $(document).ready(function () {
-        $('#kunjunganTable').DataTable({
-            responsive: true,
-            lengthChange: false,
-            autoWidth: false,
-            pageLength: 10,
-            scrollX: true,
-            language: {
-                lengthMenu: "Tampilkan _MENU_ entri",
-                zeroRecords: "Tidak ada data yang ditemukan",
-                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                infoEmpty: "Tidak ada data yang tersedia",
-                infoFiltered: "(difilter dari _MAX_ total entri)",
-                search: "Cari:",
-                searchPlaceholder: "Cari data..."
+    $(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $('#kunjunganTable').on('click', '.tombol-selesai', function (e) {
+
+        var table = $('.data-table').DataTable({
+            processing: true,
+            serverSide: true,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
+            ajax: "{{ route('kunjungan.index') }}",
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'karyawan', name: 'karyawans.nama', orderable: false },
+                { data: 'pelanggan', name: 'pelanggan.nama_pelanggan' },
+                { data: 'pesanan', name: 'pesanan.deskripsi_pesanan' },
+                { data: 'keterangan', name: 'keterangan' },
+                { data: 'tanggal', name: 'tanggal' },
+                { data: 'status', name: 'status', orderable: false, searchable: false },
+                { data: 'action', name: 'action', orderable: false, searchable: false },
+            ]
+        });
+
+        $('.data-table tbody').on('click', '.tombol-selesai', function (e) {
             e.preventDefault();
 
             const updateUrl = $(this).data('url');
@@ -110,7 +82,7 @@
                     const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
                     Toast.fire({ icon: 'success', text: response.success });
 
-                    $('#status-' + kunjunganId).html('<span class="badge badge-success">Selesai</span>');
+                    table.ajax.reload();
 
                     button.fadeOut('slow', function () {
                         $(this).remove();
@@ -121,7 +93,8 @@
                 }
             });
         });
-        $('#kunjunganTable').on('click', '.tombol-hapus', function (e) {
+
+        $('.data-table tbody').on('click', '.tombol-hapus', function (e) {
             e.preventDefault();
 
             const deleteUrl = $(this).data('url');
@@ -151,10 +124,8 @@
                                 response.success,
                                 'success'
                             );
-                            row.fadeOut('slow', function () {
-                                $(this).remove();
-                            });
 
+                            table.row(row).remove().draw();
                         },
                         error: function (xhr) {
                             Swal.fire(
