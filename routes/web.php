@@ -80,6 +80,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('izin/form', [App\Http\Controllers\IzinController::class, 'izinForm'])->name('izin.form');
     Route::resource('izin', App\Http\Controllers\IzinController::class);
     Route::resource('lembur', App\Http\Controllers\LemburController::class);
+    Route::get('/libur/import', [App\Http\Controllers\LiburController::class, 'importFromApi'])->name('libur.import');
     Route::resource('libur', App\Http\Controllers\LiburController::class);
 
     ## Barang

@@ -10,6 +10,9 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Tambah Libur</h3>
+        <a href="{{ route('libur.import') }}" class="btn btn-sm btn-success float-right" id="importApiButton">
+            <i class="fas fa-download"></i> Import dari API
+        </a>
     </div>
     <div class="card-body">
         <form id="LiburForm" action="{{ route('libur.store') }}" method="POST">
@@ -157,6 +160,35 @@
 
                 this.submit();
             });
+
+            $('#importApiButton').on('click', function (event) {
+                event.preventDefault(); 
+                let importUrl = $(this).attr('href'); 
+
+                Swal.fire({
+                    title: 'Import Hari Libur?',
+                    text: "Ini akan mengambil data libur nasional dari API. Data yang tanggalnya sudah ada akan dilewati.",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, import!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Mengimpor...',
+                            text: 'Harap tunggu, sedang mengambil data.',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        window.location.href = importUrl;
+                    }
+                });
+            });
+
             $('#LiburTable').on('click', '.tombol-hapus', function (event) {
                 event.preventDefault();
                 console.log($(this).closest('form'));
