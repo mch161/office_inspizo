@@ -95,7 +95,14 @@
         <form id="barangForm" action="{{ route('pesanan.barang.store') }}" method="POST">
             @csrf
             <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
-            <x-adminlte-select2 name="kd_barang" label="Barang">
+            @php
+                $barang_config = [
+                    'placeholder' => 'Cari barang...',
+                    'allowClear' => true,
+                    'tags' => true,
+                ]
+            @endphp
+            <x-adminlte-select2 name="kd_barang" label="Barang" :config="$barang_config">
                 <option class="text-muted" value="" selected disabled>Cari barang...</option>
                 @foreach ($barang as $barang)
                     <option value="{{ $barang->kd_barang }}">{{ $barang->nama_barang }}</option>
@@ -114,7 +121,14 @@
         <form action="{{ route('pesanan.jasa.store') }}" id="jasaForm" method="POST">
             @csrf
             <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
-            <x-adminlte-select2 name="kd_jasa" label="Jasa">
+            @php
+                $jasa_config = [
+                    'placeholder' => 'Cari jasa...',
+                    'allowClear' => true,
+                    'tags' => true,
+                ]
+            @endphp
+            <x-adminlte-select2 name="kd_jasa" label="Jasa" :config="$jasa_config">
                 <option class="text-muted" value="" selected disabled>Cari jasa...</option>
                 @foreach ($jasa as $jasa)
                     <option value="{{ $jasa->kd_jasa }}">{{ $jasa->nama_jasa }}</option>

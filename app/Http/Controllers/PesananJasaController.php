@@ -13,7 +13,7 @@ class PesananJasaController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'kd_pesanan_detail' => 'required|exists:pesanan_detail,kd_pesanan_detail',
-            'kd_jasa' => 'required|exists:jasa,kd_jasa',
+            'kd_jasa' => 'required',
             'jumlah' => 'required|numeric',
         ]);
 
@@ -23,6 +23,16 @@ class PesananJasaController extends Controller
         }
 
         $jasa = Jasa::find($request->kd_jasa);
+        
+        if (!$jasa) {
+            $newJasa = Jasa::firstOrCreate([
+                'nama_jasa' => $request->kd_jasa,
+            ], [
+                'tarif' => 0
+            ]);
+            $jasa = $newJasa;
+            $request->merge(['kd_jasa' => $newJasa->kd_jasa]);
+        }
 
         if (PesananJasa::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_jasa', $request->kd_jasa)->exists()) {
             PesananJasa::where('kd_jasa', $request->kd_jasa)->update([

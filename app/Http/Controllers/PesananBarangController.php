@@ -15,7 +15,7 @@ class PesananBarangController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'kd_pesanan_detail' => 'required|exists:pesanan_detail,kd_pesanan_detail',
-            'kd_barang' => 'required|exists:barang,kd_barang',
+            'kd_barang' => 'required',
             'jumlah' => 'required|numeric',
         ]);
 
@@ -25,6 +25,26 @@ class PesananBarangController extends Controller
         }
 
         $barang = Barang::find($request->kd_barang);
+
+        if ($barang){
+            $kd_barang = $barang->kd_barang;
+        } else {
+            $newBarang = Barang::firstOrCreate([
+                'nama_barang' => $request->kd_barang,
+            ], [
+                'kd_karyawan' => Auth::guard('karyawan')->user()->kd_karyawan,
+                'stok' => $request->jumlah,
+                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+            ]);
+            $kd_barang = $newBarang->kd_barang;
+        }
+
+        $barang = Barang::find($kd_barang);
+
+        $request->merge([
+            'kd_barang' => $kd_barang
+        ]);
+
         if ($request->jumlah > $barang->stok) {
             return redirect()->back()->with('error', 'Stok barang tidak cukup. Stok tersedia: ' . $barang->stok);
         }

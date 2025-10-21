@@ -93,7 +93,7 @@ class PesananController extends Controller
         $pesanan_detail = PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->first();
         $pesanan_barang = PesananBarang::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
         $pesanan_jasa = PesananJasa::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
-        $barang = Barang::get()->all();
+        $barang = Barang::where('status', '1')->get();
         $jasa = Jasa::get()->all();
         $surat_perintah = SuratPerintahKerja::where('kd_pesanan', $pesanan->kd_pesanan)->get();
 
