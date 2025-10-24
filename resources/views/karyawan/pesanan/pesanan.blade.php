@@ -12,80 +12,21 @@
 @section('content')
 <div class="card card-primary card-outline mb-3">
     <div class="card-header">
-        <x-adminlte-button label="Buat Pesanan" theme="primary" data-toggle="modal" data-target="#PesananModal" />
+        <a href="javascript:void(0)" id="createNewPesanan" class="btn btn-success"> Tambah Pesanan</a>
     </div>
     <div class="card-body">
-        <table id="pesananTable" class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped pesanan-table">
             <thead>
                 <tr>
                     <th width="5%">No</th>
-                    <th>Nama Pelanggan</th>
+                    <th width="20%">Nama Pelanggan</th>
                     <th>Deskripsi Pesanan</th>
                     <th>Tanggal</th>
                     <th width="100px">Status</th>
-                    <th width="150px">Aksi</th>
+                    <th width="170px">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse ($pesanan as $pesanan)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $pesanan->pelanggan->nama_pelanggan ?? 'N/A' }}</td>
-                        <td>{{ Str::limit($pesanan->deskripsi_pesanan, 50) }}</td>
-                        <td>{{ $pesanan->tanggal}}</td>
-                        <td class="text-center">
-                            @if ($pesanan->status == 1)
-                                <span class="badge bg-success">Selesai</span>
-                            @elseif ($pesanan->status == 0 && $pesanan->progres == 1)
-                                <span class="badge bg-info">Pesanan Dibuat</span>
-                            @elseif ($pesanan->status == 0 && $pesanan->progres == 2)
-                                <span class="badge bg-warning">Pesanan Diterima</span>
-                            @elseif ($pesanan->status == 0 && $pesanan->progres == 3)
-                                <span class="badge bg-secondary">Pesanan Diproses</span>
-                            @elseif ($pesanan->status == 2)
-                                <span class="badge bg-danger">Pesanan Dibatalkan</span>
-                            @endif
-                        </td>
-                        <td>
-                            <a href="{{ route('pesanan.detail', $pesanan->kd_pesanan)}}"
-                                class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
-                            <button data-toggle="modal" data-target="#EditModal" data-id="{{ $pesanan->kd_pesanan }}"
-                                data-kd_pelanggan="{{ $pesanan->kd_pelanggan }}" data-tanggal="{{ $pesanan->tanggal }}"
-                                data-deskripsi_pesanan="{{ $pesanan->deskripsi_pesanan }}"
-                                data-url="{{ route('pesanan.update', $pesanan->kd_pesanan) }}"
-                                class="btn btn-sm btn-primary edit-btn"><i class="fas fa-edit"></i></button>
-                            @if ($pesanan->status == 0)
-                                <form action="{{ route('pesanan.update', $pesanan->kd_pesanan) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" name="status" value="2">
-                                    <button type="submit" class="btn btn-danger btn-sm batalkan-btn"><i
-                                            class="fas fa-times"></i></button>
-                                </form>
-                            @endif
-                            @if ($pesanan->status == '2')
-                                <form action="{{ route('pesanan.destroy', $pesanan->kd_pesanan) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm hapus-btn"><i
-                                            class="fas fa-trash"></i></button>
-                                </form>
-                            @endif
-                            @if ($pesanan->status == 0 && $pesanan->progres == 2)
-                                <button class="btn btn-sm btn-warning agenda-btn" data-toggle="modal" data-target="#agendaModal"
-                                    data-id="{{ $pesanan->kd_pesanan }}" data-tanggal="{{ $pesanan->tanggal }}"><i
-                                        class="fas fa-calendar"></i></button>
-                            @endif
-                        </td>
-
-                    </tr>
-                @empty
-                    <tr>
-                        <td><span>Tidak ada data</span></td>
-                    </tr>
-                @endforelse
             </tbody>
         </table>
     </div>
@@ -96,7 +37,7 @@
         <h3 class="card-title">Permintaan</h3>
     </div>
     <div class="card-body">
-        <table id="pesananTable" class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped permintaan-table">
             <thead>
                 <tr>
                     <th>No</th>
@@ -108,117 +49,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($permintaan as $permintaan)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $permintaan->pelanggan->nama_pelanggan ?? 'N/A' }}</td>
-                        <td>{{ Str::limit($permintaan->deskripsi_permintaan, 50) }}</td>
-                        <td>{{ $permintaan->tanggal}}</td>
-                        <td class="text-center">
-                            @if ($permintaan->status == '2')
-                                <span class="badge badge-danger">Dibatalkan</span>
-                            @else
-                                <span class="badge badge-warning">Menunggu</span>
-                            @endif
-                        </td>
-                        <td>
-                            @if ($permintaan->status == '0')
-                                <form action="{{ route('pesanan.update', $permintaan->kd_pesanan) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" name="progres" value="2">
-                                    <button type="submit" class="btn btn-success btn-sm accept-btn  "><i
-                                            class="fas fa-check"></i></button>
-                                </form>
-                                <form action="{{ route('pesanan.update', $permintaan->kd_pesanan) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" name="status" value="2">
-                                    <button type="submit" class="btn btn-danger btn-sm batalkan-btn"><i
-                                            class="fas fa-times"></i></button>
-                                </form>
-                            @endif
-                            @if ($permintaan->status == '2')
-                                <form action="{{ route('pesanan.destroy', $permintaan->kd_pesanan) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm hapus-btn"><i
-                                            class="fas fa-trash"></i></button>
-                                </form>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
             </tbody>
         </table>
     </div>
 </div>
-</div>
-
-
-<x-adminlte-modal id="PesananModal" title="Buat Pesanan" theme="primary">
-    <form id="pesananForm" method="POST" action="{{ route('pesanan.store') }}">
-        @csrf
-        <x-adminlte-select2 name="kd_pelanggan" label="Pelanggan">
-            <x-slot name="prependSlot">
-                <div class="input-group-text">
-                    <i class="fas fa-lg fa-user"></i>
-                </div>
-            </x-slot>
-            <x-adminlte-options :options="array_column($pelanggan, 'nama_pelanggan', 'kd_pelanggan')"
-                empty-option="Pilih Pelanggan..." />
-        </x-adminlte-select2>
-        @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
-        <x-adminlte-input-date name="tanggal" id="tanggal-agenda" :config="$configDate" placeholder="Pilih tanggal..."
-            label="Tanggal Janji Temu" igroup-size="md" required>
-            <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
-            </x-slot>
-        </x-adminlte-input-date>
-
-        <label>Deskripsi Pesanan</label>
-        <textarea name="deskripsi_pesanan" id="deskripsi_pesanan" class="form-control"></textarea>
-
-        <x-slot name="footerSlot">
-            <button type="submit" class="btn btn-primary" id="saveBtn" form="pesananForm">Buat Pesanan</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-        </x-slot>
-    </form>
-</x-adminlte-modal>
-
-<x-adminlte-modal id="EditModal" title="Edit Pesanan" theme="primary">
-    <form id="editForm" method="POST" action="">
-        @csrf
-        @method('PUT')
-        <x-adminlte-select2 name="kd_pelanggan" label="Pelanggan" id="kd_pelanggan-edit">
-            <x-slot name="prependSlot">
-                <div class="input-group-text">
-                    <i class="fas fa-lg fa-user"></i>
-                </div>
-            </x-slot>
-            <x-adminlte-options :options="array_column($pelanggan, 'nama_pelanggan', 'kd_pelanggan')"
-                empty-option="Pilih Pelanggan..." />
-        </x-adminlte-select2>
-        @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
-        <x-adminlte-input-date name="tanggal" id="tanggal-edit" :config="$configDate" placeholder="Pilih tanggal..."
-            label="Tanggal Janji Temu" igroup-size="md" required>
-            <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
-            </x-slot>
-        </x-adminlte-input-date>
-
-        <label>Deskripsi Pesanan</label>
-        <textarea name="deskripsi_pesanan" id="deskripsi-edit" class="form-control"></textarea>
-
-        <x-slot name="footerSlot">
-            <button type="submit" class="btn btn-primary" id="saveBtn" form="editForm">Simpan</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-        </x-slot>
-    </form>
-</x-adminlte-modal>
 
 <x-adminlte-modal id="agendaModal" title="Agendakan Pesanan" theme="primary">
     <form id="agendaForm" method="POST" action="{{ route('pesanan.agenda') }}">
@@ -249,73 +83,245 @@
         </x-slot>
     </form>
 </x-adminlte-modal>
-</div>
-</div>
+
+<div class="modal fade" id="pesananModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="pesananForm" name="pesananForm" class="form-horizontal">
+                    <input type="hidden" name="kd_pesanan" id="form_kd_pesanan">
+                    <x-adminlte-select2 id="kd_pelanggan" name="kd_pelanggan" label="Pelanggan">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text">
+                                <i class="fas fa-lg fa-user"></i>
+                            </div>
+                        </x-slot>
+                        <x-adminlte-options :options="array_column($pelanggan, 'nama_pelanggan', 'kd_pelanggan')"
+                            empty-option="Pilih Pelanggan..." />
+                    </x-adminlte-select2>
+                    @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
+                    <x-adminlte-input-date name="tanggal" id="tanggal-agenda" :config="$configDate"
+                        placeholder="Pilih tanggal..." label="Tanggal Janji Temu" igroup-size="md" required>
+                        <x-slot name="appendSlot">
+                            <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
+                        </x-slot>
+                    </x-adminlte-input-date>
+
+                    <label>Deskripsi Pesanan</label>
+                    <textarea name="deskripsi_pesanan" id="deskripsi_pesanan" class="form-control"></textarea>
+
+                    <div class="col-sm-offset-2 col-sm-10 mt-3">
+                        <button type="button" class="btn btn-success" id="saveBtn">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @stop
 
 @section('js')
 <script>
-    $(document).ready(function () {
+    $(function () {
         $.ajaxSetup({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
         });
-        $('#pesananTable, #permintaanTable').DataTable({
-            scrollX: true,
-            paging: false,
-            scrollCollapse: true,
-            scrollY: '50vh',
-            language: {
-                lengthMenu: "Tampilkan _MENU_ entri",
-                zeroRecords: "Tidak ada data yang ditemukan",
-                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                infoEmpty: "Tidak ada data yang tersedia",
-                infoFiltered: "(difilter dari _MAX_ total entri)"
-            }
+
+        var table = $('.pesanan-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('pesanan.index') }}",
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'nama_pelanggan', name: 'pesanan.nama_pelanggan' },
+                { data: 'deskripsi_pesanan', name: 'pesanan.deskripsi_pesanan' },
+                { data: 'tanggal', name: 'pesanan.tanggal' },
+                { data: 'status', name: 'pesanan.status' },
+                { data: 'action', name: 'action', orderable: false, searchable: false },
+            ]
         });
-        $('.edit-btn').on('click', function (e) {
-            e.preventDefault();
-            let kd_pesanan = $(this).data('kd_pesanan');
-            let deskripsi_pesanan = $(this).data('deskripsi_pesanan');
-            let tanggal = $(this).data('tanggal');
-            let kd_pelanggan = $(this).data('kd_pelanggan');
-            let updateUrl = $(this).data('url');
 
-            $('#kd_pesanan-edit').val(kd_pesanan);
-            $('#deskripsi-edit').val(deskripsi_pesanan);
-            $('#tanggal-edit').val(tanggal);
-
-            $('#kd_pelanggan-edit').val(kd_pelanggan);
-            $('#kd_pelanggan-edit').trigger('change');
-
-            $('#editForm').attr('action', updateUrl);
+        var table_permintaan = $('.permintaan-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('pesanan.permintaan') }}",
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'nama_pelanggan', name: 'pesanan.nama_pelanggan' },
+                { data: 'deskripsi_pesanan', name: 'pesanan.deskripsi_pesanan' },
+                { data: 'tanggal', name: 'pesanan.tanggal' },
+                { data: 'status', name: 'pesanan.status' },
+                { data: 'action', name: 'action', orderable: false, searchable: false },
+            ]
         });
-        $('#pesananTable').on('click', '.accept-btn, .batalkan-btn, .hapus-btn', function (e) {
-            e.preventDefault();
-            let form = $(this).closest('form');
-            let title = $(this).hasClass('accept-btn') ? 'Terima Pesanan' : ($(this).hasClass('batalkan-btn') ? 'Batalkan Pesanan' : 'Hapus Pesanan');
-            let text = $(this).hasClass('hapus-btn') ? 'Data yang dihapus tidak dapat dikembalikan!' : 'Data yang di ganti tidak dapat dikembalikan!';
-            let icon = $(this).hasClass('hapus-btn') ? 'warning' : 'question';
-            let confirmButtonText = $(this).hasClass('accept-btn') ? 'Ya, Terima!' : ($(this).hasClass('batalkan-btn') ? 'Ya, Batalkan!' : 'Ya, Hapus!');
-            let cancelButtonText = 'Batal';
-            let confirmButtonColor = $(this).hasClass('accept-btn') ? '#28a745' : ($(this).hasClass('batalkan-btn') ? '#3085d6' : '#d33');
-            let cancelButtonColor = $(this).hasClass('hapus-btn') ? '#28a745' : '#d33';
 
-            Swal.fire({
-                title: title,
-                text: text,
-                icon: icon,
-                showCancelButton: true,
-                confirmButtonColor: confirmButtonColor,
-                cancelButtonColor: cancelButtonColor,
-                confirmButtonText: confirmButtonText,
-                cancelButtonText: cancelButtonText
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+        $('#createNewPesanan').click(function () {
+            $('#pesananForm').trigger("reset");
+            $('#myModalLabel').html("Tambah Pesanan Baru");
+            $('#saveBtn').html('Simpan');
+            $('#kd_pelanggan').val('').trigger('change');
+            $('#form_kd_pesanan').val('');
+            $('#pesananModal').modal('show');
+        });
+
+        $('body').on('click', '.editBtn', function () {
+            var kd_pesanan = $(this).data('id');
+            $.get("{{ route('pesanan.index') }}" + '/' + kd_pesanan + '/edit', function (data) {
+                $('#myModalLabel').html("Edit Data Pesanan");
+                $('#saveBtn').html('Simpan Perubahan');
+                $('#pesananModal').modal('show');
+                $('#kd_pelanggan').val(data.kd_pelanggan).trigger('change');
+                $('#deskripsi_pesanan').val(data.deskripsi_pesanan);
+                $('#tanggal-agenda').val(data.tanggal);
+                $('#form_kd_pesanan').val(data.kd_pesanan);
             })
         });
+
+        $('#pesananModal').on('click', '#saveBtn', function (e) {
+            e.preventDefault();
+            var saveButton = $(this);
+            saveButton.html('Menyimpan...');
+
+            $.ajax({
+                data: $('#pesananForm').serialize(),
+                url: "{{ route('pesanan.store') }}",
+                type: "POST",
+                dataType: 'json',
+                success: function (data) {
+                    $('#pesananForm').trigger("reset");
+                    $('#pesananModal').modal('hide');
+                    table.ajax.reload(null, false);
+                    table_permintaan.ajax.reload(null, false);
+                    Swal.fire('Sukses!', data.success, 'success');
+                },
+                error: function (data) {
+                    console.log('Error:', data);
+                    let errorMsg = 'Terjadi kesalahan. Silakan coba lagi.';
+                    if (data.responseJSON && data.responseJSON.errors) {
+                        errorMsg = Object.values(data.responseJSON.errors).map(val => val.join('<br>')).join('<br>');
+                    }
+                    saveButton.html('Simpan');
+                    Swal.fire('Error!', errorMsg, 'error');
+                }
+            });
+        });
+
+        $('body').on('click', '.agendaBtn', function () {
+            var kd_pesanan = $(this).data('id');
+            $('#agendaModal #kd_pesanan').val(kd_pesanan);
+            $('#agendaModal').modal('show');
+        });
+
+        $('body').on('click', '.accept-btn', function (e) {
+            e.preventDefault();
+            var kd_pesanan = $(this).data('id');
+            var url = "{{ route('pesanan.index') }}" + '/' + kd_pesanan;
+
+            Swal.fire({
+                title: 'Terima pesanan ini?',
+                text: "Pesanan akan dipindahkan ke daftar 'Pesanan'.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, terima!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "PUT",
+                        url: url,
+                        data: {
+                            progres: 2
+                        },
+                        success: function (data) {
+                            table.ajax.reload(null, false);
+                            table_permintaan.ajax.reload(null, false);
+                            Swal.fire('Diterima!', data.success || 'Pesanan telah diterima.', 'success');
+                        },
+                        error: function (data) {
+                            console.log('Error:', data);
+                            Swal.fire('Error!', 'Gagal menerima pesanan.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+        $('body').on('click', '.batalkan-btn', function (e) {
+            e.preventDefault();
+            var kd_pesanan = $(this).data('id');
+            var url = "{{ route('pesanan.index') }}" + '/' + kd_pesanan;
+
+            Swal.fire({
+                title: 'Batalkan pesanan ini?',
+                text: "Status pesanan akan diubah menjadi 'Dibatalkan'.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, batalkan!',
+                cancelButtonText: 'Nanti dulu'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "PUT",
+                        url: url,
+                        data: {
+                            status: 2
+                        },
+                        success: function (data) {
+                            table.ajax.reload(null, false);
+                            table_permintaan.ajax.reload(null, false);
+                            Swal.fire('Dibatalkan!', data.success || 'Pesanan telah dibatalkan.', 'success');
+                        },
+                        error: function (data) {
+                            console.log('Error:', data);
+                            Swal.fire('Error!', 'Gagal membatalkan pesanan.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+        $('body').on('click', '.deleteBtn', function (e) {
+            e.preventDefault();
+            var kd_pesanan = $(this).data('id');
+            var url = "{{ route('pesanan.index') }}" + '/' + kd_pesanan;
+
+            Swal.fire({
+                title: 'Anda yakin?',
+                text: "Data akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        success: function (data) {
+                            table.ajax.reload(null, false);
+                            table_permintaan.ajax.reload(null, false);
+                            Swal.fire('Dihapus!', data.success || 'Data berhasil dihapus.', 'success');
+                        },
+                        error: function (data) {
+                            console.log('Error:', data);
+                            Swal.fire('Error!', 'Gagal menghapus data.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
         $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
         });
@@ -349,13 +355,6 @@
                     text: '{{ session('error') }}',
                 })
             @endif
-
-        $('.agenda-btn').on('click', function () {
-            var tanggal = $(this).data('tanggal');
-            var kd_pesanan = $(this).data('id');
-            $('#tanggal-agenda').val(tanggal);
-            $('#kd_pesanan').val(kd_pesanan);
-        })
     });
 </script>
 @stop

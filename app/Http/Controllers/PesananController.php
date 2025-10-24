@@ -17,14 +17,60 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class PesananController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $pesanan = Pesanan::where('progres', '>=', 2)
+                ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
+                ->get();
+
+            return DataTables::of($pesanan)
+                ->addIndexColumn()
+                ->addColumn('nama_pelanggan', function ($row) {
+                    return $row->pelanggan->nama_pelanggan;
+                })
+                ->addColumn('deskripsi_pesanan', function ($row) {
+                    return $row->deskripsi_pesanan;
+                })
+                ->addColumn('tanggal', function ($row) {
+                    return $row->tanggal;
+                })
+                ->addColumn('status', function ($row) {
+                    if ($row->status == 1) {
+                        return '<span class="badge bg-success">Selesai</span>';
+                    } elseif ($row->status == 0 && $row->progres == 1) {
+                        return '<span class="badge bg-info">Pesanan Dibuat</span>';
+                    } elseif ($row->status == 0 && $row->progres == 2) {
+                        return '<span class="badge bg-warning">Pesanan Diterima</span>';
+                    } elseif ($row->status == 0 && $row->progres == 3) {
+                        return '<span class="badge bg-secondary">Pesanan Diproses</span>';
+                    } elseif ($row->status == 2) {
+                        return '<span class="badge bg-danger">Pesanan Dibatalkan</span>';
+                    } else {
+                        return '<span class="badge bg-primary">Belum Selesai</span>';
+                    }
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="' . route('pesanan.detail', $row->kd_pesanan) . '" class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>';
+                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editBtn"><i class="fas fa-edit"></i></a>';
+                    if ($row->status == 0) {
+                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Batalkan" class="btn btn-danger btn-sm batalkan-btn"><i class="fas fa-times"></i></a>';
+                    }
+                    if ($row->status == 2) {
+                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Hapus" class="btn btn-danger btn-sm deleteBtn"><i class="fas fa-trash"></i></a>';
+                    }
+                    if ($row->status == 0 && $row->progres == 2) {
+                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Agendakan" class="btn btn-warning btn-sm agendaBtn"><i class="fas fa-calendar-day"></i></a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['status', 'action'])
+                ->make(true);
+        }
         $pesanan = Pesanan::where('progres', '>=', 2)
             ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
             ->get();
@@ -41,17 +87,55 @@ class PesananController extends Controller
             "permintaan" => $permintaan
         ]);
     }
-    /**
-     * Show the form for creating a new resource.
-     */
+
+    public function permintaan(Request $request)
+    {
+        if ($request->ajax()) {
+            $permintaan = Pesanan::where('progres', '1')
+                ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
+                ->get();
+
+            return DataTables::of($permintaan)
+                ->addIndexColumn()
+                ->addColumn('nama_pelanggan', function ($row) {
+                    return $row->pelanggan->nama_pelanggan;
+                })
+                ->addColumn('deskripsi_pesanan', function ($row) {
+                    return $row->deskripsi_pesanan;
+                })
+                ->addColumn('tanggal', function ($row) {
+                    return $row->tanggal;
+                })
+                ->addColumn('status', function ($row) {
+                    if ($row->status == 0 && $row->progres == 1) {
+                        return '<span class="badge bg-info">Pesanan Dibuat</span>';
+                    } elseif ($row->status == 2) {
+                        return '<span class="badge bg-danger">Pesanan Dibatalkan</span>';
+                    } else {
+                        return '<span class="badge bg-light">Unknown</span>';
+                    }
+                })
+                ->addColumn('action', function ($row) {
+                    if ($row->status == 0) {
+                        $btn = ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Terima" class="btn btn-success btn-sm accept-btn"><i class="fas fa-check"></i></a>';
+                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Batalkan" class="btn btn-danger btn-sm batalkan-btn"><i class="fas fa-times"></i></a>';
+                    }
+
+                    if ($row->status == 2) {
+                        $btn = ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Hapus" class="btn btn-danger btn-sm deleteBtn"><i class="fas fa-trash"></i></a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['status', 'action'])
+                ->make(true);
+        }
+    }
+
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -65,15 +149,18 @@ class PesananController extends Controller
                 ->withInput();
         }
 
-        $pesanan = Pesanan::create([
-            'kd_pelanggan' => $request->kd_pelanggan,
-            'deskripsi_pesanan' => $request->deskripsi_pesanan,
-            'tanggal' => $request->tanggal,
-            'progres' => '2',
-            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
-        ]);
-
-        if ($pesanan) {
+        if ($request->kd_pesanan) {
+            $pesanan = Pesanan::find($request->kd_pesanan);
+            $pesanan->update($request->all());
+        } else {
+            $pesanan = Pesanan::create([
+                'kd_pelanggan' => $request->kd_pelanggan,
+                'deskripsi_pesanan' => $request->deskripsi_pesanan,
+                'tanggal' => $request->tanggal,
+                'progres' => '2',
+                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+            ]);
+            
             PesananDetail::create([
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'kd_pesanan' => $pesanan->kd_pesanan,
@@ -81,10 +168,7 @@ class PesananController extends Controller
             ]);
         }
 
-        if ($pesanan) {
-            return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil dibuat.');
-        }
-        return redirect()->route('pesanan.index')->with('error', 'Pesanan gagal dibuat.');
+        return response()->json(['success' => 'Data pekerjaan berhasil disimpan.']);
     }
 
     public function detail($pesanan)
@@ -164,83 +248,66 @@ class PesananController extends Controller
         return redirect()->route('pesanan.index')->with('success', 'Pesanan terselesaikan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
+        $pesanan = Pesanan::find($id);
+
+        return response()->json($pesanan);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Pesanan $pesanan)
     {
-        if ($request->has('progres')) {
-            $pesanan->update([
-                'progres' => $request->progres
-            ]);
+        $validator = Validator::make($request->all(), [
+            'progres' => 'sometimes|in:2',
+            'status' => 'sometimes|in:2',
+        ]);
 
-            return redirect()->back()->with('success', 'Pesanan berhasil diterima.');
-        }
-        if ($request->has('status')) {
-            $pesanan->update([
-                'status' => $request->status
-            ]);
-
-            return redirect()->back()->with('success', 'Pesanan berhasil dibatalkan.');
-        }
-        if ($request->has('kd_pelanggan', 'tanggal', 'deskripsi_pesanan')) {
-            $pesanan->update([
-                'kd_pelanggan' => $request->kd_pelanggan,
-                'tanggal' => $request->tanggal,
-                'deskripsi_pesanan' => $request->deskripsi_pesanan
-            ]);
-
-            return redirect()->back()->with('success', 'Pesanan berhasil diperbarui.');
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
         }
 
-        return redirect()->back()->with('error', 'Terjadi kesalahan.');
+        $message = 'Pesanan diperbarui.';
+
+        if ($request->has('progres') && $request->progres == 2) {
+            $pesanan->progres = 2;
+            $message = 'Pesanan diterima.';
+        }
+
+        if ($request->has('status') && $request->status == 2) {
+            $pesanan->status = 2;
+            $message = 'Pesanan dibatalkan.';
+        }
+
+        $pesanan->save();
+
+        return response()->json(['success' => $message]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Pesanan $pesanan)
     {
-        $pesananDetail = PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->get();
-        if ($pesananDetail->count()) {
-            $pesananDetail = $pesananDetail->first();
-            if (PesananBarang::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->exists()) {
-                PesananBarang::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
-            }
+        $pesananDetail = PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->first();
 
-            if (PesananJasa::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->exists()) {
-                PesananJasa::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
-            }
+        if ($pesananDetail) {
+            PesananBarang::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
+            PesananJasa::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
         }
 
         if (PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)->exists()) {
-            $pesananProgress = PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)->get();
-            foreach ($pesananProgress as $progress) {
-                $progress->update(['kd_pesanan' => null]);
-            }
+            PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)
+                ->update(['kd_pesanan' => null]);
         }
 
-        if ($pesananDetail->exists()) {
+        if ($pesananDetail) {
             $pesananDetail->delete();
         }
+
         $pesanan->delete();
 
-        return redirect()->back()->with('success', 'Pesanan berhasil dihapus.');
+        return response()->json(['success' => 'Pesanan berhasil dihapus.']);
     }
 }
