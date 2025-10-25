@@ -101,8 +101,10 @@
                                 <i class="fas fa-lg fa-user"></i>
                             </div>
                         </x-slot>
-                        <x-adminlte-options :options="array_column($pelanggan, 'nama_pelanggan', 'kd_pelanggan')"
-                            empty-option="Pilih Pelanggan..." />
+                        <option value="" disabled selected>Pilih pelanggan...</option>
+                        @foreach ($pelanggan as $item)
+                            <option value="{{ $item->kd_pelanggan }}">{{ $item->nama_pelanggan }}</option>
+                        @endforeach
                     </x-adminlte-select2>
                     @php $configDate = ['format' => 'DD/MM/YYYY']; @endphp
                     <x-adminlte-input-date name="tanggal" id="tanggal-agenda" :config="$configDate"
