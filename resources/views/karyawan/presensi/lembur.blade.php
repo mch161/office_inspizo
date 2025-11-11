@@ -7,52 +7,65 @@
 @stop
 
 @section('content')
-<x-adminlte-modal id="FormModal" icon="fas fa-clipboard" title="Form Lembur" theme="primary" size="lg">
-    <form id="lemburForm" action="{{ route('lembur.store') }}" method="POST">
-        @csrf
-        @php $config = ['format' => 'DD-MM-YYYY']; @endphp
-        <x-adminlte-input-date name="tanggal" value="{{ date('d-m-Y') }}" :config="$config"
-            placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
-            <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
-            </x-slot>
-        </x-adminlte-input-date>
-        @php $config = ['format' => 'HH:mm']; @endphp
-        <x-adminlte-input-date name="jam_mulai" id="mulai" :config="$config" placeholder="Pilih jam..."
-            label="Jam Mulai" igroup-size="md" required>
-            <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
-            </x-slot>
-        </x-adminlte-input-date>
-        @php $config = ['format' => 'HH:mm']; @endphp
-        <x-adminlte-input-date name="jam_selesai" id="selesai" :config="$config" placeholder="Pilih jam..."
-            label="Jam Selesai" igroup-size="md" required>
-            <x-slot name="appendSlot">
-                <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
-            </x-slot>
-        </x-adminlte-input-date>
-        <x-adminlte-textarea name="keterangan" label="Keterangan" rows=5 igroup-size="sm"
-            placeholder="Masukkan keterangan...">
-            <x-slot name="prependSlot">
-                <div class="input-group-text bg-dark">
-                    <i class="fas fa-lg fa-file-alt"></i>
-                </div>
-            </x-slot>
-        </x-adminlte-textarea>
-        <x-slot name="footerSlot">
-            <x-adminlte-button theme="success" label="Kirim" type="submit" form="lemburForm" />
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
-        </x-slot>
-    </form>
-</x-adminlte-modal>
+<div class="modal fade" id="modalLembur">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Form Lembur</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="lemburForm" class="form-horizontal">
+                    @php $config = ['format' => 'DD-MM-YYYY']; @endphp
+                    <x-adminlte-input-date name="tanggal" value="{{ date('d-m-Y') }}" :config="$config"
+                        placeholder="Pilih tanggal..." label="Tanggal" igroup-size="md" required>
+                        <x-slot name="appendSlot">
+                            <div class="input-group-text bg-dark"><i class="fas fa-calendar-day"></i></div>
+                        </x-slot>
+                    </x-adminlte-input-date>
+                    @php $config = ['format' => 'HH:mm']; @endphp
+                    <x-adminlte-input-date name="jam_mulai" id="mulai" :config="$config" placeholder="Pilih jam..."
+                        label="Jam Mulai" igroup-size="md" required>
+                        <x-slot name="appendSlot">
+                            <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
+                        </x-slot>
+                    </x-adminlte-input-date>
+                    @php $config = ['format' => 'HH:mm']; @endphp
+                    <x-adminlte-input-date name="jam_selesai" id="selesai" :config="$config" placeholder="Pilih jam..."
+                        label="Jam Selesai" igroup-size="md" required>
+                        <x-slot name="appendSlot">
+                            <div class="input-group-text bg-dark"><i class="fas fa-clock"></i></div>
+                        </x-slot>
+                    </x-adminlte-input-date>
+                    <x-adminlte-textarea name="keterangan" label="Keterangan" rows=5 igroup-size="sm"
+                        placeholder="Masukkan keterangan...">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text bg-dark">
+                                <i class="fas fa-lg fa-file-alt"></i>
+                            </div>
+                        </x-slot>
+                    </x-adminlte-textarea>
+
+                    <div class="col-sm-offset-2 col-sm-10 mt-3">
+                        <button type="button" class="btn btn-success" id="saveBtn">Kirim</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Tabel Lembur</h3>
     </div>
     <div class="card-body">
         <div class="mb-3 float-right">
-            <x-adminlte-button label="Form Lembur" icon="fas fa-clipboard" class="float-right mb-2 bg-blue"
-                data-toggle="modal" data-target="#FormModal" />
+            <button class="btn btn-primary" id="formLembur">
+                <i class="fas fa-plus"></i>
+                Form Lembur
+            </button>
         </div>
         <table id="LemburTable" class="table table-bordered table-striped">
             <thead>
@@ -67,42 +80,6 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($lemburs as $lembur)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $lembur->dibuat_oleh }}</td>
-                        <td>{{ \Carbon\Carbon::parse($lembur->tanggal)->format('d-m-Y') }}</td>
-                        <td>{{ $lembur->jam_mulai }} - {{ $lembur->jam_selesai }} ({{ $lembur->jumlah_jam }})</td>
-                        <td>{{ $lembur->keterangan }}</td>
-                        <td>
-                            @if ($lembur->verifikasi == '0')
-                                <div class="badge badge-warning">Menunggu</div>
-                            @else
-                                <div class="badge badge-success">Disetujui</div>
-                            @endif
-                        </td>
-                        <td>
-                            @can('superadmin')
-                                @if ($lembur->verifikasi == '0')
-                                    <form action="{{ route('lembur.approve') }}" method="POST" style="display: inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="kd_lembur" value="{{ $lembur->kd_lembur }}">
-                                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i></button>
-                                    </form>
-                                @endif
-                            @endcan
-                            @if ($lembur->verifikasi == '0' && $lembur->dibuat_oleh == auth()->user()->nama)
-                                <form action="{{ route('lembur.destroy', $lembur->kd_lembur) }}" method="POST"
-                                    style="display: inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger tombol-hapus"><i class="fas fa-trash"></i></button>
-                                </form>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
             </tbody>
         </table>
     </div>
@@ -111,7 +88,22 @@
 
 @section('js')
     <script>
+        $.ajaxSetup({
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+        });
         $('#LemburTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('lembur.index') }}",
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'karyawan', name: 'karyawans.nama' },
+                { data: 'tanggal', name: 'tanggal' },
+                { data: 'jam', name: 'jam' },
+                { data: 'keterangan', name: 'keterangan' },
+                { data: 'status', name: 'status' },
+                { data: 'action', name: 'action', orderable: false, searchable: false },
+            ],
             responsive: true,
             lengthChange: false,
             autoWidth: false,
@@ -127,6 +119,38 @@
                 search: "Cari:",
                 searchPlaceholder: "Cari data..."
             }
+        });
+        $('#formLembur').on('click', function () {
+            $('#saveBtn').text('Kirim');
+            $('#lemburForm').trigger("reset");
+            $('#modalLembur').modal('show');
+        })
+        $('#modalLembur').on('click', '#saveBtn', function (e) {
+            e.preventDefault();
+            var saveButton = $(this);
+            saveButton.text('Menyimpan...');
+
+            $.ajax({
+                data: $('#lemburForm').serialize(),
+                url: "{{ route('lembur.store') }}",
+                type: "POST",
+                dataType: 'json',
+                success: function (data) {
+                    $('#lemburForm').trigger("reset");
+                    $('#modalLembur').modal('hide');
+                    $('#LemburTable').DataTable().ajax.reload(null, false);
+                    Swal.fire('Sukses!', data.success, 'success');
+                },
+                error: function (data) {
+                    console.log('Error:', data);
+                    let errorMsg = 'Terjadi kesalahan. Silakan coba lagi.';
+                    if (data.responseJSON && data.responseJSON.errors) {
+                        errorMsg = Object.values(data.responseJSON.errors).map(val => val.join('<br>')).join('<br>');
+                    }
+                    saveButton.text('Simpan');
+                    Swal.fire('Error!', errorMsg, 'error');
+                }
+            });
         });
         $('.tombol-hapus').on('click', function (e) {
             e.preventDefault();

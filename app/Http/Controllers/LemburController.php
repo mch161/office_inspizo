@@ -6,19 +6,55 @@ use App\Models\PresensiLembur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class LemburController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        if (auth()->user()->role == 'superadmin') {
-            $lemburs = PresensiLembur::all();
-        }
-        else {
-            $lemburs = PresensiLembur::where('kd_karyawan', auth()->user()->id)->get();
+        if ($request->ajax()) {
+            if (auth()->user()->role == 'superadmin') {
+                $data = PresensiLembur::all();
+            } else {
+                $data = PresensiLembur::where('kd_karyawan', auth()->user()->id)->get();
+            }
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('karyawan', function ($row) {
+                    return $row->karyawans->nama;
+                })
+                ->addColumn('tanggal', function ($row) {
+                    return Carbon::parse($row->tanggal)->format('d-m-Y');
+                })
+                ->addColumn('jam', function ($row) {
+                    return $row->jam_mulai . ' - ' . $row->jam_selesai . ' (' . $row->jumlah_jam . ')';
+                })
+                ->addColumn('keterangan', function ($row) {
+                    return $row->keterangan;
+                })
+                ->addColumn('status', function ($row) {
+                    if ($row->verifikasi == 1) {
+                        return '<div class="badge badge-success">Disetujui</div>';
+                    } else {
+                        return '<div class="badge badge-warning">Menunggu</div>';
+                    }
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '';
+                    if ($row->verifikasi == 0 && auth()->user()->role == 'superadmin') {
+                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_lembur . '" data-original-title="Approve" class="btn btn-success btn-sm approve-btn"><i class="fas fa-check"></i></a>';
+                    }
+                    if ($row->verifikasi == 0 && $row->kd_karyawan == auth()->user()->id) {
+                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_lembur . '" data-original-title="Hapus" class="btn btn-danger btn-sm delete-btn"><i class="fas fa-trash"></i></a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['action', 'status'])
+                ->make(true);
         }
 
-        return view('karyawan.presensi.lembur', compact('lemburs'));
+        return view('karyawan.presensi.lembur');
     }
 
     public function store(Request $request)
@@ -35,7 +71,7 @@ class LemburController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->with('error', $validator->errors()->first());
+            return redirect()->json(['errors' => $validator->errors()->first()]);
         }
 
         $mulai = Carbon::parse($request->jam_mulai);

@@ -21,4 +21,9 @@ class PresensiLembur extends Model
         'verifikasi',
         'dibuat_oleh'
     ];
+
+    public function karyawans()
+    {
+        return $this->belongsTo(Karyawan::class, 'kd_karyawan', 'kd_karyawan');
+    }
 }
