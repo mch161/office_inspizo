@@ -21,6 +21,8 @@ class Pesanan extends Model
         'status',
         'tanggal',
         'progres',
+        'jenis',
+        'kd_tiket',
         'dibuat_oleh',
     ];
 
@@ -40,5 +42,10 @@ class Pesanan extends Model
     public function details(): HasMany
     {
         return $this->hasMany(PesananDetail::class, 'kd_pesanan', 'kd_pesanan');
+    }
+
+    public function tiket(): BelongsTo
+    {
+        return $this->belongsTo(Tiket::class, 'kd_tiket', 'kd_tiket');
     }
 }

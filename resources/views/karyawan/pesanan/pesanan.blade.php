@@ -21,7 +21,10 @@
                     <th width="5%">No</th>
                     <th width="20%">Nama Pelanggan</th>
                     <th>Deskripsi Pesanan</th>
+                    <th>Prioritas</th>
+                    <th width="20%">Jenis</th>
                     <th>Tanggal</th>
+                    <th>Via</th>
                     <th width="100px">Status</th>
                     <th width="170px">Aksi</th>
                 </tr>
@@ -114,6 +117,26 @@
                         </x-slot>
                     </x-adminlte-input-date>
 
+                    <x-adminlte-select name="prioritas" id="prioritas" label="Prioritas">
+                        <option value="1">Normal</option>
+                        <option value="2">Segera</option>
+                        <option value="3">Penting</option>
+                    </x-adminlte-select>
+
+                    <x-adminlte-select2 name="jenis" id="jenis" :config="['placeholder' => 'Masukan jenis...', 'tags' => true, 'allowClear' => true]" label="Jenis">
+                        <option value="" disabled selected>Pilih jenis...</option>
+                        <option value="Pasang Baru">Pasang Baru</option>
+                        <option value="Pesanan">Pesanan</option>
+                        <option value="Perbaiki">Perbaiki</option>
+                    </x-adminlte-select2>
+
+                    <x-adminlte-select2 name="via" id="via" :config="['placeholder' => 'Masukan via...', 'tags' => true, 'allowClear' => true]" label="Via">
+                        <option value="" disabled selected>Pilih via...</option>
+                        <option value="Telepon">Telepon</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                        <option value="Web">Web</option>
+                    </x-adminlte-select2>
+
                     <label>Deskripsi Pesanan</label>
                     <textarea name="deskripsi_pesanan" id="deskripsi_pesanan" class="form-control"></textarea>
 
@@ -137,12 +160,16 @@
         var table = $('.pesanan-table').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             ajax: "{{ route('pesanan.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'nama_pelanggan', name: 'pesanan.nama_pelanggan' },
                 { data: 'deskripsi_pesanan', name: 'pesanan.deskripsi_pesanan' },
+                { data: 'prioritas', name: 'pesanan.prioritas' },
+                { data: 'jenis', name: 'pesanan.jenis' },
                 { data: 'tanggal', name: 'pesanan.tanggal' },
+                { data: 'via', name: 'pesanan.via' },
                 { data: 'status', name: 'pesanan.status' },
                 { data: 'action', name: 'action', orderable: false, searchable: false },
             ]
@@ -151,6 +178,7 @@
         var table_permintaan = $('.permintaan-table').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             ajax: "{{ route('pesanan.permintaan') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
@@ -167,6 +195,9 @@
             $('#myModalLabel').html("Tambah Pesanan Baru");
             $('#saveBtn').html('Simpan');
             $('#kd_pelanggan').val('').trigger('change');
+            $('#prioritas').val('').trigger('change');
+            $('#jenis').val('').trigger('change');
+            $('#via').val('').trigger('change');
             $('#form_kd_pesanan').val('');
             $('#pesananModal').modal('show');
         });
@@ -180,6 +211,12 @@
                 $('#kd_pelanggan').val(data.kd_pelanggan).trigger('change');
                 $('#deskripsi_pesanan').val(data.deskripsi_pesanan);
                 $('#tanggal-agenda').val(data.tanggal);
+                
+                tiket = data.tiket;
+                $('#prioritas').val(tiket.prioritas).trigger('change');
+                $('#jenis').val(tiket.jenis).trigger('change');
+                $('#via').val(tiket.via).trigger('change');
+
                 $('#form_kd_pesanan').val(data.kd_pesanan);
             })
         });

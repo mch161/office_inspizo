@@ -12,6 +12,7 @@ use App\Models\PesananDetail;
 use App\Models\PesananJasa;
 use App\Models\PesananProgress;
 use App\Models\SuratPerintahKerja;
+use App\Models\Tiket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -36,8 +37,34 @@ class PesananController extends Controller
                 ->addColumn('deskripsi_pesanan', function ($row) {
                     return $row->deskripsi_pesanan;
                 })
+                ->addColumn('prioritas', function ($row) {
+                    if ($row->tiket == null) {
+                        return '<span class="badge bg-info">Normal</span>';
+                    }
+                    if ($row->tiket->prioritas == 1) {
+                        return '<span class="badge bg-info">Normal</span>';
+                    }
+                    if ($row->tiket->prioritas == 2) {
+                        return '<span class="badge bg-warning">Segera</span>';
+                    }
+                    if ($row->tiket->prioritas == 3) {
+                        return '<span class="badge bg-danger">Penting</span>';
+                    }
+                })
+                ->addColumn('jenis', function ($row) {
+                    if ($row->tiket == null) {
+                        return "-";
+                    }
+                    return $row->tiket->jenis;
+                })
                 ->addColumn('tanggal', function ($row) {
                     return $row->tanggal;
+                })
+                ->addColumn('via', function ($row) {
+                    if ($row->tiket == null) {
+                        return "-";
+                    }
+                    return $row->tiket->via;
                 })
                 ->addColumn('status', function ($row) {
                     if ($row->status == 1) {
@@ -68,7 +95,7 @@ class PesananController extends Controller
                     }
                     return $btn;
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['prioritas', 'status', 'action'])
                 ->make(true);
         }
         $pesanan = Pesanan::where('progres', '>=', 2)
@@ -103,8 +130,25 @@ class PesananController extends Controller
                 ->addColumn('deskripsi_pesanan', function ($row) {
                     return $row->deskripsi_pesanan;
                 })
+                ->addColumn('prioritas', function ($row) {
+                    if ($row->tiket->prioritas == 1) {
+                        return '<span class="badge bg-info">Normal</span>';
+                    }
+                    if ($row->tiket->prioritas == 2) {
+                        return '<span class="badge bg-warning">Segera</span>';
+                    }
+                    if ($row->tiket->prioritas == 3) {
+                        return '<span class="badge bg-danger">Penting</span>';
+                    }
+                })
+                ->addColumn('jenis', function ($row) {
+                    return $row->tiket->jenis;
+                })
                 ->addColumn('tanggal', function ($row) {
                     return $row->tanggal;
+                })
+                ->addColumn('via', function ($row) {
+                    return $row->tiket->via;
                 })
                 ->addColumn('status', function ($row) {
                     if ($row->status == 0 && $row->progres == 1) {
@@ -152,15 +196,31 @@ class PesananController extends Controller
         if ($request->kd_pesanan) {
             $pesanan = Pesanan::find($request->kd_pesanan);
             $pesanan->update($request->all());
+            Tiket::where('kd_tiket', $pesanan->kd_tiket)->update([
+                'prioritas' => $request->prioritas,
+                'jenis' => $request->jenis,
+                'deskripsi' => $request->deskripsi_pesanan,
+                'via' => $request->via
+            ]);
         } else {
+            $tiket = Tiket::create([
+                'prioritas' => $request->prioritas,
+                'jenis' => $request->jenis,
+                'deskripsi' => $request->deskripsi_pesanan,
+                'kd_pelanggan' => $request->kd_pelanggan,
+                'via' => $request->via,
+            ]);
+
             $pesanan = Pesanan::create([
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'deskripsi_pesanan' => $request->deskripsi_pesanan,
                 'tanggal' => $request->tanggal,
                 'progres' => '2',
+                'jenis' => 'Quotation',
+                'kd_tiket' => $tiket->kd_tiket,
                 'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
             ]);
-            
+
             PesananDetail::create([
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'kd_pesanan' => $pesanan->kd_pesanan,
@@ -256,6 +316,19 @@ class PesananController extends Controller
     public function edit(string $id)
     {
         $pesanan = Pesanan::find($id);
+        if (is_null($pesanan->kd_tiket)) {
+            $tiket = Tiket::create([
+                'prioritas' => 1,
+                'jenis' => 'Pesanan',
+                'deskripsi' => $pesanan->deskripsi_pesanan,
+                'kd_pelanggan' => $pesanan->kd_pelanggan,
+                'via' => 'web',
+            ]);
+            $pesanan->kd_tiket = $tiket->kd_tiket;
+            $pesanan->save();
+        }
+
+        $pesanan->tiket = Tiket::where('kd_tiket', $pesanan->kd_tiket)->first();
 
         return response()->json($pesanan);
     }
