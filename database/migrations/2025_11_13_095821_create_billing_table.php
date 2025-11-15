@@ -14,21 +14,19 @@ return new class extends Migration {
             $table->id('kd_quotation');
             $table->unsignedBigInteger('kd_tiket');
             $table->unsignedBigInteger('kd_pelanggan');
-            $table->unsignedBigInteger('kd_karyawan');
             $table->string('tanggal', 20);
             $table->string('dibuat_oleh', 50);
             $table->timestamps();
 
             $table->foreign('kd_tiket')->references('kd_tiket')->on('tiket')->onDelete('cascade');
             $table->foreign('kd_pelanggan')->references('kd_pelanggan')->on('pelanggan')->onDelete('cascade');
-            $table->foreign('kd_karyawan')->references('kd_karyawan')->on('karyawan')->onDelete('cascade');
         });
 
         Schema::create('quotation_item', function (Blueprint $table) {
             $table->id('kd_quotation_item');
             $table->unsignedBigInteger('kd_quotation');
-            $table->unsignedBigInteger('kd_barang');
-            $table->unsignedBigInteger('kd_jasa');
+            $table->unsignedBigInteger('kd_barang')->nullable();
+            $table->unsignedBigInteger('kd_jasa')->nullable();
             $table->string('harga', 200);
             $table->string('jumlah', 200);
             $table->timestamps();
@@ -55,8 +53,8 @@ return new class extends Migration {
         Schema::create('invoice_item', function (Blueprint $table) {
             $table->id('kd_invoice_item');
             $table->unsignedBigInteger('kd_invoice');
-            $table->unsignedBigInteger('kd_barang');
-            $table->unsignedBigInteger('kd_jasa');
+            $table->unsignedBigInteger('kd_barang')->nullable();
+            $table->unsignedBigInteger('kd_jasa')->nullable();
             $table->string('harga', 200);
             $table->string('jumlah', 200);
             $table->timestamps();
@@ -72,9 +70,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('quotation');
-        Schema::dropIfExists('quotation_item');
-        Schema::dropIfExists('invoice');
         Schema::dropIfExists('invoice_item');
+        Schema::dropIfExists('invoice');
+        Schema::dropIfExists('quotation_item');
+        Schema::dropIfExists('quotation');
     }
 };
