@@ -22,7 +22,7 @@
                     <th width="20%">Nama Pelanggan</th>
                     <th>Deskripsi Pesanan</th>
                     <th>Prioritas</th>
-                    <th width="20%">Jenis</th>
+                    <th width=5%">Jenis</th>
                     <th>Tanggal</th>
                     <th>Via</th>
                     <th width="100px">Status</th>
