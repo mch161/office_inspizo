@@ -29,6 +29,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('kd_jasa')->nullable();
             $table->string('harga', 200);
             $table->string('jumlah', 200);
+            $table->string('subtotal', 200);
             $table->timestamps();
 
             $table->foreign('kd_quotation')->references('kd_quotation')->on('quotation')->onDelete('cascade');
@@ -57,6 +58,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('kd_jasa')->nullable();
             $table->string('harga', 200);
             $table->string('jumlah', 200);
+            $table->string('subtotal', 200);
             $table->timestamps();
 
             $table->foreign('kd_invoice')->references('kd_invoice')->on('invoice')->onDelete('cascade');

@@ -72,6 +72,7 @@ class MigratePesananToQuotation extends Command
                                 'kd_jasa' => null,
                                 'harga' => $item->harga_jual,
                                 'jumlah' => $item->jumlah,
+                                'subtotal' => $item->subtotal,
                                 'created_at' => $item->created_at ?? now(),
                                 'updated_at' => $item->updated_at ?? now(),
                             ]);
@@ -87,6 +88,7 @@ class MigratePesananToQuotation extends Command
                                 'kd_jasa' => $item->kd_jasa,
                                 'harga' => $item->harga_jasa,
                                 'jumlah' => $item->jumlah,
+                                'subtotal' => $item->subtotal,
                                 'created_at' => $item->created_at ?? now(),
                                 'updated_at' => $item->updated_at ?? now(),
                             ]);

@@ -18,5 +18,16 @@ class QuotationItem extends Model
         'kd_jasa',
         'harga',
         'jumlah',
+        'subtotal',
     ];
+
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class, 'kd_barang');
+    }
+
+    public function jasa()
+    {
+        return $this->belongsTo(Jasa::class, 'kd_jasa');
+    }
 }
