@@ -97,7 +97,7 @@
             <input type="hidden" name="kd_quotation" value="{{ $quotation->kd_quotation }}">
             @php
                 $barang_config = [
-                    $barang = App\Models\Barang::get(),
+                    $barang = App\Models\Barang::orderBy('nama_barang', 'asc')->get(),
                     'placeholder' => 'Cari barang...',
                     'allowClear' => true,
                     'tags' => true,
@@ -124,7 +124,7 @@
             <input type="hidden" name="kd_quotation" value="{{ $quotation->kd_quotation }}">
             @php
                 $jasa_config = [
-                    $jasa = App\Models\Jasa::get(),
+                    $jasa = App\Models\Jasa::orderBy('nama_jasa', 'asc')->get(),
                     'placeholder' => 'Cari jasa...',
                     'allowClear' => true,
                     'tags' => true,
