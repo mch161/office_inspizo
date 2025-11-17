@@ -11,6 +11,8 @@ use App\Models\PesananBarang;
 use App\Models\PesananDetail;
 use App\Models\PesananJasa;
 use App\Models\PesananProgress;
+use App\Models\Quotation;
+use App\Models\QuotationItem;
 use App\Models\SuratPerintahKerja;
 use App\Models\Tiket;
 use Illuminate\Http\Request;
@@ -234,11 +236,6 @@ class PesananController extends Controller
     public function detail($pesanan)
     {
         $pesanan = Pesanan::find($pesanan);
-        $pesanan_detail = PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->first();
-        $pesanan_barang = PesananBarang::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
-        $pesanan_jasa = PesananJasa::where('kd_pesanan_detail', $pesanan_detail->kd_pesanan_detail)->get();
-        $barang = Barang::where('status', '1')->get();
-        $jasa = Jasa::get()->all();
         $surat_perintah = SuratPerintahKerja::where('kd_pesanan', $pesanan->kd_pesanan)->get();
 
         $previousUrl = URL::previous();
@@ -252,7 +249,11 @@ class PesananController extends Controller
             $backUrl = $previousUrl;
         }
 
-        return view('karyawan.pesanan.detail', compact('pesanan', 'pesanan_detail', 'pesanan_barang', 'barang', 'jasa', 'pesanan_jasa', 'surat_perintah', 'backUrl'));
+        $quotation = Quotation::where('kd_tiket', $pesanan->kd_tiket)->first();
+        $quotation_barang = QuotationItem::where('kd_quotation', $quotation->kd_quotation)->where('kd_barang', '!=', null)->get();
+        $quotation_jasa = QuotationItem::where('kd_quotation', $quotation->kd_quotation)->where('kd_jasa', '!=', null)->get();
+
+        return view('karyawan.pesanan.detail', compact('pesanan', 'quotation', 'quotation_barang', 'quotation_jasa','surat_perintah', 'backUrl'));
     }
 
     public function agenda(Request $request)

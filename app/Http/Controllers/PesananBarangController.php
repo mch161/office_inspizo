@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\PesananBarang;
+use App\Models\QuotationItem;
 use App\Models\Stok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ class PesananBarangController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kd_pesanan_detail' => 'required|exists:pesanan_detail,kd_pesanan_detail',
+            'kd_quotation' => 'required|exists:quotation,kd_quotation',
             'kd_barang' => 'required',
             'jumlah' => 'required|numeric',
         ]);
@@ -49,27 +50,24 @@ class PesananBarangController extends Controller
             return redirect()->back()->with('error', 'Stok barang tidak cukup. Stok tersedia: ' . $barang->stok);
         }
 
-        if (PesananBarang::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_barang', $request->kd_barang)->exists()) {
-            Stok::where('created_at', PesananBarang::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_barang', $request->kd_barang)->first()->created_at)->update([
-                'stok_keluar' => Stok::where('created_at', PesananBarang::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_barang', $request->kd_barang)->first()->created_at)->first()->stok_keluar + $request->jumlah
+        if (QuotationItem::where('kd_quotation', $request->kd_quotation)->where('kd_barang', $request->kd_barang)->exists()) {
+            Stok::where('created_at', QuotationItem::where('kd_quotation', $request->kd_quotation)->where('kd_barang', $request->kd_barang)->first()->created_at)->update([
+                'stok_keluar' => Stok::where('created_at', QuotationItem::where('kd_quotation', $request->kd_quotation)->where('kd_barang', $request->kd_barang)->first()->created_at)->first()->stok_keluar + $request->jumlah
             ]);
             Barang::where('kd_barang', $request->kd_barang)->update([
                 'stok' => Barang::where('kd_barang', $request->kd_barang)->first()->stok - $request->jumlah
             ]);
-            PesananBarang::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_barang', $request->kd_barang)->update([
-                'jumlah' => PesananBarang::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_barang', $request->kd_barang)->first()->jumlah + $request->jumlah
+            QuotationItem::where('kd_quotation', $request->kd_quotation)->where('kd_barang', $request->kd_barang)->update([
+                'jumlah' => QuotationItem::where('kd_quotation', $request->kd_quotation)->where('kd_barang', $request->kd_barang)->first()->jumlah + $request->jumlah
             ]);
             return redirect()->back()->with('success', 'Barang berhasil ditambahkan.');
         }
 
-        PesananBarang::create([
-            'kd_pesanan_detail' => $request->kd_pesanan_detail,
+        QuotationItem::create([
+            'kd_quotation' => $request->kd_quotation,
             'kd_barang' => $request->kd_barang,
-            'nama_barang' => $barang->nama_barang,
-            'hpp' => $barang->hpp,
-            'laba' => $barang->harga_jual - $barang->hpp,
-            'harga_jual' => $barang->harga_jual,
             'jumlah' => $request->jumlah,
+            'harga'=> $barang->harga_jual,
             'subtotal' => $barang->harga_jual * $request->jumlah
         ]);
 
@@ -91,16 +89,15 @@ class PesananBarangController extends Controller
         $barang_stok = Barang::find($request->kd_barang);
 
 
-        $barang = PesananBarang::find($id);
-        $barang->laba = $request->harga_jual - $barang->hpp;
-        $barang->harga_jual = $request->harga_jual;
+        $barang = QuotationItem::find($id);
+        $barang->harga = $request->harga;
         $barang->jumlah = $request->jumlah;
 
         if ($barang->isDirty('jumlah') && $request->jumlah > $barang_stok->stok) {
             return redirect()->back()->with('error', 'Stok barang tidak cukup. Stok tersedia: ' . $barang_stok->stok);
         }
         Barang::where('kd_barang', $request->kd_barang)->update([
-            'stok' => Barang::where('kd_barang', $request->kd_barang)->first()->stok + (PesananBarang::find($id)->jumlah - $request->jumlah)
+            'stok' => Barang::where('kd_barang', $request->kd_barang)->first()->stok + (QuotationItem::find($id)->jumlah - $request->jumlah)
         ]);
 
         $barang->subtotal = $request->harga_jual * $request->jumlah;
@@ -115,11 +112,11 @@ class PesananBarangController extends Controller
 
     public function destroy($id)
     {
-        Stok::where('created_at', PesananBarang::find($id)->created_at)->delete();
-        Barang::where('kd_barang', PesananBarang::find($id)->kd_barang)->update([
-            'stok' => Barang::where('kd_barang', PesananBarang::find($id)->kd_barang)->first()->stok + PesananBarang::find($id)->jumlah
+        Stok::where('created_at', QuotationItem::find($id)->created_at)->delete();
+        Barang::where('kd_barang', QuotationItem::find($id)->kd_barang)->update([
+            'stok' => Barang::where('kd_barang', QuotationItem::find($id)->kd_barang)->first()->stok + QuotationItem::find($id)->jumlah
         ]);
-        PesananBarang::find($id)->delete();
+        QuotationItem::find($id)->delete();
         return redirect()->back()->with('success', 'Barang berhasil dihapus.');
     }
 }

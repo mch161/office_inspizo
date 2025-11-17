@@ -94,9 +94,10 @@
     <x-adminlte-modal id="barangModal" title="Tambahkan barang" theme="primary">
         <form id="barangForm" action="{{ route('pesanan.barang.store') }}" method="POST">
             @csrf
-            <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
+            <input type="hidden" name="kd_quotation" value="{{ $quotation->kd_quotation }}">
             @php
                 $barang_config = [
+                    $barang = App\Models\Barang::get(),
                     'placeholder' => 'Cari barang...',
                     'allowClear' => true,
                     'tags' => true,
@@ -120,9 +121,10 @@
     <x-adminlte-modal id="jasaModal" title="Tambahkan jasa" theme="primary">
         <form action="{{ route('pesanan.jasa.store') }}" id="jasaForm" method="POST">
             @csrf
-            <input type="hidden" name="kd_pesanan_detail" value="{{ $pesanan_detail->kd_pesanan_detail }}">
+            <input type="hidden" name="kd_quotation" value="{{ $quotation->kd_quotation }}">
             @php
                 $jasa_config = [
+                    $jasa = App\Models\Jasa::get(),
                     'placeholder' => 'Cari jasa...',
                     'allowClear' => true,
                     'tags' => true,
@@ -296,20 +298,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($pesanan_barang as $barang)
+                            @foreach ($quotation_barang as $barang)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $barang->nama_barang }}</td>
+                                    <td>{{ $barang->barang->nama_barang }}</td>
                                     <form class="update-form-barang"
-                                        action="{{ route('pesanan.barang.update', $barang->kd_pesanan_barang) }}" method="post">
+                                        action="{{ route('pesanan.barang.update', $barang->kd_quotation_item) }}" method="post">
                                         @csrf
                                         @method('PUT')
                                         <input type="hidden" name="kd_barang" value="{{ $barang->kd_barang }}">
                                         <td class="harga-jual-edit">
                                             <span
-                                                class="display-mode-1">{{ number_format($barang->harga_jual ?? $barang->barang->harga, 2, ',', '.') }}</span>
-                                            <input type="number" class="edit-mode-1 d-none" name="harga_jual"
-                                                value="{{ $barang->harga_jual ?? $barang->barang->harga }}">
+                                                class="display-mode-1">{{ number_format($barang->harga ?? $barang->barang->harga, 2, ',', '.') }}</span>
+                                            <input type="number" class="edit-mode-1 d-none" name="harga"
+                                                value="{{ $barang->harga ?? $barang->barang->harga }}">
                                         </td>
                                         <td class="jumlah-edit">
                                             <span class="display-mode-2">{{ number_format($barang->jumlah) }}</span>
@@ -317,10 +319,10 @@
                                                 value="{{ $barang->jumlah }}">
                                         </td>
                                     </form>
-                                    <td>{{ number_format($barang->jumlah * ($barang->harga_jual ?? $barang->barang->harga), 2, ',', '.') }}
+                                    <td>{{ number_format($barang->jumlah * ($barang->harga ?? $barang->barang->harga), 2, ',', '.') }}
                                     </td>
                                     <td>
-                                        <form action="{{ route('pesanan.barang.destroy', $barang->kd_pesanan_barang) }}"
+                                        <form action="{{ route('pesanan.barang.destroy', $barang->kd_quotation_item) }}"
                                             method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
@@ -365,20 +367,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($pesanan_jasa as $jasa)
+                                @foreach ($quotation_jasa as $jasa)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $jasa->nama_jasa }}</td>
+                                        <td>{{ $jasa->jasa->nama_jasa }}</td>
                                         <form class="update-form-jasa"
-                                            action="{{ route('pesanan.jasa.update', $jasa->kd_pesanan_jasa) }}" method="post">
+                                            action="{{ route('pesanan.jasa.update', $jasa->kd_quotation_item) }}" method="post">
                                             @csrf
                                             @method('PUT')
                                             <input type="hidden" name="kd_jasa" value="{{ $jasa->kd_jasa }}">
                                             <td class="harga-jasa-edit">
                                                 <span
-                                                    class="display-mode-3">{{ number_format($jasa->harga_jasa, 2, ',', '.') }}</span>
+                                                    class="display-mode-3">{{ number_format($jasa->harga, 2, ',', '.') }}</span>
                                                 <input type="number" class="edit-mode-3 d-none" name="harga_jasa"
-                                                    value="{{ $jasa->harga_jasa }}">
+                                                    value="{{ $jasa->harga }}">
                                             </td>
                                             <td class="jumlah-jasa-edit">
                                                 <span class="display-mode-4">{{ number_format($jasa->jumlah) }}</span>
@@ -388,7 +390,7 @@
                                         </form>
                                         <td>{{ number_format($jasa->subtotal, 2, ',', '.') }}</td>
                                         <td>
-                                            <form action="{{ route('pesanan.jasa.destroy', $jasa->kd_pesanan_jasa) }}"
+                                            <form action="{{ route('pesanan.jasa.destroy', $jasa->kd_quotation_item) }}"
                                                 method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
@@ -421,11 +423,11 @@
                 <div class="card-body">
                     <p class="mb-0">
                         <span class="font-weight-bold">Subtotal Barang:</span> Rp.
-                        {{ number_format($pesanan_barang->sum('subtotal'), 2, ',', '.') }}<br>
+                        {{ number_format($quotation_barang->sum('subtotal'), 2, ',', '.') }}<br>
                         <span class="font-weight-bold">Subtotal Jasa:</span> Rp.
-                        {{ number_format($pesanan_jasa->sum('subtotal'), 2, ',', '.') }}<br>
+                        {{ number_format($quotation_jasa->sum('subtotal'), 2, ',', '.') }}<br>
                         <span class="font-weight-bold">Total:</span> Rp.
-                        {{ number_format($pesanan_jasa->sum('subtotal') + $pesanan_barang->sum('subtotal'), 2, ',', '.') }}
+                        {{ number_format($quotation_barang->sum('subtotal') + $quotation_jasa->sum('subtotal'), 2, ',', '.') }}
                     </p>
                 </div>
             </div>

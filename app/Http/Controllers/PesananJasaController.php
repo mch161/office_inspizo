@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Jasa;
 use App\Models\PesananJasa;
+use App\Models\QuotationItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,7 +13,7 @@ class PesananJasaController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kd_pesanan_detail' => 'required|exists:pesanan_detail,kd_pesanan_detail',
+            'kd_quotation' => 'required|exists:quotation,kd_quotation',
             'kd_jasa' => 'required',
             'jumlah' => 'required|numeric',
         ]);
@@ -34,19 +35,18 @@ class PesananJasaController extends Controller
             $request->merge(['kd_jasa' => $newJasa->kd_jasa]);
         }
 
-        if (PesananJasa::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_jasa', $request->kd_jasa)->exists()) {
-            PesananJasa::where('kd_jasa', $request->kd_jasa)->update([
-                'jumlah' => PesananJasa::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_jasa', $request->kd_jasa)->first()->jumlah + $request->jumlah,
-                'subtotal' => PesananJasa::where('kd_pesanan_detail', $request->kd_pesanan_detail)->where('kd_jasa', $request->kd_jasa)->first()->subtotal + ($jasa->tarif * $request->jumlah)
+        if (QuotationItem::where('kd_quotation', $request->quotation_item)->where('kd_jasa', $request->kd_jasa)->exists()) {
+            QuotationItem::where('kd_jasa', $request->kd_jasa)->update([
+                'jumlah' => QuotationItem::where('kd_quotation', $request->quotation_item)->where('kd_jasa', $request->kd_jasa)->first()->jumlah + $request->jumlah,
+                'subtotal' => QuotationItem::where('kd_quotation', $request->quotation_item)->where('kd_jasa', $request->kd_jasa)->first()->subtotal + ($jasa->tarif * $request->jumlah)
             ]);
             return redirect()->back()->with('success', 'Jasa berhasil ditambahkan.');
         }
 
-        $pesanan = PesananJasa::create([
-            'kd_pesanan_detail' => $request->kd_pesanan_detail,
+        QuotationItem::create([
+            'kd_quotation' => $request->kd_quotation,
             'kd_jasa' => $request->kd_jasa,
-            'nama_jasa' => $jasa->nama_jasa,
-            'harga_jasa' => $jasa->tarif,
+            'harga' => $jasa->tarif,
             'jumlah' => $request->jumlah,
             'subtotal' => $jasa->tarif * $request->jumlah
         ]);
@@ -56,9 +56,9 @@ class PesananJasaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $pesanan = PesananJasa::find($id);
+        $pesanan = QuotationItem::find($id);
         $pesanan->update([
-            'harga_jasa' => $request->harga_jasa,
+            'harga' => $request->harga_jasa,
             'jumlah' => $request->jumlah,
             'subtotal' => $request->harga_jasa * $request->jumlah
         ]);
