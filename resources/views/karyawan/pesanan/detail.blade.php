@@ -201,21 +201,17 @@
                         <a href="{{ route('signature.index', ['type' => 'pesanan', 'id' => $pesanan->kd_pesanan]) }}"
                             class="btn btn-primary mr-2 mb-2">
                             <i class="fas fa-signature"></i> Signature</a>
-                        @if ($pesanan->progres >= '3')
-                            <a class="btn btn-primary mr-2 mb-2"
-                                href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
-                                    class="fas fa-chart-line"></i> Progress</a>
-                        @endif
+                        <a class="btn btn-primary mr-2 mb-2"
+                            href="{{ route('progress.index', ['pesanan' => $pesanan->kd_pesanan]) }}"><i
+                                class="fas fa-chart-line"></i> Progress</a>
                         @if ($pesanan->status == 0 && $pesanan->progres == 2)
                             <a class="btn btn-warning mr-2 mb-2" data-toggle="modal" data-target="#agendaModal">
                                 <i class="fas fa-calendar-day"></i> Agendakan</a>
                         @endif
-                        @if ($pesanan->status == '0' && $pesanan->progres >= '3')
-                            <form action="{{ route('pesanan.complete', ['pesanan' => $pesanan->kd_pesanan]) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Selesaikan</button>
-                            </form>
-                        @endif
+                        <form action="{{ route('pesanan.complete', ['pesanan' => $pesanan->kd_pesanan]) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Selesaikan</button>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -9,16 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class PesananProgressController extends Controller
 {
-    public function index($pesanan) {
+    public function index($pesanan)
+    {
         $pesanan = Pesanan::find($pesanan);
-        if ($pesanan->progres <= '2') {
-            return redirect()->route('pesanan.detail', $pesanan->kd_pesanan);
-        }
         $progress = PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)->get();
         return view('karyawan.pesanan.progress', compact('pesanan', 'progress'));
     }
 
-    public function store(Request $request, $pesanan) {
+    public function store(Request $request, $pesanan)
+    {
         $request->validate([
             'keterangan' => 'required|string',
         ]);
@@ -31,13 +30,13 @@ class PesananProgressController extends Controller
 
         if ($progress) {
             return redirect()->route('progress.index', $pesanan)->with('success', 'Progress berhasil ditambahkan.');
-        }
-        else {
+        } else {
             return redirect()->route('progress.index', $pesanan)->with('error', 'Progress gagal ditambahkan.');
         }
     }
 
-    public function update(Request $request, $pesanan, $progress) {
+    public function update(Request $request, $pesanan, $progress)
+    {
         $request->validate([
             'keterangan' => 'required|string',
         ]);
@@ -48,7 +47,8 @@ class PesananProgressController extends Controller
         return redirect()->route('progress.index', $pesanan)->with('success', 'Progress berhasil diubah.');
     }
 
-    public function destroy($pesanan, $progress) {
+    public function destroy($pesanan, $progress)
+    {
         $progress = PesananProgress::find($progress);
         $progress->delete();
         return redirect()->route('progress.index', $pesanan)->with('success', 'Progress berhasil dihapus.');
