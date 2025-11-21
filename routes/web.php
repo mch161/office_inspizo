@@ -50,12 +50,16 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('pesanan', App\Http\Controllers\PesananController::class);
     Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
     Route::post('pesanan/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('pesanan.complete');
-    Route::resource('pesanan/{pesanan}/galeri', App\Http\Controllers\GaleriController::class);
     Route::get('/pesanan/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('pesanan.permintaan');
 
     ## Signature
-    Route::get('/signature/{type}/{id}', [App\Http\Controllers\SignatureController::class, 'index'])->name('signature.index');
-    Route::post('/signature/{type}/{id}/store', [App\Http\Controllers\SignatureController::class, 'store'])->name('signature.store');
+    Route::get('/{type}/{id}/signature', [App\Http\Controllers\SignatureController::class, 'index'])->name('signature.index');
+    Route::post('/{type}/{id}/signature/store', [App\Http\Controllers\SignatureController::class, 'store'])->name('signature.store');
+
+    ## Galeri
+    Route::get('/{type}/{id}/galeri', [App\Http\Controllers\GaleriController::class, 'index'])->name('galeri.index');
+    Route::post('/{type}/{id}/galeri/store', [App\Http\Controllers\GaleriController::class, 'store'])->name('galeri.store');
+    Route::delete('/{type}/{id}/galeri/destroy/{kd_galeri}', [App\Http\Controllers\GaleriController::class, 'destroy'])->name('galeri.destroy');
 
     ## Pesanan Detail
     Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');

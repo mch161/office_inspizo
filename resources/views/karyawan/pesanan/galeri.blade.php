@@ -1,13 +1,13 @@
 @extends('adminlte::page')
 
-@section('title', 'Galeri Pesanan')
+@section('title', 'Galeri ' . ucfirst($type))
 
 @section('plugins.Sweetalert2', true)
 @section('plugins.Select2', true)
 @section('plugins.KrajeeFileinput', true)
 
 @section('content_header')
-<h1><i class="fas fa-images"></i> Galeri Pesanan #{{ $pesanan->kd_pesanan }}</h1>
+<h1><i class="fas fa-images"></i> Galeri {{ ucfirst($type) }} #{{ $item->getKey() }}</h1>
 @stop
 
 @section('css')
@@ -80,13 +80,23 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools float-end">
-                <a href="{{ route('pesanan.detail', $pesanan) }}" class="btn btn-primary">
+                {{-- Tombol Kembali Dinamis --}}
+                @php
+                    $back_route = ($type === 'pesanan') ? 'pesanan.detail' : 'pekerjaan.show'; 
+                    $back_param = ($type === 'pesanan') ? 'pesanan' : 'pekerjaan';
+                @endphp
+                <a href="{{ route($back_route, [$back_param => $item->getKey()]) }}" class="btn btn-primary">
                     <i class="fas fa-arrow-left"></i>
-                    Kembali
+                    Kembali ke Detail {{ ucfirst($type) }}
                 </a>
             </div>
         </div>
         <div class="card-body">
+            @if(isset($is_combined_view) && $is_combined_view)
+            <div class="alert alert-warning" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> Tampilan ini menggabungkan foto dari Pesanan ini dan Pekerjaan terkait.
+            </div>
+            @endif
             <div class="d-flex justify-content-end mb-2">
                 <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#uploadModal"><i
                         class="fas fa-upload"></i>
@@ -106,34 +116,78 @@
     <hr>
 
     <x-adminlte-modal id="uploadModal" title="Upload Galeri">
-        <form action="{{ route('galeri.store', $pesanan->kd_pesanan) }}" method="POST" enctype="multipart/form-data">
+        {{-- Rute store dinamis: Menggunakan ID item dan type --}}
+        <form action="{{ route('galeri.store', ['type' => $type, 'id' => $item->getKey()]) }}" 
+              method="POST" 
+              enctype="multipart/form-data">
             @csrf
             <x-adminlte-input-file-krajee id="kifPholder" name="foto[]" igroup-size="sm"
                 data-msg-placeholder="Choose multiple files..." data-show-cancel="false" data-show-close="false" multiple
                 required />
+            <button type="submit" class="btn btn-primary mt-3">Upload Sekarang</button>
         </form>
         <x-slot name="footerSlot">
-            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+            <x-adminlte-button label="Tutup" data-dismiss="modal" theme="danger" />
         </x-slot>
     </x-adminlte-modal>
 
     <div class="row">
-        @forelse ($galeri as $galeri)
+        @forelse ($galeri as $galeri_item)
+            @php
+                // Logika Penentuan Path:
+                // Tentukan folder dan ID dari Model yang sebenarnya
+                $is_pesanan_galeri = ($galeri_item instanceof \App\Models\PesananGaleri);
+                
+                if ($is_pesanan_galeri) {
+                    $folder_name = 'pesanan';
+                    $folder_id = $galeri_item->kd_pesanan; 
+                    $delete_type = 'pesanan';
+                    $delete_id = $galeri_item->kd_pesanan;
+                } else {
+                    // Berarti ini PekerjaanGaleri
+                    $folder_name = 'pekerjaan';
+                    $folder_id = $galeri_item->kd_pekerjaan;
+                    $delete_type = 'pekerjaan';
+                    $delete_id = $galeri_item->kd_pekerjaan;
+                }
+                
+                // Jika view-nya adalah Pesanan (gabungan), kita harus menggunakan ID dan type item aslinya untuk rute delete
+                // agar redirect kembali ke halaman yang benar.
+                if (isset($is_combined_view) && $is_combined_view) {
+                    $delete_route_id = $item->getKey();
+                    $delete_route_type = $type;
+                } else {
+                    // Jika view Pekerjaan, hapus harus menggunakan ID pekerjaan itu sendiri
+                    $delete_route_id = $delete_id;
+                    $delete_route_type = $delete_type;
+                }
+                
+                $imagePath = 'storage/images/' . $folder_name . '/' . $folder_id . '/' . $galeri_item->foto;
+            @endphp
+            
+            {{-- Tautan Popup --}}
             <a class="image-popup" data-toggle="modal" data-target="#imageModal"
-                data-src="{{ asset('storage/images/pesanan/' . $pesanan->kd_pesanan . '/' . $galeri->foto) }}">
-                <img class="galeri-image m-1"
-                    src="{{ asset('storage/images/pesanan/' . $pesanan->kd_pesanan . '/' . $galeri->foto) }}">
+                data-src="{{ asset($imagePath) }}">
+                <img class="galeri-image m-1" src="{{ asset($imagePath) }}">
             </a>
-            <form action="{{ route('galeri.destroy', [$pesanan->kd_pesanan, $galeri->kd_galeri]) }}" method="POST">
+            
+            {{-- Form Hapus Dinamis --}}
+            {{-- Catatan: Rute delete harus menggunakan type dan id yang sesuai dengan lokasi data yang akan dihapus, 
+                TETAPI redirect harus kembali ke $type/$item->getKey(). 
+                Untuk kesederhanaan, kita akan biarkan controller yang menangani redirect dengan benar. --}}
+            
+            <form action="{{ route('galeri.destroy', ['type' => $delete_type, 'id' => $delete_id, 'kd_galeri' => $galeri_item->kd_galeri]) }}" method="POST">
                 @csrf
                 @method('DELETE')
-                <img class="delete-image m-1 d-none"
-                    src="{{ asset('storage/images/pesanan/' . $pesanan->kd_pesanan . '/' . $galeri->foto) }}">
+                <img class="delete-image m-1 d-none" src="{{ asset($imagePath) }}">
+                {{-- Tambahkan field tersembunyi untuk redirect --}}
+                <input type="hidden" name="redirect_type" value="{{ $type }}">
+                <input type="hidden" name="redirect_id" value="{{ $item->getKey() }}">
             </form>
         @empty
             <div class="d-flex justify-content-center align-items-center flex-column m-auto">
                 <i class="fas fa-camera-retro fa-5x text-muted mb-3"></i>
-                <p class="text-center">Belum ada gambar.</p>
+                <p class="text-center">Belum ada gambar untuk {{ ucfirst($type) }} ini.</p>
                 <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#uploadModal">
                     <i class="fas fa-upload"></i> Mulai Upload
                 </button>

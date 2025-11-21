@@ -196,7 +196,7 @@
                             <p><strong>Telepon:</strong> {{ $pesanan->pelanggan->telepon }}</p>
                             <p><strong>Deskripsi Pesanan: </strong> {{ $pesanan->deskripsi_pesanan }}</p>
                         </div>
-                        <a href="{{ route('galeri.index', ['pesanan' => $pesanan->kd_pesanan]) }}"
+                        <a href="{{ route('galeri.index', ['type' => 'pesanan', 'id' => $pesanan->kd_pesanan]) }}"
                             class="btn btn-primary mr-2 mb-2"><i class="fas fa-images"></i> Galeri</a>
                         <a href="{{ route('signature.index', ['type' => 'pesanan', 'id' => $pesanan->kd_pesanan]) }}"
                             class="btn btn-primary mr-2 mb-2">

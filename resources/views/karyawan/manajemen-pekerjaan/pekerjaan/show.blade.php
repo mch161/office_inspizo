@@ -62,7 +62,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('pekerjaan.show', ['pekerjaan' => $pekerjaan->kd_pekerjaan]) }}"
+                    <a href="{{ route('galeri.index', ['type' => 'pekerjaan', 'id' => $pekerjaan->kd_pekerjaan]) }}"
                         class="btn btn-primary mr-2 mb-2"><i class="fas fa-images"></i> Galeri</a>
                     <a href="{{ route('signature.index', ['type' => 'pekerjaan', 'id' => $pekerjaan->kd_pekerjaan]) }}"
                         class="btn btn-primary mr-2 mb-2">
