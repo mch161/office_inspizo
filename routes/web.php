@@ -51,8 +51,11 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
     Route::post('pesanan/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('pesanan.complete');
     Route::resource('pesanan/{pesanan}/galeri', App\Http\Controllers\GaleriController::class);
-    Route::resource('pesanan/{pesanan}/signature', App\Http\Controllers\SignatureController::class);
     Route::get('/pesanan/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('pesanan.permintaan');
+
+    ## Signature
+    Route::get('/signature/{type}/{id}', [App\Http\Controllers\SignatureController::class, 'index'])->name('signature.index');
+    Route::post('/signature/{type}/{id}/store', [App\Http\Controllers\SignatureController::class, 'store'])->name('signature.store');
 
     ## Pesanan Detail
     Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');

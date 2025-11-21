@@ -3,20 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
+use App\Models\Pekerjaan;
 use App\Models\Signature;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class SignatureController extends Controller
 {
-    public function index($id)
+    /**
+     * Mapping model, kolom, dan rute untuk fungsionalitas universal.
+     * Format: [Model Class, 'Model DB Key', 'Route Param Name', 'Redirect Route Name', 'TTD Column/Relation']
+     */
+    private $modelMap = [
+        'pesanan' => [Pesanan::class, 'kd_pesanan', 'pesanan', 'pesanan.detail', 'relation:signature'], 
+        
+        'pekerjaan' => [Pekerjaan::class, 'kd_pekerjaan', 'pekerjaan', 'pekerjaan.show', 'column:ttd_pelanggan'],
+    ];
+
+    /**
+     * Menampilkan formulir tanda tangan.
+     *
+     * @param string $type Tipe model ('pesanan' atau 'pekerjaan').
+     * @param int $id ID item.
+     * @return \Illuminate\View\View
+     */
+    public function index($type, $id)
     {
-        $pesanan = Pesanan::find($id);
-        $signature = Signature::where('kd_pesanan', $id)->first();
-        return view('karyawan.pesanan.signature', compact('pesanan', 'signature'));
+        if (!isset($this->modelMap[$type])) {
+            abort(404, 'Tipe model tidak valid.');
+        }
+
+        $map = $this->modelMap[$type];
+        $modelClass = $map[0];
+        $dbKeyName = $map[1];
+        $ttdSource = $map[4]; 
+        
+        $item = $modelClass::find($id);
+        
+        if (!$item) {
+            return redirect()->back()->with('error', ucfirst($type) . ' tidak ditemukan.');
+        }
+
+        $signature = null;
+        
+        if ($ttdSource === 'relation:signature') {
+            $signature = Signature::where($dbKeyName, $id)->first();
+        } else if ($ttdSource === 'column:ttd_pelanggan') {
+            if ($item->ttd_pelanggan) {
+                 $signature = (object) ['signature' => $item->ttd_pelanggan];
+            }
+        }
+        
+        // Pass generic variable names and map data to the view
+        return view('karyawan.pesanan.signature', compact('item', 'signature', 'type', 'map'));
     }
 
-    public function store(Request $request, $id)
+    /**
+     * Menyimpan data tanda tangan.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param string $type Tipe model ('pesanan' atau 'pekerjaan').
+     * @param int $id ID item.
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request, $type, $id)
     {
         $validator = Validator::make($request->all(), [
             'signed' => 'required',
@@ -26,13 +76,38 @@ class SignatureController extends Controller
             return redirect()->back()->with('error', $validator->errors()->first());
         }
 
-        Signature::where('kd_pesanan', $id)->delete();
+        if (!isset($this->modelMap[$type])) {
+            return redirect()->back()->with('error', 'Tipe model tidak valid.');
+        }
 
-        $signature = new Signature();
-        $signature->kd_pesanan = $id;
-        $signature->signature = $request->signed;
-        $signature->save();
+        $map = $this->modelMap[$type];
+        $modelClass = $map[0];
+        $dbKeyName = $map[1];
+        $routeParamName = $map[2];
+        $redirectRoute = $map[3];
+        $ttdSource = $map[4];
 
-        return redirect()->route('pesanan.detail', ['pesanan' => $id])->with('success', 'Signature berhasil disimpan.');
+        $item = $modelClass::find($id);
+
+        if (!$item) {
+             return redirect()->back()->with('error', ucfirst($type) . ' tidak ditemukan.');
+        }
+        
+        $signedData = $request->signed;
+
+        if ($ttdSource === 'relation:signature') {
+            Signature::where($dbKeyName, $id)->delete();
+            Signature::create([
+                $dbKeyName => $id,
+                'signature' => $signedData,
+            ]);
+            
+        } else if ($ttdSource === 'column:ttd_pelanggan') {
+            $item->update([
+                'ttd_pelanggan' => $signedData,
+            ]);
+        }
+        
+        return redirect()->route($redirectRoute, [$routeParamName => $id])->with('success', 'Signature berhasil disimpan.');
     }
 }

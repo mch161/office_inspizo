@@ -16,20 +16,20 @@ class TugasController extends Controller
     public function index(Request $request)
     {
         if (!$request->ajax()) {
-            $pekerjaans = Pekerjaan::with('project')->get();
+            $pekerjaans = Pekerjaan::get();
             $karyawans = Karyawan::all();
             return view('karyawan.manajemen-pekerjaan.tugas.index', compact('pekerjaans', 'karyawans'));
         }
 
-        $data = Tugas::with(['pekerjaan.project', 'karyawan'])->latest();
+        $data = Tugas::with(['karyawan'])->latest();
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('project', function ($row) {
-                return $row->pekerjaan && $row->pekerjaan->project ? $row->pekerjaan->project->nama_project : 'N/A';
-            })
+            // ->addColumn('project', function ($row) {
+            //     return $row->pekerjaan && $row->pekerjaan->project ? $row->pekerjaan->project->nama_project : 'N/A';
+            // })
             ->addColumn('pekerjaan_info', function ($row) {
-                return $row->pekerjaan ? $row->pekerjaan->pekerjaan : 'N/A';
+                return $row->pekerjaan->keterangan_pekerjaan ?? 'N/A';
             })
             ->editColumn('tanggal', function ($row) {
                 return Carbon::parse($row->tanggal)->format('d-m-Y');

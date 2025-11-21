@@ -21,7 +21,7 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Project</th>
+                    <!-- <th>Project</th> -->
                     <th>Pekerjaan</th>
                     <th>Tanggal</th>
                     <th>Status</th>
@@ -51,8 +51,8 @@
                     <x-adminlte-select2 name="kd_pekerjaan" id="kd_pekerjaan" label="Pekerjaan" required>
                         <option value="" disabled selected>Pilih Pekerjaan</option>
                         @foreach($pekerjaans as $p)
-                            <option value="{{ $p->kd_pekerjaan }}">{{ $p->project->nama_project ?? 'No Project' }} -
-                                {{ $p->pekerjaan }}
+                            <option value="{{ $p->kd_pekerjaan }}">
+                                {{ $p->keterangan_pekerjaan }}
                             </option>
                         @endforeach
                     </x-adminlte-select2>
@@ -101,7 +101,7 @@
             ajax: "{{ route('tugas.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'project', name: 'pekerjaan.project.nama_project' },
+                // { data: 'project', name: 'pekerjaan.project.nama_project' },
                 { data: 'pekerjaan_info', name: 'pekerjaan.pekerjaan' },
                 { data: 'tanggal', name: 'tanggal' },
                 { data: 'status', name: 'status' },

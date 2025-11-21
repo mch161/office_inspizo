@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Laravel Signature Pad</title>
+    <title>Signature Pad - {{ ucfirst($type) }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css">
@@ -38,16 +38,21 @@
             <div class="col-md-6 offset-md-3 mt-5">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Signature Pad</h5>
+                        <h5>Signature Pad - {{ ucfirst($type) }}</h5>
                     </div>
                     <div class="card-body">
+                        @php
+                            $redirectRoute = $map[3];
+                            $keyName = $map[2];
+                        @endphp
+                        
                         <form method="POST" id="form"
-                            action="{{ route('signature.store', ['pesanan' => $pesanan->kd_pesanan]) }}">
+                            action="{{ route('signature.store', ['type' => $type, 'id' => $item->getKey()]) }}">
                             @csrf
                             <div class="col-md-12">
-                                <label class="" for="">Kode Pesanan:</label>
-                                <input type="text" name="kd_pesanan" class="form-control"
-                                    value="{{ $pesanan->kd_pesanan }}" readonly="readonly">
+                                <label class="" for="">Kode {{ ucfirst($type) }}:</label>
+                                <input type="text" name="kd_item" class="form-control"
+                                    value="{{ $item->getKey() }}" readonly="readonly">
                             </div>
                             <div class="col-md-12">
                                 <label class="" for="">Signature:</label>
@@ -61,7 +66,7 @@
                         </form>
                         <button form="form" type="submit" class="btn btn-success">Simpan</button>
                         <a class="btn btn-primary"
-                            href="{{ route('pesanan.detail', ['pesanan' => $pesanan->kd_pesanan]) }}"><i></i>Batal</a>
+                            href="{{ route($redirectRoute, [$keyName => $item->getKey()]) }}"><i></i>Batal</a>
                     </div>
                 </div>
             </div>

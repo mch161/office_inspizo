@@ -11,14 +11,20 @@ class Pekerjaan extends Model
     protected $primaryKey = 'kd_pekerjaan';
 
     protected $fillable = [
-        'kd_project',
+        'kd_pelanggan',
         'kd_karyawan',
-        'pekerjaan',
+        'kd_tiket',
+        'tanggal',
+        'jenis',
+        'keterangan_pekerjaan',
+        'keterangan_barang',
+        'status',
+        'ttd_pelanggan',
     ];
 
-    public function project()
+    public function pelanggan()
     {
-        return $this->belongsTo(Project::class, 'kd_project');
+        return $this->belongsTo(Pelanggan::class, 'kd_pelanggan', 'kd_pelanggan');
     }
 
     public function karyawans()
@@ -29,5 +35,10 @@ class Pekerjaan extends Model
     public function karyawan()
     {
         return $this->belongsToMany(Karyawan::class, 'pekerjaan_karyawan', 'kd_pekerjaan', 'kd_karyawan');
+    }
+
+    public function tiket()
+    {
+        return $this->belongsTo(Tiket::class, 'kd_tiket', 'kd_tiket');
     }
 }
