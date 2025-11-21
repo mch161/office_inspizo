@@ -47,6 +47,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
 
     ## Pesanan
     Route::get('pesanan/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('pesanan.permintaan');
+    Route::get('pesanan/invoice', [App\Http\Controllers\PesananController::class, 'migrateToInvoice'])->name('pesanan.invoice');
     Route::resource('pesanan', App\Http\Controllers\PesananController::class);
     Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
     Route::post('pesanan/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('pesanan.complete');
@@ -63,16 +64,15 @@ Route::middleware(['auth:karyawan'])->group(function () {
 
     ## Pesanan Detail
     Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');
-    Route::resource('pesanan/barang', App\Http\Controllers\PesananBarangController::class)->names([
-        'store' => 'pesanan.barang.store',
-        'destroy' => 'pesanan.barang.destroy',
-        'update' => 'pesanan.barang.update',
-    ]);
-    Route::resource('pesanan/jasa', App\Http\Controllers\PesananJasaController::class)->names([
-        'store' => 'pesanan.jasa.store',
-        'destroy' => 'pesanan.jasa.destroy',
-        'update' => 'pesanan.jasa.update',
-    ]);
+
+    Route::post('pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'store'])->name('pesanan.barang.store');
+    Route::put('pesanan/barang/{jenis}/{id}/{pesanan_barang}', [App\Http\Controllers\PesananBarangController::class, 'update'])->name('pesanan.barang.update');
+    Route::delete('pesanan/barang/{jenis}/{id}/{pesanan_barang}', [App\Http\Controllers\PesananBarangController::class, 'destroy'])->name('pesanan.barang.destroy');
+
+    Route::post('pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'store'])->name('pesanan.jasa.store');
+    Route::put('pesanan/jasa/{jenis}/{id}/{pesanan_jasa}', [App\Http\Controllers\PesananJasaController::class, 'update'])->name('pesanan.jasa.update');
+    Route::delete('pesanan/jasa/{jenis}/{id}/{pesanan_jasa}', [App\Http\Controllers\PesananJasaController::class, 'destroy'])->name('pesanan.jasa.destroy');
+
     Route::resource('pesanan/{pesanan}/progress', App\Http\Controllers\PesananProgressController::class);
 
     ## Agenda
