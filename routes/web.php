@@ -107,6 +107,9 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('project/{project}/detail', [App\Http\Controllers\ProjectController::class, 'detail'])->name('project.detail');
 
     ## Pekerjaan
+    Route::get('pekerjaan/barang', [App\Http\Controllers\PekerjaanController::class, 'barang'])->name('pekerjaan.barang');
+    Route::post('pekerjaan/barang/{pekerjaan}/store', [App\Http\Controllers\PekerjaanController::class, 'storeBarang'])->name('pekerjaan.barang.store');
+    Route::delete('pekerjaan/barang/{barang}', [App\Http\Controllers\PekerjaanController::class, 'destroyBarang'])->name('pekerjaan.barang.destroy');
     Route::resource('pekerjaan', App\Http\Controllers\PekerjaanController::class);
 
     ## Tugas

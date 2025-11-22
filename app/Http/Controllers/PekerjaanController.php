@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barang;
 use App\Models\Pekerjaan;
+use App\Models\PekerjaanBarang;
 use App\Models\Project;
 use App\Models\Karyawan;
 use App\Models\Tiket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -106,14 +110,88 @@ class PekerjaanController extends Controller
 
     public function show($id)
     {
+        if (request()->ajax()) {
+            $data = PekerjaanBarang::with('pekerjaan', 'barang')->where('kd_pekerjaan', $id)->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('nama_barang', function ($row) {
+                    return $row->barang->nama_barang;
+                })
+                ->addColumn('jumlah', function ($row) {
+                    return $row->jumlah;
+                })
+                ->addColumn('aksi', function ($row) {
+                    $btn = ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan_barang . '" data-original-title="Delete" class="btn btn-danger btn-sm deleteBtn"><i class="fa fa-trash"></i></a>';
+                    return $btn;
+                })
+                ->rawColumns(['aksi'])
+                ->make(true);
+        }
         $pekerjaan = Pekerjaan::with('karyawans')->find($id);
         return view('karyawan.manajemen-pekerjaan.pekerjaan.show', compact('pekerjaan'));
+    }
+
+    public function destroyBarang($id)
+    {
+        $barang = PekerjaanBarang::find($id);
+        $barang->delete();
+        return response()->json(['success' => 'Barang berhasil dihapus.']);
     }
 
     public function signature($id)
     {
         $pekerjaan = Pekerjaan::with('karyawans')->find($id);
         return view('karyawan.manajemen-pekerjaan.pekerjaan.signature', compact('pekerjaan'));
+    }
+
+    public function storeBarang(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'kd_barang' => 'required',
+            'jumlah' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Barang gagal ditambahkan: ' . $validator->errors()->first());
+        }
+
+        $barang = Barang::find($request->kd_barang);
+
+        if ($barang) {
+            $kd_barang = $barang->kd_barang;
+        } else {
+            $newBarang = Barang::firstOrCreate([
+                'nama_barang' => $request->kd_barang,
+            ], [
+                'kd_karyawan' => Auth::guard('karyawan')->user()->kd_karyawan,
+                'stok' => $request->jumlah,
+                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+            ]);
+            $kd_barang = $newBarang->kd_barang;
+        }
+
+        $barang = Barang::find($kd_barang);
+
+        $request->merge([
+            'kd_barang' => $kd_barang
+        ]);
+
+
+        if (PekerjaanBarang::where('kd_pekerjaan', $id)->where('kd_barang', $request->kd_barang)->exists()) {
+            PekerjaanBarang::where('kd_pekerjaan', $id)->where('kd_barang', $request->kd_barang)->update([
+                'jumlah' => PekerjaanBarang::where('kd_pekerjaan', $id)->where('kd_barang', $request->kd_barang)->first()->jumlah + $request->jumlah
+            ]);
+            return redirect()->back()->with('success', 'Barang berhasil ditambahkan.');
+        }
+
+        PekerjaanBarang::create([
+            'kd_pekerjaan' => $id,
+            'kd_barang' => $request->kd_barang,
+            'jumlah' => $request->jumlah,
+            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+        ]);
+        return response()->json(['success' => 'Data barang berhasil disimpan.']);
     }
 
     public function destroy($id)
