@@ -15,16 +15,11 @@ class Invoice extends Model
     
     protected $fillable = [
         'kd_quotation',
-        'kd_tiket',
         'kd_pelanggan',
+        'kd_karyawan',
         'tanggal',
         'dibuat_oleh',
     ];
-
-    public function tiket()
-    {
-        return $this->belongsTo(Tiket::class, 'kd_tiket');
-    }
 
     public function quotation()
     {
@@ -34,5 +29,10 @@ class Invoice extends Model
     public function pelanggan()
     {
         return $this->belongsTo(Pelanggan::class, 'kd_pelanggan');
+    }
+
+    public function karyawan()
+    {
+        return $this->belongsTo(Karyawan::class, 'kd_karyawan');
     }
 }

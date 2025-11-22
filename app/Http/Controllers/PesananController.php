@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Agenda;
 use App\Models\Barang;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Jasa;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
@@ -228,6 +230,13 @@ class PesananController extends Controller
                 'kd_pesanan' => $pesanan->kd_pesanan,
                 'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
             ]);
+
+            Quotation::create([
+                'kd_tiket' => $tiket->kd_tiket,
+                'kd_pelanggan' => $request->kd_pelanggan,
+                'tanggal' => $request->tanggal,
+                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
+            ]);
         }
 
         return response()->json(['success' => 'Data pekerjaan berhasil disimpan.']);
@@ -249,11 +258,18 @@ class PesananController extends Controller
             $backUrl = $previousUrl;
         }
 
-        $quotation = Quotation::where('kd_tiket', $pesanan->kd_tiket)->first();
-        $quotation_barang = QuotationItem::where('kd_quotation', $quotation->kd_quotation)->where('kd_barang', '!=', null)->get();
-        $quotation_jasa = QuotationItem::where('kd_quotation', $quotation->kd_quotation)->where('kd_jasa', '!=', null)->get();
+        if ($pesanan->jenis == 'Quotation') {
+            $billing = Quotation::where('kd_tiket', $pesanan->kd_tiket)->first();
+            $billing_barang = QuotationItem::where('kd_quotation', $billing->kd_quotation)->where('kd_barang', '!=', null)->get();
+            $billing_jasa = QuotationItem::where('kd_quotation', $billing->kd_quotation)->where('kd_jasa', '!=', null)->get();
+        } elseif ($pesanan->jenis == 'Invoice') {
+            $quotation = Quotation::where('kd_tiket', $pesanan->kd_tiket)->first();
+            $billing = Invoice::where('kd_quotation', $quotation->kd_quotation)->first();
+            $billing_barang = InvoiceItem::where('kd_invoice', $billing->kd_invoice)->where('kd_barang', '!=', null)->get();
+            $billing_jasa = InvoiceItem::where('kd_invoice', $billing->kd_invoice)->where('kd_jasa', '!=', null)->get();
+        }
 
-        return view('karyawan.pesanan.detail', compact('pesanan', 'quotation', 'quotation_barang', 'quotation_jasa','surat_perintah', 'backUrl'));
+        return view('karyawan.pesanan.detail', compact('pesanan', 'billing', 'billing_barang', 'billing_jasa', 'surat_perintah', 'backUrl'));
     }
 
     public function agenda(Request $request)
@@ -384,4 +400,46 @@ class PesananController extends Controller
 
         return response()->json(['success' => 'Pesanan berhasil dihapus.']);
     }
+
+    public function migrateToInvoice($kd_pesanan)
+    {
+        $pesanan = Pesanan::findOrFail($kd_pesanan);
+
+        $quotation = Quotation::where('kd_tiket', $pesanan->kd_tiket)->first();
+
+        if (!$quotation) {
+            return redirect()->back()->with('error', 'Quotation tidak ditemukan untuk pesanan ini.');
+        }
+
+        if (Invoice::where('kd_quotation', $quotation->kd_quotation)->exists()) {
+            return redirect()->back()->with('error', 'Invoice sudah dibuat untuk Quotation ini.');
+        }
+
+        $invoice = Invoice::create([
+            'kd_quotation' => $quotation->kd_quotation,
+            'kd_pelanggan' => $quotation->kd_pelanggan,
+            'kd_karyawan' => Auth::guard('karyawan')->user()->kd_karyawan,
+            'tanggal' => Carbon::now()->format('d/m/Y'),
+            'dibuat_oleh' => Auth::guard('karyawan')->user()->nama,
+        ]);
+
+        $quotationItems = QuotationItem::where('kd_quotation', $quotation->kd_quotation)->get();
+
+        foreach ($quotationItems as $item) {
+            InvoiceItem::create([
+                'kd_invoice' => $invoice->kd_invoice,
+                'kd_barang' => $item->kd_barang,
+                'kd_jasa' => $item->kd_jasa,
+                'harga' => $item->harga,
+                'jumlah' => $item->jumlah,
+                'subtotal' => $item->subtotal ?? ($item->harga * $item->jumlah),
+            ]);
+        }
+
+        $pesanan->jenis = 'Invoice';
+        $pesanan->save();
+
+        return redirect()->back()->with('success', 'Quotation berhasil dimigrasi menjadi Invoice.');
+    }
+
 }

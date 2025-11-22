@@ -10,12 +10,15 @@ class InvoiceItem extends Model
     use HasFactory;
     protected $table = 'invoice_item';
 
+    protected $primaryKey = 'kd_invoice_item';
+
     protected $fillable = [
         'kd_invoice',
         'kd_barang',
         'kd_jasa',
         'harga',
         'jumlah',
+        'subtotal'
     ];
 
     public function invoice()
