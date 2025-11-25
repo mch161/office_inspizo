@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kunjungan;
+use App\Models\Pekerjaan;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\Project;
@@ -98,7 +99,7 @@ class PelangganController extends Controller
     {
         $pelanggan = Pelanggan::find($id);
         $pesanan = Pesanan::where('kd_pelanggan', $id)->get();
-        $kunjungan = Kunjungan::where('kd_pelanggan', $id)->get();
+        $kunjungan = Pekerjaan::where('kd_pelanggan', $id)->where('jenis', 'LIKE', '%kunjungan%')->get();
         $project = Project::where('kd_pelanggan', $id)->get();
         return view('karyawan.pelanggan.show', compact('pelanggan', 'pesanan', 'kunjungan', 'project'));
     }
