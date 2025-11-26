@@ -13,7 +13,7 @@ class PesananProgressController extends Controller
     {
         $pesanan = Pesanan::find($pesanan);
         $progress = PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)->get();
-        return view('karyawan.pesanan.progress', compact('pesanan', 'progress'));
+        return view('karyawan.tiket.progress', compact('pesanan', 'progress'));
     }
 
     public function store(Request $request, $pesanan)

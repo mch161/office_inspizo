@@ -1,18 +1,18 @@
 @extends('adminlte::page')
 
-@section('title', 'Pesanan')
+@section('title', 'Tiket')
 
 @section('plugins.Sweetalert2', true)
 @section('plugins.Select2', true)
 
 @section('content_header')
-<h1><i class="fas fa-shopping-cart"></i> Pesanan</h1>
+<h1><i class="fas fa-shopping-cart"></i> Tiket</h1>
 @stop
 
 @section('content')
 <div class="card card-primary card-outline mb-3">
     <div class="card-header">
-        <a href="javascript:void(0)" id="createNewPesanan" class="btn btn-success"> Tambah Pesanan</a>
+        <a href="javascript:void(0)" id="createNewPesanan" class="btn btn-success"> Tambah Tiket</a>
     </div>
     <div class="card-body">
         <table class="table table-bordered table-striped pesanan-table">
@@ -20,7 +20,7 @@
                 <tr>
                     <th width="5%">No</th>
                     <th width="20%">Nama Pelanggan</th>
-                    <th>Deskripsi Pesanan</th>
+                    <th>Deskripsi</th>
                     <th>Prioritas</th>
                     <th width=5%">Jenis</th>
                     <th>Tanggal</th>
@@ -45,7 +45,7 @@
                 <tr>
                     <th>No</th>
                     <th>Nama Pelanggan</th>
-                    <th>Deskripsi Pesanan</th>
+                    <th>Deskripsi</th>
                     <th>Tanggal</th>
                     <th>Status</th>
                     <th>Aksi</th>
@@ -58,7 +58,7 @@
 </div>
 
 <x-adminlte-modal id="agendaModal" title="Agendakan Pesanan" theme="primary">
-    <form id="agendaForm" method="POST" action="{{ route('pesanan.agenda') }}">
+    <form id="agendaForm" method="POST" action="{{ route('tiket.agenda') }}">
         @csrf
         <input type="hidden" name="kd_pesanan" id="kd_pesanan">
         <label for="title">Nama</label>
@@ -137,7 +137,7 @@
                         <option value="Web">Web</option>
                     </x-adminlte-select2>
 
-                    <label>Deskripsi Pesanan</label>
+                    <label>Deskripsi</label>
                     <textarea name="deskripsi_pesanan" id="deskripsi_pesanan" class="form-control"></textarea>
 
                     <div class="col-sm-offset-2 col-sm-10 mt-3">
@@ -161,7 +161,7 @@
             processing: true,
             serverSide: true,
             scrollX: true,
-            ajax: "{{ route('pesanan.index') }}",
+            ajax: "{{ route('tiket.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'nama_pelanggan', name: 'pesanan.nama_pelanggan' },
@@ -179,7 +179,7 @@
             processing: true,
             serverSide: true,
             scrollX: true,
-            ajax: "{{ route('pesanan.permintaan') }}",
+            ajax: "{{ route('tiket.permintaan') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'nama_pelanggan', name: 'pesanan.nama_pelanggan' },
@@ -204,7 +204,7 @@
 
         $('body').on('click', '.editBtn', function () {
             var kd_pesanan = $(this).data('id');
-            $.get("{{ route('pesanan.index') }}" + '/' + kd_pesanan + '/edit', function (data) {
+            $.get("{{ route('tiket.index') }}" + '/' + kd_pesanan + '/edit', function (data) {
                 $('#myModalLabel').html("Edit Data Pesanan");
                 $('#saveBtn').html('Simpan Perubahan');
                 $('#pesananModal').modal('show');
@@ -228,7 +228,7 @@
 
             $.ajax({
                 data: $('#pesananForm').serialize(),
-                url: "{{ route('pesanan.store') }}",
+                url: "{{ route('tiket.store') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function (data) {
@@ -259,7 +259,7 @@
         $('body').on('click', '.accept-btn', function (e) {
             e.preventDefault();
             var kd_pesanan = $(this).data('id');
-            var url = "{{ route('pesanan.index') }}" + '/' + kd_pesanan;
+            var url = "{{ route('tiket.index') }}" + '/' + kd_pesanan;
 
             Swal.fire({
                 title: 'Terima pesanan ini?',
@@ -295,7 +295,7 @@
         $('body').on('click', '.batalkan-btn', function (e) {
             e.preventDefault();
             var kd_pesanan = $(this).data('id');
-            var url = "{{ route('pesanan.index') }}" + '/' + kd_pesanan;
+            var url = "{{ route('tiket.index') }}" + '/' + kd_pesanan;
 
             Swal.fire({
                 title: 'Batalkan pesanan ini?',
@@ -331,7 +331,7 @@
         $('body').on('click', '.deleteBtn', function (e) {
             e.preventDefault();
             var kd_pesanan = $(this).data('id');
-            var url = "{{ route('pesanan.index') }}" + '/' + kd_pesanan;
+            var url = "{{ route('tiket.index') }}" + '/' + kd_pesanan;
 
             Swal.fire({
                 title: 'Anda yakin?',

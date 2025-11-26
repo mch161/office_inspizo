@@ -15,7 +15,7 @@ class SignatureController extends Controller
      * Format: [Model Class, 'Model DB Key', 'Route Param Name', 'Redirect Route Name', 'TTD Column/Relation']
      */
     private $modelMap = [
-        'pesanan' => [Pesanan::class, 'kd_pesanan', 'pesanan', 'pesanan.detail', 'relation:signature'], 
+        'pesanan' => [Pesanan::class, 'kd_pesanan', 'tiket', 'tiket.show', 'relation:signature'], 
         
         'pekerjaan' => [Pekerjaan::class, 'kd_pekerjaan', 'pekerjaan', 'pekerjaan.show', 'column:ttd_pelanggan'],
     ];
@@ -55,7 +55,7 @@ class SignatureController extends Controller
         }
         
         // Pass generic variable names and map data to the view
-        return view('karyawan.pesanan.signature', compact('item', 'signature', 'type', 'map'));
+        return view('karyawan.tiket.signature', compact('item', 'signature', 'type', 'map'));
     }
 
     /**

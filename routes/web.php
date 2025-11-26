@@ -46,34 +46,32 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('jurnalku', [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
 
     ## Pesanan
-    Route::get('pesanan/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('pesanan.permintaan');
-    Route::get('pesanan/invoice/{kd_pesanan}', [App\Http\Controllers\PesananController::class, 'migrateToInvoice'])->name('pesanan.invoice');
-    Route::resource('pesanan', App\Http\Controllers\PesananController::class);
-    Route::post('pesanan/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('pesanan.agenda');
-    Route::post('pesanan/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('pesanan.complete');
-    Route::get('/pesanan/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('pesanan.permintaan');
+    Route::get('tiket/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('tiket.permintaan');
+    Route::get('tiket/invoice/{kd_pesanan}', [App\Http\Controllers\PesananController::class, 'migrateToInvoice'])->name('tiket.invoice');
+    Route::resource('tiket', App\Http\Controllers\PesananController::class);
+    Route::post('tiket/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('tiket.agenda');
+    Route::post('tiket/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('tiket.complete');
+    Route::get('tiket/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('tiket.permintaan');
 
     ## Signature
-    Route::get('/{type}/{id}/signature', [App\Http\Controllers\SignatureController::class, 'index'])->name('signature.index');
-    Route::post('/{type}/{id}/signature/store', [App\Http\Controllers\SignatureController::class, 'store'])->name('signature.store');
+    Route::get('tiket/{type}/{id}/signature', [App\Http\Controllers\SignatureController::class, 'index'])->name('signature.index');
+    Route::post('tiket/{type}/{id}/signature/store', [App\Http\Controllers\SignatureController::class, 'store'])->name('signature.store');
 
     ## Galeri
-    Route::get('/{type}/{id}/galeri', [App\Http\Controllers\GaleriController::class, 'index'])->name('galeri.index');
-    Route::post('/{type}/{id}/galeri/store', [App\Http\Controllers\GaleriController::class, 'store'])->name('galeri.store');
-    Route::delete('/{type}/{id}/galeri/destroy/{kd_galeri}', [App\Http\Controllers\GaleriController::class, 'destroy'])->name('galeri.destroy');
+    Route::get('tiket/{type}/{id}/galeri', [App\Http\Controllers\GaleriController::class, 'index'])->name('galeri.index');
+    Route::post('tiket/{type}/{id}/galeri/store', [App\Http\Controllers\GaleriController::class, 'store'])->name('galeri.store');
+    Route::delete('tiket/{type}/{id}/galeri/destroy/{kd_galeri}', [App\Http\Controllers\GaleriController::class, 'destroy'])->name('galeri.destroy');
 
     ## Pesanan Detail
-    Route::get('pesanan/{pesanan}/detail', [App\Http\Controllers\PesananController::class, 'detail'])->name('pesanan.detail');
+    Route::post('tiket/pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'store'])->name('pesanan.barang.store');
+    Route::put('tiket/pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'update'])->name('pesanan.barang.update');
+    Route::delete('tiket/pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'destroy'])->name('pesanan.barang.destroy');
 
-    Route::post('pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'store'])->name('pesanan.barang.store');
-    Route::put('pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'update'])->name('pesanan.barang.update');
-    Route::delete('pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'destroy'])->name('pesanan.barang.destroy');
+    Route::post('tiket/pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'store'])->name('pesanan.jasa.store');
+    Route::put('tiket/pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'update'])->name('pesanan.jasa.update');
+    Route::delete('tiket/pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'destroy'])->name('pesanan.jasa.destroy');
 
-    Route::post('pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'store'])->name('pesanan.jasa.store');
-    Route::put('pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'update'])->name('pesanan.jasa.update');
-    Route::delete('pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'destroy'])->name('pesanan.jasa.destroy');
-
-    Route::resource('pesanan/{pesanan}/progress', App\Http\Controllers\PesananProgressController::class);
+    Route::resource('tiket/{pesanan}/progress', App\Http\Controllers\PesananProgressController::class);
 
     ## Agenda
     Route::get('agenda/fetch', [App\Http\Controllers\AgendaController::class, 'fetch'])->name('fetch');

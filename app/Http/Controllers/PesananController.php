@@ -86,7 +86,7 @@ class PesananController extends Controller
                     }
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('pesanan.detail', $row->kd_pesanan) . '" class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>';
+                    $btn = '<a href="' . route('tiket.show', $row->kd_pesanan) . '" class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>';
                     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editBtn"><i class="fas fa-edit"></i></a>';
                     if ($row->status == 0) {
                         $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Batalkan" class="btn btn-danger btn-sm batalkan-btn"><i class="fas fa-times"></i></a>';
@@ -112,7 +112,7 @@ class PesananController extends Controller
             ->get();
 
         $pelanggan = Pelanggan::get()->all();
-        return view('karyawan.pesanan.pesanan', [
+        return view('karyawan.tiket.index', [
             "pesanan" => $pesanan,
             "pelanggan" => $pelanggan,
             "permintaan" => $permintaan
@@ -242,9 +242,9 @@ class PesananController extends Controller
         return response()->json(['success' => 'Data pekerjaan berhasil disimpan.']);
     }
 
-    public function detail($pesanan)
+    public function show($tiket)
     {
-        $pesanan = Pesanan::find($pesanan);
+        $pesanan = Pesanan::find($tiket);
         $surat_perintah = SuratPerintahKerja::where('kd_pesanan', $pesanan->kd_pesanan)->get();
 
         $previousUrl = URL::previous();
@@ -253,7 +253,7 @@ class PesananController extends Controller
         $pattern = '/\/pesanan\/' . $pesananId . '\/.+/';
 
         if (preg_match($pattern, $previousUrl) || $previousUrl == route('login')) {
-            $backUrl = route('pesanan.index');
+            $backUrl = route('tiket.index');
         } else {
             $backUrl = $previousUrl;
         }
@@ -269,7 +269,7 @@ class PesananController extends Controller
             $billing_jasa = InvoiceItem::where('kd_invoice', $billing->kd_invoice)->where('kd_jasa', '!=', null)->get();
         }
 
-        return view('karyawan.pesanan.detail', compact('pesanan', 'billing', 'billing_barang', 'billing_jasa', 'surat_perintah', 'backUrl'));
+        return view('karyawan.tiket.show', compact('pesanan', 'billing', 'billing_barang', 'billing_jasa', 'surat_perintah', 'backUrl'));
     }
 
     public function agenda(Request $request)
@@ -315,19 +315,14 @@ class PesananController extends Controller
         return redirect()->back()->with('success', 'Agenda berhasil dibuat.');
     }
 
-    public function complete($pesanan)
+    public function complete($tiket)
     {
-        $p = Pesanan::find($pesanan);
+        $p = Pesanan::find($tiket);
         $p->status = '1';
         $p->progres = '4';
         $p->save();
 
-        return redirect()->route('pesanan.index')->with('success', 'Pesanan terselesaikan.');
-    }
-
-    public function show(string $id)
-    {
-        //
+        return redirect()->route('tiket.index')->with('success', 'Pesanan terselesaikan.');
     }
 
     public function edit(string $id)
@@ -350,7 +345,7 @@ class PesananController extends Controller
         return response()->json($pesanan);
     }
 
-    public function update(Request $request, Pesanan $pesanan)
+    public function update(Request $request, Pesanan $tiket)
     {
         $validator = Validator::make($request->all(), [
             'progres' => 'sometimes|in:2',
@@ -364,31 +359,31 @@ class PesananController extends Controller
         $message = 'Pesanan diperbarui.';
 
         if ($request->has('progres') && $request->progres == 2) {
-            $pesanan->progres = 2;
+            $tiket->progres = 2;
             $message = 'Pesanan diterima.';
         }
 
         if ($request->has('status') && $request->status == 2) {
-            $pesanan->status = 2;
+            $tiket->status = 2;
             $message = 'Pesanan dibatalkan.';
         }
 
-        $pesanan->save();
+        $tiket->save();
 
         return response()->json(['success' => $message]);
     }
 
-    public function destroy(Pesanan $pesanan)
+    public function destroy(Pesanan $id)
     {
-        $pesananDetail = PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->first();
+        $pesananDetail = PesananDetail::where('kd_pesanan', $id->kd_pesanan)->first();
 
         if ($pesananDetail) {
             PesananBarang::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
             PesananJasa::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
         }
 
-        if (PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)->exists()) {
-            PesananProgress::where('kd_pesanan', $pesanan->kd_pesanan)
+        if (PesananProgress::where('kd_pesanan', $id->kd_pesanan)->exists()) {
+            PesananProgress::where('kd_pesanan', $id->kd_pesanan)
                 ->update(['kd_pesanan' => null]);
         }
 
@@ -396,7 +391,7 @@ class PesananController extends Controller
             $pesananDetail->delete();
         }
 
-        $pesanan->delete();
+        $id->delete();
 
         return response()->json(['success' => 'Pesanan berhasil dihapus.']);
     }

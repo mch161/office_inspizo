@@ -20,7 +20,7 @@
                 <div class="icon">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
-                <a href="{{ route('pesanan.index') }}" class="small-box-footer">Selengkapnya <i
+                <a href="{{ route('tiket.index') }}" class="small-box-footer">Selengkapnya <i
                         class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>

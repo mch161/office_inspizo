@@ -70,22 +70,16 @@ class BuildUserMenu
         $pesananYangBelumDisetujui = $this->getPesananYangBelumDisetujui();
         $suratPerintahBelumSelesai = $this->getSuratPerintahBelumSelesai();
         $event->menu->addAfter('pelanggan', [
-            'key' => 'pesanan',
-            'text' => 'Agenda & Pesanan',
+            'key' => 'tiket',
+            'text' => 'Tiket',
             'icon' => 'fas fa-fw fa-calendar-alt',
             'can' => 'access-karyawan',
             'label' => $pesananYangBelumDisetujui + $suratPerintahBelumSelesai > 0 ? $pesananYangBelumDisetujui + $suratPerintahBelumSelesai : '',
             'label_color' => $pesananYangBelumDisetujui + $suratPerintahBelumSelesai > 0 ? 'danger' : '',
             'submenu' => [
                 [
-                    'text' => 'Agenda',
-                    'icon' => 'fa fas fa-calendar-alt',
-                    'route' => 'agenda.index',
-                    'can' => 'access-karyawan'
-                ],
-                [
-                    'text' => 'Pesanan',
-                    'route' => 'pesanan.index',
+                    'text' => 'Tiket',
+                    'route' => 'tiket.index',
                     'icon' => 'fa fas fa-clipboard-list',
                     'label' => $pesananYangBelumDisetujui > 0 ? $pesananYangBelumDisetujui : '',
                     'label_color' => $pesananYangBelumDisetujui > 0 ? 'danger' : '',
@@ -93,6 +87,12 @@ class BuildUserMenu
                     'active' => [
                         'pesanan/*/*',
                     ],
+                ],
+                [
+                    'text' => 'Kalender',
+                    'icon' => 'fa fas fa-calendar-alt',
+                    'route' => 'agenda.index',
+                    'can' => 'access-karyawan'
                 ],
                 [
                     'text' => 'Surat Perintah',
@@ -119,7 +119,7 @@ class BuildUserMenu
             $lembur = 0;
         }
 
-        $event->menu->addAfter('pesanan', [
+        $event->menu->addAfter('tiket', [
             'text' => 'Presensi',
             'icon' => 'fas fa-fw fa-address-card',
             'can' => 'access-karyawan',

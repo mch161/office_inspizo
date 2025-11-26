@@ -82,8 +82,8 @@
             <div class="card-tools float-end">
                 {{-- Tombol Kembali Dinamis --}}
                 @php
-                    $back_route = ($type === 'pesanan') ? 'pesanan.detail' : 'pekerjaan.show'; 
-                    $back_param = ($type === 'pesanan') ? 'pesanan' : 'pekerjaan';
+                    $back_route = ($type === 'pesanan') ? 'tiket.show' : 'pekerjaan.show'; 
+                    $back_param = ($type === 'pesanan') ? 'tiket' : 'pekerjaan';
                 @endphp
                 <a href="{{ route($back_route, [$back_param => $item->getKey()]) }}" class="btn btn-primary">
                     <i class="fas fa-arrow-left"></i>

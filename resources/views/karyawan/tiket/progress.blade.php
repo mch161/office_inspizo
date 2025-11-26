@@ -104,7 +104,7 @@
     <div class="card-header">
         <h3 class="card-title">Tambah Progress</h3>
         <div class="card-tools float-end">
-            <a href="{{ route('pesanan.detail', $pesanan) }}" class="btn btn-primary">
+            <a href="{{ route('tiket.show', $pesanan) }}" class="btn btn-primary">
                 <i class="fas fa-arrow-left"></i>
                 Kembali
             </a>

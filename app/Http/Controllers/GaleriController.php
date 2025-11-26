@@ -18,7 +18,7 @@ class GaleriController extends Controller
 {
     private $modelMap = [
         // [Model Utama, Model Galeri, 'Primary Key', 'Redirect Route', 'Storage Folder']
-        'pesanan' => [Pesanan::class, PesananGaleri::class, 'kd_pesanan', 'pesanan.detail', 'pesanan'],
+        'pesanan' => [Pesanan::class, PesananGaleri::class, 'kd_pesanan', 'tiket.show', 'pesanan'],
         'pekerjaan' => [Pekerjaan::class, PekerjaanGaleri::class, 'kd_pekerjaan', 'pekerjaan.show', 'pekerjaan'],
     ];
 
@@ -84,7 +84,7 @@ class GaleriController extends Controller
         }
         
         // Pass item generic name, type, storage folder, dan status gabungan
-        return view('karyawan.pesanan.galeri', compact('item', 'galeri', 'type', 'folder', 'is_combined_view'));
+        return view('karyawan.tiket.galeri', compact('item', 'galeri', 'type', 'folder', 'is_combined_view'));
     }
 
     /**

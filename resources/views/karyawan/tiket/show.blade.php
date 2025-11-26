@@ -147,7 +147,7 @@
     </x-adminlte-modal>
     {{-- /jasa modal --}}
     <x-adminlte-modal id="agendaModal" title="Agendakan Pesanan" theme="primary">
-        <form id="agendaForm" method="POST" action="{{ route('pesanan.agenda') }}">
+        <form id="agendaForm" method="POST" action="{{ route('tiket.agenda') }}">
             @csrf
             <input type="hidden" name="kd_pesanan" id="kd_pesanan" value="{{ $pesanan->kd_pesanan }}">
             <label for="title">Nama</label>
@@ -210,7 +210,7 @@
                             <a class="btn btn-warning mr-2 mb-2" data-toggle="modal" data-target="#agendaModal">
                                 <i class="fas fa-calendar-day"></i> Agendakan</a>
                         @endif
-                        <form action="{{ route('pesanan.complete', ['pesanan' => $pesanan->kd_pesanan]) }}" method="POST">
+                        <form action="{{ route('tiket.complete', ['pesanan' => $pesanan->kd_pesanan]) }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Selesaikan</button>
                         </form>
@@ -419,7 +419,7 @@
                     <h3 class="card-title">Subtotal</h3>
                     <div class="card-tools">
                         @if ($pesanan->jenis == 'Quotation')
-                            <a class="btn btn-primary mr-2 mb-2" href="{{ route('pesanan.invoice', $pesanan->kd_pesanan) }}"><i
+                            <a class="btn btn-primary mr-2 mb-2" href="{{ route('tiket.invoice', $pesanan->kd_pesanan) }}"><i
                                     class="fas fa-notebook"></i> Ganti ke Invoice</a>
                         @endif
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

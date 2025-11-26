@@ -67,7 +67,7 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('pesanan.detail', $pesanan->kd_pesanan)}}"
+                            <a href="{{ route('tiket.show', $pesanan->kd_pesanan)}}"
                                 class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>
                         </td>
                     </tr>

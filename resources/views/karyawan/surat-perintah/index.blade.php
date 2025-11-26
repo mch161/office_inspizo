@@ -38,7 +38,7 @@
                                 @endcan
                                 <td>
                                     @if ($item->pesanan)
-                                        <a href="{{ route('pesanan.detail', $item->pesanan->kd_pesanan) }}">
+                                        <a href="{{ route('tiket.show', $item->pesanan->kd_pesanan) }}">
                                             {{ $item->pesanan->deskripsi_pesanan ?? '-' }}
                                         </a>
                                     @elseif ($item->project)
