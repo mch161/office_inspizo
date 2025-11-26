@@ -7,6 +7,7 @@ use App\Models\Barang;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Jasa;
+use App\Models\Pekerjaan;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\PesananBarang;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
-class PesananController extends Controller
+class TiketController extends Controller
 {
     public function index(Request $request)
     {
@@ -86,13 +87,13 @@ class PesananController extends Controller
                     }
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('tiket.show', $row->kd_pesanan) . '" class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>';
+                    $btn = '<a href="' . route('tiket.show', $row->kd_tiket) . '" class="btn btn-sm btn-info view-btn"><i class="fas fa-eye"></i></a>';
                     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editBtn"><i class="fas fa-edit"></i></a>';
                     if ($row->status == 0) {
                         $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Batalkan" class="btn btn-danger btn-sm batalkan-btn"><i class="fas fa-times"></i></a>';
                     }
                     if ($row->status == 2) {
-                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Hapus" class="btn btn-danger btn-sm deleteBtn"><i class="fas fa-trash"></i></a>';
+                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_tiket . '" data-original-title="Hapus" class="btn btn-danger btn-sm deleteBtn"><i class="fas fa-trash"></i></a>';
                     }
                     if ($row->status == 0 && $row->progres == 2) {
                         $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pesanan . '" data-original-title="Agendakan" class="btn btn-warning btn-sm agendaBtn"><i class="fas fa-calendar-day"></i></a>';
@@ -244,7 +245,7 @@ class PesananController extends Controller
 
     public function show($tiket)
     {
-        $pesanan = Pesanan::find($tiket);
+        $pesanan = Pesanan::where('kd_tiket', $tiket)->first();
         $surat_perintah = SuratPerintahKerja::where('kd_pesanan', $pesanan->kd_pesanan)->get();
 
         $previousUrl = URL::previous();
@@ -373,25 +374,17 @@ class PesananController extends Controller
         return response()->json(['success' => $message]);
     }
 
-    public function destroy(Pesanan $id)
+    public function destroy($tiket)
     {
-        $pesananDetail = PesananDetail::where('kd_pesanan', $id->kd_pesanan)->first();
-
-        if ($pesananDetail) {
-            PesananBarang::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
-            PesananJasa::where('kd_pesanan_detail', $pesananDetail->kd_pesanan_detail)->delete();
+        if (Pesanan::where('kd_tiket', $tiket)->exists()) {
+            $pesanan = Pesanan::where('kd_tiket', $tiket)->first();
+            PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->delete();
+            $pesanan->delete();
         }
-
-        if (PesananProgress::where('kd_pesanan', $id->kd_pesanan)->exists()) {
-            PesananProgress::where('kd_pesanan', $id->kd_pesanan)
-                ->update(['kd_pesanan' => null]);
+        if (Pekerjaan::where('kd_tiket', $tiket)->exists()) {
+            Pekerjaan::where('kd_tiket', $tiket)->delete();
         }
-
-        if ($pesananDetail) {
-            $pesananDetail->delete();
-        }
-
-        $id->delete();
+        Tiket::find($tiket)->delete();
 
         return response()->json(['success' => 'Pesanan berhasil dihapus.']);
     }

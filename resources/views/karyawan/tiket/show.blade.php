@@ -1,93 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Detail Pesanan')
+@section('title', 'Detail Tiket')
 
 @section('plugins.Sweetalert2', true)
 @section('plugins.Select2', true)
 
-@section('css')
-    <style>
-        .ticket-progress ul {
-            display: flex;
-            list-style-type: none;
-            padding-left: 0;
-            position: relative;
-        }
-
-        .ticket-progress li {
-            flex: 1;
-            position: relative;
-            text-align: center;
-            padding-top: 40px;
-        }
-
-        .ticket-progress li::before {
-            content: '';
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #ccc;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-        }
-
-        .ticket-progress li::after {
-            content: '';
-            width: 100%;
-            height: 2px;
-            background-color: #ccc;
-            position: absolute;
-            top: 9px;
-            left: -50%;
-            z-index: 1;
-        }
-
-        .ticket-progress li:first-child::after {
-            content: none;
-        }
-
-        .ticket-progress li.completed::before {
-            background-color: #28a745;
-        }
-
-        .ticket-progress li.completed::after {
-            background-color: #28a745;
-        }
-
-        .ticket-progress li.active::before {
-            background-color: #007bff;
-        }
-
-        .ticket-progress li.active::after {
-            background-color: #007bff;
-        }
-
-        .step-label {
-            font-weight: bold;
-        }
-
-        .step-info {
-            font-size: 0.9em;
-            color: #666;
-            padding: 5px 10px;
-        }
-
-        .edit-mode-1,
-        .edit-mode-2,
-        .edit-mode-3,
-        .edit-mode-4 {
-            border: 1px solid #ced4da;
-            border-radius: .25rem;
-            width: 100px;
-        }
-    </style>
-@endsection
-
 @section('content_header')
-<h1><i class="fas fa-shopping-cart"></i> Detail Pesanan #{{ $pesanan->kd_pesanan }}</h1>
+<h1><i class="fas fa-shopping-cart"></i> Detail Tiket #{{ $pesanan->kd_pesanan }}</h1>
 @stop
 
 @section('content')

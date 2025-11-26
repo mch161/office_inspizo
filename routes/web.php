@@ -46,12 +46,12 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('jurnalku', [App\Http\Controllers\JurnalController::class, 'jurnalku'])->name('jurnalku');
 
     ## Pesanan
-    Route::get('tiket/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('tiket.permintaan');
-    Route::get('tiket/invoice/{kd_pesanan}', [App\Http\Controllers\PesananController::class, 'migrateToInvoice'])->name('tiket.invoice');
-    Route::resource('tiket', App\Http\Controllers\PesananController::class);
-    Route::post('tiket/agenda', [App\Http\Controllers\PesananController::class, 'agenda'])->name('tiket.agenda');
-    Route::post('tiket/{pesanan}/complete', [App\Http\Controllers\PesananController::class, 'complete'])->name('tiket.complete');
-    Route::get('tiket/permintaan', [App\Http\Controllers\PesananController::class, 'permintaan'])->name('tiket.permintaan');
+    Route::get('tiket/permintaan', [App\Http\Controllers\TiketController::class, 'permintaan'])->name('tiket.permintaan');
+    Route::get('tiket/invoice/{kd_pesanan}', [App\Http\Controllers\TiketController::class, 'migrateToInvoice'])->name('tiket.invoice');
+    Route::resource('tiket', App\Http\Controllers\TiketController::class);
+    Route::post('tiket/agenda', [App\Http\Controllers\TiketController::class, 'agenda'])->name('tiket.agenda');
+    Route::post('tiket/{pesanan}/complete', [App\Http\Controllers\TiketController::class, 'complete'])->name('tiket.complete');
+    Route::get('tiket/permintaan', [App\Http\Controllers\TiketController::class, 'permintaan'])->name('tiket.permintaan');
 
     ## Signature
     Route::get('tiket/{type}/{id}/signature', [App\Http\Controllers\SignatureController::class, 'index'])->name('signature.index');
