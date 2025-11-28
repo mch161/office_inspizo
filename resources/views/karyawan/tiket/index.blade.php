@@ -161,16 +161,17 @@
             processing: true,
             serverSide: true,
             scrollX: true,
+            order: [[5, "asc"]],
             ajax: "{{ route('tiket.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'nama_pelanggan', name: 'pesanan.nama_pelanggan' },
-                { data: 'deskripsi_pesanan', name: 'pesanan.deskripsi_pesanan' },
-                { data: 'prioritas', name: 'pesanan.prioritas' },
+                { data: 'nama_pelanggan', name: 'pelanggan.nama_pelanggan' },
+                { data: 'deskripsi_pesanan', name: 'tiket.deskripsi' },
+                { data: 'prioritas', name: 'tiket.prioritas' },
                 { data: 'jenis', name: 'pesanan.jenis' },
-                { data: 'tanggal', name: 'pesanan.tanggal' },
-                { data: 'via', name: 'pesanan.via' },
-                { data: 'status', name: 'pesanan.status' },
+                { data: 'tanggal', name: 'tiket.tanggal' },
+                { data: 'via', name: 'tiket.via' },
+                { data: 'status', name: 'pesanan.progress' },
                 { data: 'action', name: 'action', orderable: false, searchable: false },
             ]
         });

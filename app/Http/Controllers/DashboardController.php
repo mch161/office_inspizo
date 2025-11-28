@@ -70,10 +70,11 @@ class DashboardController extends Controller
         ], array_fill_keys(range(0, 4), 0));
 
         $pesananData = Pesanan::select(
-            DB::raw('count(kd_pesanan) as total'),
-            DB::raw("SUBSTR(tanggal, 4, 7) as bulan")
+            DB::raw('count(pesanan.kd_pesanan) as total'),
+            DB::raw("SUBSTR(tiket.tanggal, 4, 7) as bulan")
         )
-            ->where(DB::raw("SUBSTR(tanggal, 4, 7)"), '>=', Carbon::now()->subMonths(5)->startOfMonth()->format('m/Y'))
+            ->join('tiket', 'tiket.kd_tiket', '=', 'pesanan.kd_tiket')
+            ->where(DB::raw("STR_TO_DATE(tiket.tanggal, '%d/%m/%Y')"), '>=', Carbon::now()->subMonths(5)->startOfMonth()->format('Y-m-d'))
             ->groupBy('bulan')
             ->orderBy('bulan', 'asc')
             ->pluck('total', 'bulan');
