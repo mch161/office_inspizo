@@ -17,7 +17,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Detail Pekerjaan</h3>
                     <div class="card-tools">
-                        <a href="{{ route('pekerjaan.index') }}" class="btn btn-primary"><i class="fas fa-arrow-left"></i>
+                        <a href="{{ $backUrl }}" class="btn btn-primary"><i class="fas fa-arrow-left"></i>
                             Kembali</a>
                     </div>
                 </div>

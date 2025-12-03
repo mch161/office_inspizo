@@ -140,7 +140,19 @@ class PekerjaanController extends Controller
                 ->make(true);
         }
         $pekerjaan = Pekerjaan::with('karyawans')->find($id);
-        return view('karyawan.manajemen-pekerjaan.pekerjaan.show', compact('pekerjaan'));
+
+        $Id = $pekerjaan->kd_tiket;
+        $previousUrl = url()->previous();
+
+        $pattern = '/\/tiket\/' . $Id . '\/.+/';
+
+        if (preg_match($pattern, $previousUrl) || $previousUrl == route('login')) {
+            $backUrl = route('pekerjaan.index');
+        } else {
+            $backUrl = $previousUrl;
+        }
+
+        return view('karyawan.manajemen-pekerjaan.pekerjaan.show', compact('pekerjaan', 'backUrl'));
     }
 
     public function destroyBarang($id)
