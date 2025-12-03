@@ -223,7 +223,7 @@ class TiketController extends Controller
         $previousUrl = URL::previous();
         $pesananId = $pesanan->kd_pesanan;
 
-        $pattern = '/\/pesanan\/' . $pesananId . '\/.+/';
+        $pattern = '/\/tiket\/' . $pesananId . '\/.+/';
 
         if (preg_match($pattern, $previousUrl) || $previousUrl == route('login')) {
             $backUrl = route('tiket.index');
