@@ -16,8 +16,8 @@ class SignatureController extends Controller
      * Format: [Model Class, 'Model DB Key', 'Route Param Name', 'Redirect Route Name', 'TTD Column/Relation']
      */
     private $modelMap = [
-        'pesanan' => [Pesanan::class, 'kd_pesanan', 'tiket', 'tiket.show', 'relation:signature'], 
-        
+        'pesanan' => [Pesanan::class, 'kd_pesanan', 'tiket', 'tiket.show', 'relation:signature'],
+
         'pekerjaan' => [Pekerjaan::class, 'kd_pekerjaan', 'pekerjaan', 'pekerjaan.show', 'column:ttd_pelanggan'],
     ];
 
@@ -37,26 +37,26 @@ class SignatureController extends Controller
         $map = $this->modelMap[$type];
         $modelClass = $map[0];
         $dbKeyName = $map[1];
-        $ttdSource = $map[4]; 
-        
+        $ttdSource = $map[4];
+
         $item = $modelClass::find($id);
 
         $previousUrl = URL::previous();
-        
+
         if (!$item) {
-            return redirect()->back()->with('error', ucfirst($type) . ' tidak ditemukan.');
+            return view('error', ['message' => ucfirst($type) . ' tidak ditemukan.']);
         }
 
         $signature = null;
-        
+
         if ($ttdSource === 'relation:signature') {
             $signature = Signature::where($dbKeyName, $id)->first();
         } else if ($ttdSource === 'column:ttd_pelanggan') {
             if ($item->ttd_pelanggan) {
-                 $signature = (object) ['signature' => $item->ttd_pelanggan];
+                $signature = (object) ['signature' => $item->ttd_pelanggan];
             }
         }
-        
+
         return view('karyawan.tiket.signature', compact('item', 'signature', 'type', 'map', 'previousUrl'));
     }
 
@@ -92,9 +92,9 @@ class SignatureController extends Controller
         $item = $modelClass::find($id);
 
         if (!$item) {
-             return redirect()->back()->with('error', ucfirst($type) . ' tidak ditemukan.');
+            return redirect()->back()->with('error', ucfirst($type) . ' tidak ditemukan.');
         }
-        
+
         $signedData = $request->signed;
 
         if ($ttdSource === 'relation:signature') {
@@ -103,13 +103,13 @@ class SignatureController extends Controller
                 $dbKeyName => $id,
                 'signature' => $signedData,
             ]);
-            
+
         } else if ($ttdSource === 'column:ttd_pelanggan') {
             $item->update([
                 'ttd_pelanggan' => $signedData,
             ]);
         }
-        
+
         return redirect()->route($redirectRoute, [$routeParamName => $id])->with('success', 'Signature berhasil disimpan.');
     }
 }
