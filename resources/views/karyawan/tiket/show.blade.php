@@ -192,7 +192,7 @@
                                                 value="{{ $barang->jumlah }}">
                                         </td>
                                     </form>
-                                    <td>{{ number_format($barang->jumlah * ($barang->harga ?? $barang->barang->harga), 2, ',', '.') }}
+                                    <td>{{ number_format($barang->subtotal , 2, ',', '.') }}
                                     </td>
                                     <td>
                                         <form
@@ -269,7 +269,7 @@
         </div>
     </div>
 
-    <div class="row mb-3">
+    <div class="row">
         <div class="col-md-12">
             <div class="card mt-4">
                 <div class="card-header">
@@ -287,7 +287,7 @@
                         <span class="font-weight-bold">Subtotal Jasa:</span> Rp.
                         {{ number_format($billing_jasa->sum('subtotal'), 2, ',', '.') }}<br>
                         <span class="font-weight-bold">Total:</span> Rp.
-                        {{ number_format($billing_barang->sum('subtotal') + $billing_barang->sum('subtotal'), 2, ',', '.') }}
+                        {{ number_format($billing_barang->sum('subtotal') + $billing_jasa->sum('subtotal'), 2, ',', '.') }}
                     </p>
                 </div>
             </div>

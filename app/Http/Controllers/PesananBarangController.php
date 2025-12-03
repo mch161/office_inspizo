@@ -68,7 +68,7 @@ class PesananBarangController extends Controller
                 'kd_quotation' => $id,
                 'kd_barang' => $request->kd_barang,
                 'jumlah' => $request->jumlah,
-                'harga' => $barang->harga_jual,
+                'harga' => $barang->harga_jual ?? 0,
                 'subtotal' => $barang->harga_jual * $request->jumlah
             ]);
         } elseif ($jenis == 'Invoice') {
@@ -89,7 +89,7 @@ class PesananBarangController extends Controller
                 'kd_invoice' => $id,
                 'kd_barang' => $request->kd_barang,
                 'jumlah' => $request->jumlah,
-                'harga' => $barang->harga_jual,
+                'harga' => $barang->harga_jual ?? 0,
                 'subtotal' => $barang->harga_jual * $request->jumlah
             ]);
         }
@@ -128,14 +128,14 @@ class PesananBarangController extends Controller
                 'stok' => Barang::where('kd_barang', $request->kd_barang)->first()->stok + (QuotationItem::find($id)->jumlah - $request->jumlah)
             ]);
 
-            $barang->subtotal = $request->harga_jual * $request->jumlah;
+            $barang->subtotal = $request->harga * $request->jumlah;
             $barang->save();
         } elseif ($jenis == 'Invoice') {
             Barang::where('kd_barang', $request->kd_barang)->update([
                 'stok' => Barang::where('kd_barang', $request->kd_barang)->first()->stok + (InvoiceItem::find($id)->jumlah - $request->jumlah)
             ]);
 
-            $barang->subtotal = $request->harga_jual * $request->jumlah;
+            $barang->subtotal = $request->harga * $request->jumlah;
             $barang->save();
         }
 
