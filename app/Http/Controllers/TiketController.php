@@ -3,16 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agenda;
-use App\Models\Barang;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\Jasa;
 use App\Models\Pekerjaan;
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
-use App\Models\PesananBarang;
-use App\Models\PesananDetail;
-use App\Models\PesananJasa;
 use App\Models\PesananProgress;
 use App\Models\Quotation;
 use App\Models\QuotationItem;
@@ -21,6 +16,7 @@ use App\Models\Tiket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -30,17 +26,18 @@ class TiketController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $pesanan = Pesanan::where('progres', '>=', 2)
-                ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
-                ->get();
+            $query = Pesanan::select('pesanan.*')
+                ->join('pelanggan', 'pelanggan.kd_pelanggan', '=', 'pesanan.kd_pelanggan')
+                ->join('tiket', 'tiket.kd_tiket', '=', 'pesanan.kd_tiket')
+                ->where('pesanan.progres', '>=', 2);
 
-            return DataTables::of($pesanan)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('nama_pelanggan', function ($row) {
                     return $row->pelanggan->nama_pelanggan;
                 })
                 ->addColumn('deskripsi_pesanan', function ($row) {
-                    return $row->deskripsi_pesanan;
+                    return $row->tiket->deskripsi;
                 })
                 ->addColumn('prioritas', function ($row) {
                     if ($row->tiket == null) {
@@ -63,7 +60,10 @@ class TiketController extends Controller
                     return $row->tiket->jenis;
                 })
                 ->addColumn('tanggal', function ($row) {
-                    return $row->tanggal;
+                    return $row->tiket->tanggal;
+                })
+                ->orderColumn('tanggal', function ($query, $order) {
+                    $query->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') $order");
                 })
                 ->addColumn('via', function ($row) {
                     if ($row->tiket == null) {
@@ -104,36 +104,30 @@ class TiketController extends Controller
                 ->make(true);
         }
         $pesanan = Pesanan::where('progres', '>=', 2)
-            ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
-            ->get();
-
-        $permintaan = Pesanan::where('progres', '1')
-            ->where('status', '!=', '1')
-            ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
             ->get();
 
         $pelanggan = Pelanggan::get()->all();
         return view('karyawan.tiket.index', [
             "pesanan" => $pesanan,
             "pelanggan" => $pelanggan,
-            "permintaan" => $permintaan
         ]);
     }
 
     public function permintaan(Request $request)
     {
         if ($request->ajax()) {
-            $permintaan = Pesanan::where('progres', '1')
-                ->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') DESC")
-                ->get();
+            $query = Pesanan::select('pesanan.*')
+                ->join('pelanggan', 'pelanggan.kd_pelanggan', '=', 'pesanan.kd_pelanggan')
+                ->join('tiket', 'tiket.kd_tiket', '=', 'pesanan.kd_tiket')
+                ->where('pesanan.progres', 1);
 
-            return DataTables::of($permintaan)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('nama_pelanggan', function ($row) {
                     return $row->pelanggan->nama_pelanggan;
                 })
                 ->addColumn('deskripsi_pesanan', function ($row) {
-                    return $row->deskripsi_pesanan;
+                    return $row->tiket->deskripsi;
                 })
                 ->addColumn('prioritas', function ($row) {
                     if ($row->tiket->prioritas == 1) {
@@ -150,7 +144,7 @@ class TiketController extends Controller
                     return $row->tiket->jenis;
                 })
                 ->addColumn('tanggal', function ($row) {
-                    return $row->tanggal;
+                    return $row->tiket->tanggal;
                 })
                 ->addColumn('via', function ($row) {
                     return $row->tiket->via;
@@ -215,29 +209,6 @@ class TiketController extends Controller
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'via' => $request->via,
             ]);
-
-            $pesanan = Pesanan::create([
-                'kd_pelanggan' => $request->kd_pelanggan,
-                'deskripsi_pesanan' => $request->deskripsi_pesanan,
-                'tanggal' => $request->tanggal,
-                'progres' => '2',
-                'jenis' => 'Quotation',
-                'kd_tiket' => $tiket->kd_tiket,
-                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
-            ]);
-
-            PesananDetail::create([
-                'kd_pelanggan' => $request->kd_pelanggan,
-                'kd_pesanan' => $pesanan->kd_pesanan,
-                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
-            ]);
-
-            Quotation::create([
-                'kd_tiket' => $tiket->kd_tiket,
-                'kd_pelanggan' => $request->kd_pelanggan,
-                'tanggal' => $request->tanggal,
-                'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
-            ]);
         }
 
         return response()->json(['success' => 'Data pekerjaan berhasil disimpan.']);
@@ -245,8 +216,9 @@ class TiketController extends Controller
 
     public function show($tiket)
     {
-        $pesanan = Pesanan::where('kd_tiket', $tiket)->first();
-        $surat_perintah = SuratPerintahKerja::where('kd_pesanan', $pesanan->kd_pesanan)->get();
+        $tiket = Tiket::find($tiket);
+        $pesanan = Pesanan::where('kd_tiket', $tiket->kd_tiket)->first();
+        // $surat_perintah = SuratPerintahKerja::where('kd_pesanan', $pesanan->kd_pesanan)->get();
 
         $previousUrl = URL::previous();
         $pesananId = $pesanan->kd_pesanan;
@@ -268,9 +240,20 @@ class TiketController extends Controller
             $billing = Invoice::where('kd_quotation', $quotation->kd_quotation)->first();
             $billing_barang = InvoiceItem::where('kd_invoice', $billing->kd_invoice)->where('kd_barang', '!=', null)->get();
             $billing_jasa = InvoiceItem::where('kd_invoice', $billing->kd_invoice)->where('kd_jasa', '!=', null)->get();
+        } else {
+            Quotation::create([
+                'kd_tiket' => $pesanan->kd_tiket,
+                'dibuat_oleh' => $pesanan->dibuat_oleh
+            ]);
+            $pesanan->update([
+                'jenis' => 'Quotation'
+            ]);
+            $billing = Quotation::where('kd_tiket', $pesanan->kd_tiket)->first();
+            $billing_barang = QuotationItem::where('kd_quotation', $billing->kd_quotation)->where('kd_barang', '!=', null)->get();
+            $billing_jasa = QuotationItem::where('kd_quotation', $billing->kd_quotation)->where('kd_jasa', '!=', null)->get();
         }
 
-        return view('karyawan.tiket.show', compact('pesanan', 'billing', 'billing_barang', 'billing_jasa', 'surat_perintah', 'backUrl'));
+        return view('karyawan.tiket.show', compact('tiket', 'pesanan', 'billing', 'billing_barang', 'billing_jasa', 'backUrl'));
     }
 
     public function agenda(Request $request)
@@ -378,7 +361,6 @@ class TiketController extends Controller
     {
         if (Pesanan::where('kd_tiket', $tiket)->exists()) {
             $pesanan = Pesanan::where('kd_tiket', $tiket)->first();
-            PesananDetail::where('kd_pesanan', $pesanan->kd_pesanan)->delete();
             $pesanan->delete();
         }
         if (Pekerjaan::where('kd_tiket', $tiket)->exists()) {

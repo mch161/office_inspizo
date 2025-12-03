@@ -41,10 +41,6 @@
                         <h5>Signature Pad - {{ ucfirst($type) }}</h5>
                     </div>
                     <div class="card-body">
-                        @php
-                            $redirectRoute = $map[3];
-                            $keyName = $map[2];
-                        @endphp
                         
                         <form method="POST" id="form"
                             action="{{ route('signature.store', ['type' => $type, 'id' => $item->getKey()]) }}">
@@ -66,7 +62,7 @@
                         </form>
                         <button form="form" type="submit" class="btn btn-success">Simpan</button>
                         <a class="btn btn-primary"
-                            href="{{ route($redirectRoute, [$keyName => $item->getKey()]) }}"><i></i>Batal</a>
+                            href="{{ $previousUrl }}"><i></i>Batal</a>
                     </div>
                 </div>
             </div>

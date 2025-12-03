@@ -20,6 +20,9 @@ class PekerjaanController extends Controller
     {
         if ($request->ajax()) {
             $data = Pekerjaan::with(['tiket', 'pelanggan', 'karyawan'])->latest()->get();
+            if ($request->has('kd_tiket')) {
+                $data = $data->where('kd_tiket', $request->kd_tiket);
+            }
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('pelanggan', function ($row) {
@@ -48,13 +51,22 @@ class PekerjaanController extends Controller
                     $badgeColor = $statusMap[$row->status] ?? 'warning';
                     return '<span class="badge badge-' . $badgeColor . '">' . $row->status . '</span>';
                 })
+                ->addColumn('signature_status', function ($row) {
+                    $url = route('signature.index', ['type' => 'pekerjaan', 'id' => $row->kd_pekerjaan]);
+
+                    if ($row->ttd_pelanggan) {
+                        return '<a href="' . $url . '" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Ada</a>';
+                    } else {
+                        return '<a href="' . $url . '" class="btn btn-warning btn-sm"><i class="fas fa-file-signature"></i> Minta</a>';
+                    }
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('pekerjaan.show', $row->kd_pekerjaan) . '" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="View" class="btn btn-info btn-sm viewPekerjaan"><i class="fa fa-eye"></i></a>';
                     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editPekerjaan"><i class="fa fa-edit"></i></a>';
                     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="Delete" class="btn btn-danger btn-sm deletePekerjaan"><i class="fa fa-trash"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['signature_status', 'status', 'action'])
                 ->make(true);
         }
 

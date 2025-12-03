@@ -6,6 +6,7 @@ use App\Models\Pesanan;
 use App\Models\Pekerjaan;
 use App\Models\Signature;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class SignatureController extends Controller
@@ -39,6 +40,8 @@ class SignatureController extends Controller
         $ttdSource = $map[4]; 
         
         $item = $modelClass::find($id);
+
+        $previousUrl = URL::previous();
         
         if (!$item) {
             return redirect()->back()->with('error', ucfirst($type) . ' tidak ditemukan.');
@@ -54,8 +57,7 @@ class SignatureController extends Controller
             }
         }
         
-        // Pass generic variable names and map data to the view
-        return view('karyawan.tiket.signature', compact('item', 'signature', 'type', 'map'));
+        return view('karyawan.tiket.signature', compact('item', 'signature', 'type', 'map', 'previousUrl'));
     }
 
     /**

@@ -63,10 +63,12 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::delete('tiket/{type}/{id}/galeri/destroy/{kd_galeri}', [App\Http\Controllers\GaleriController::class, 'destroy'])->name('galeri.destroy');
 
     ## Pesanan Detail
+    Route::get('tiket/pesanan/barang', [App\Http\Controllers\PesananBarangController::class, 'index'])->name('pesanan.barang.index');
     Route::post('tiket/pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'store'])->name('pesanan.barang.store');
     Route::put('tiket/pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'update'])->name('pesanan.barang.update');
     Route::delete('tiket/pesanan/barang/{jenis}/{id}', [App\Http\Controllers\PesananBarangController::class, 'destroy'])->name('pesanan.barang.destroy');
 
+    Route::get('tiket/pesanan/jasa', [App\Http\Controllers\PesananJasaController::class, 'index'])->name('pesanan.jasa.index');
     Route::post('tiket/pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'store'])->name('pesanan.jasa.store');
     Route::put('tiket/pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'update'])->name('pesanan.jasa.update');
     Route::delete('tiket/pesanan/jasa/{jenis}/{id}', [App\Http\Controllers\PesananJasaController::class, 'destroy'])->name('pesanan.jasa.destroy');
