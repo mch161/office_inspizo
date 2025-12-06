@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
-use App\Models\Pekerjaan; 
+use App\Models\Pekerjaan;
 use App\Models\PesananGaleri;
 use App\Models\PekerjaanGaleri;
 use App\Models\Tiket; // Diasumsikan model Tiket tersedia
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Collection;
@@ -25,8 +26,12 @@ class GaleriController extends Controller
     /**
      * Menampilkan galeri berdasarkan tipe dan ID dengan logika penggabungan.
      */
-    public function index($type, $id)
+    public function index($type, $id, $id2 = null)
     {
+        if ($id2) {
+            $type = $id;
+            $id = $id2;
+        }
         if (!isset($this->modelMap[$type])) {
             abort(404, 'Tipe galeri tidak valid.');
         }
@@ -38,6 +43,11 @@ class GaleriController extends Controller
         $folder = $map[4];
 
         $item = $mainModel::find($id);
+
+        $currentUrl = url()->current();
+        $normalizedUrl = rtrim($currentUrl, '/');
+
+        $backUrl = dirname($normalizedUrl);
 
         if (!$item) {
             abort(404, ucfirst($type) . ' tidak ditemukan.');
@@ -52,16 +62,16 @@ class GaleriController extends Controller
 
             // 1. Dapatkan KD Tiket dari Pesanan (Asumsi Pesanan memiliki relasi/kolom ke Tiket)
             // Kebutuhan: Pesanan -> kd_tiket
-            $kd_tiket = $item->kd_tiket; 
+            $kd_tiket = $item->kd_tiket;
             $kd_pesanan = $id;
             $is_combined_view = true;
 
             // 2. Ambil galeri dari tabel pesanan_galeri (miliknya sendiri)
             $galeri_pesanan = PesananGaleri::where('kd_pesanan', $id)->get();
-            
+
             // 3. Cari semua Pekerjaan yang memiliki KD Tiket yang sama
             $kd_pekerjaan_list = Pekerjaan::where('kd_tiket', $kd_tiket)->pluck('kd_pekerjaan');
-            
+
             // 4. Ambil galeri dari tabel pekerjaan_galeri berdasarkan list kd_pekerjaan
             if ($kd_pekerjaan_list->isNotEmpty()) {
                 $galeri_pekerjaan_terkait = PekerjaanGaleri::whereIn('kd_pekerjaan', $kd_pekerjaan_list)->get();
@@ -71,20 +81,20 @@ class GaleriController extends Controller
 
             // 5. Gabungkan kedua koleksi
             $galeri = $galeri_pesanan->merge($galeri_pekerjaan_terkait)->sortByDesc('created_at');
-            
+
         } elseif ($type === 'pekerjaan') {
             // Logika Normal untuk Pekerjaan: Hanya ambil dari pekerjaan_galeri berdasarkan kd_pekerjaan
             $galeri = PekerjaanGaleri::where('kd_pekerjaan', $id)->get();
-            
+
             // Dapatkan kd_pesanan untuk path folder jika dibutuhkan (Asumsi Pekerjaan->kd_tiket->kd_pesanan)
             $kd_tiket = $item->kd_tiket;
             // Jika Anda memiliki relasi Pekerjaan -> Tiket -> Pesanan, Anda bisa mendapatkan kd_pesanan di sini
             // Untuk kesederhanaan, saya akan mengabaikan path dinamis gambar dari pekerjaan_galeri, 
             // karena galeri pekerjaan akan menggunakan folder 'pekerjaan'.
         }
-        
+
         // Pass item generic name, type, storage folder, dan status gabungan
-        return view('karyawan.tiket.galeri', compact('item', 'galeri', 'type', 'folder', 'is_combined_view'));
+        return view('karyawan.tiket.galeri', compact('item', 'galeri', 'type', 'folder', 'is_combined_view', 'backUrl'));
     }
 
     /**
@@ -110,30 +120,30 @@ class GaleriController extends Controller
         $galleryModel = $map[1];
         $keyName = $map[2];
         $folder = $map[4];
-        
+
         $item = $mainModel::find($id);
         if (!$item) {
             return redirect()->back()->with('error', ucfirst($type) . ' tidak ditemukan.');
         }
 
         $galeri = null;
-        
+
         foreach ($request->file('foto') as $file) {
             $imageName = $file->getClientOriginalName();
             $i = 1;
             // Folder penyimpanan menggunakan nama folder dinamis
-            $storage_path = 'storage/images/' . $folder . '/' . $id; 
-            
+            $storage_path = 'storage/images/' . $folder . '/' . $id;
+
             while (file_exists(public_path($storage_path . '/' . $imageName))) {
                 $imageName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . "({$i})" . "." . $file->getClientOriginalExtension();
                 $i++;
             }
-            
+
             $path = public_path($storage_path);
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);
             }
-            
+
             $img = Image::read($file->path());
             $img->scale(width: 480)->save($path . '/' . $imageName);
 
@@ -169,7 +179,7 @@ class GaleriController extends Controller
         $folder = $map[4];
 
         $galeri = $galleryModel::find($kd_galeri);
-        
+
         if (!$galeri) {
             return redirect()->back()->with('error', 'Foto tidak ditemukan.');
         }

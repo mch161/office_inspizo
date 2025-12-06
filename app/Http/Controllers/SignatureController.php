@@ -28,8 +28,12 @@ class SignatureController extends Controller
      * @param int $id ID item.
      * @return \Illuminate\View\View
      */
-    public function index($type, $id)
+    public function index($type, $id, $id2 = null)
     {
+        if ($id2) {
+            $type = $id;
+            $id = $id2;
+        }
         if (!isset($this->modelMap[$type])) {
             abort(404, 'Tipe model tidak valid.');
         }
@@ -41,7 +45,10 @@ class SignatureController extends Controller
 
         $item = $modelClass::find($id);
 
-        $previousUrl = URL::previous();
+        $currentUrl = url()->current();
+        $normalizedUrl = rtrim($currentUrl, '/');
+
+        $backUrl = dirname($normalizedUrl);
 
         if (!$item) {
             return view('error', ['message' => ucfirst($type) . ' tidak ditemukan.']);
@@ -57,7 +64,7 @@ class SignatureController extends Controller
             }
         }
 
-        return view('karyawan.tiket.signature', compact('item', 'signature', 'type', 'map', 'previousUrl'));
+        return view('karyawan.tiket.signature', compact('item', 'signature', 'type', 'map', 'backUrl'));
     }
 
     /**

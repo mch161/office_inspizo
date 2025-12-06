@@ -144,7 +144,11 @@ class PekerjaanController extends Controller
                 ->make(true);
         }
 
+        $signRoute = route('signature.index', ['type' => 'pekerjaan', 'id' => $id]);
+        $galeriRoute = route('galeri.index', ['type' => 'pekerjaan', 'id' => $id]);
         if ($request->routeIs('tiket.pekerjaan.show')) {
+            $signRoute = route('tiket.signature.index', ['pesanan' => $id, 'type' => 'pekerjaan', 'id' => $id2]);
+            $galeriRoute = route('tiket.galeri.index', [ 'pesanan' => $id, 'type' => 'pekerjaan', 'id' => $id2]);
             $id = $id2;
         }
         $pekerjaan = Pekerjaan::with('karyawans')->find($id);
@@ -158,7 +162,7 @@ class PekerjaanController extends Controller
             $backUrl = dirname($normalizedUrl);
         }
 
-        return view('karyawan.manajemen-pekerjaan.pekerjaan.show', compact('pekerjaan', 'backUrl'));
+        return view('karyawan.manajemen-pekerjaan.pekerjaan.show', compact('pekerjaan', 'backUrl' , 'signRoute', 'galeriRoute'));
     }
 
     public function destroyBarang($id)

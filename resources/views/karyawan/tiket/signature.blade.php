@@ -62,7 +62,7 @@
                         </form>
                         <button form="form" type="submit" class="btn btn-success">Simpan</button>
                         <a class="btn btn-primary"
-                            href="{{ $previousUrl }}"><i></i>Batal</a>
+                            href="{{ $backUrl }}"><i></i>Batal</a>
                     </div>
                 </div>
             </div>

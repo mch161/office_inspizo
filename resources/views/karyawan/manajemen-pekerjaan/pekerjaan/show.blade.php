@@ -62,9 +62,9 @@
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('galeri.index', ['type' => 'pekerjaan', 'id' => $pekerjaan->kd_pekerjaan]) }}"
+                    <a href="{{ $galeriRoute }}"
                         class="btn btn-primary mr-2 mb-2"><i class="fas fa-images"></i> Galeri</a>
-                    <a href="{{ route('signature.index', ['type' => 'pekerjaan', 'id' => $pekerjaan->kd_pekerjaan]) }}"
+                    <a href="{{ $signRoute }}"
                         class="btn btn-primary mr-2 mb-2">
                         <i class="fas fa-signature"></i> Signature
                     </a>

@@ -54,13 +54,13 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('tiket/permintaan', [App\Http\Controllers\TiketController::class, 'permintaan'])->name('tiket.permintaan');
 
     ## Signature
-    Route::get('tiket/{type}/{id}/signature', [App\Http\Controllers\SignatureController::class, 'index'])->name('signature.index');
-    Route::post('tiket/{type}/{id}/signature/store', [App\Http\Controllers\SignatureController::class, 'store'])->name('signature.store');
+    Route::get('{type}/{id}/signature', [App\Http\Controllers\SignatureController::class, 'index'])->name('signature.index');
+    Route::post('{type}/{id}/signature/store', [App\Http\Controllers\SignatureController::class, 'store'])->name('signature.store');
 
     ## Galeri
-    Route::get('tiket/{type}/{id}/galeri', [App\Http\Controllers\GaleriController::class, 'index'])->name('galeri.index');
-    Route::post('tiket/{type}/{id}/galeri/store', [App\Http\Controllers\GaleriController::class, 'store'])->name('galeri.store');
-    Route::delete('tiket/{type}/{id}/galeri/destroy/{kd_galeri}', [App\Http\Controllers\GaleriController::class, 'destroy'])->name('galeri.destroy');
+    Route::get('{type}/{id}/galeri', [App\Http\Controllers\GaleriController::class, 'index'])->name('galeri.index');
+    Route::post('{type}/{id}/galeri/store', [App\Http\Controllers\GaleriController::class, 'store'])->name('galeri.store');
+    Route::delete('{type}/{id}/galeri/destroy/{kd_galeri}', [App\Http\Controllers\GaleriController::class, 'destroy'])->name('galeri.destroy');
 
     ## Pesanan Detail
     Route::get('tiket/pesanan/barang', [App\Http\Controllers\PesananBarangController::class, 'index'])->name('pesanan.barang.index');
@@ -113,7 +113,11 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::resource('pekerjaan', App\Http\Controllers\PekerjaanController::class);
 
     ## Pekerjaan from tiket
-    Route::get('tiket/{pesanan}/pekerjaan/{pekerjaan}', [App\Http\Controllers\PekerjaanController::class, 'show'])->name('tiket.pekerjaan.show');
+    Route::prefix('tiket/{pesanan}')->group(function () {
+        Route::get('pekerjaan/{pekerjaan}', [App\Http\Controllers\PekerjaanController::class, 'show'])->name('tiket.pekerjaan.show');
+        Route::get('{type}/{id}/signature', [App\Http\Controllers\SignatureController::class, 'index'])->name('tiket.signature.index');
+        Route::get('{type}/{id}/galeri', [App\Http\Controllers\GaleriController::class, 'index'])->name('tiket.galeri.index');
+    });
 
     ## Tugas
     Route::resource('tugas', App\Http\Controllers\TugasController::class);
