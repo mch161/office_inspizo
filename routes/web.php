@@ -112,6 +112,9 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::delete('pekerjaan/barang/{barang}', [App\Http\Controllers\PekerjaanController::class, 'destroyBarang'])->name('pekerjaan.barang.destroy');
     Route::resource('pekerjaan', App\Http\Controllers\PekerjaanController::class);
 
+    ## Pekerjaan from tiket
+    Route::get('tiket/{pesanan}/pekerjaan/{pekerjaan}', [App\Http\Controllers\PekerjaanController::class, 'show'])->name('tiket.pekerjaan.show');
+
     ## Tugas
     Route::resource('tugas', App\Http\Controllers\TugasController::class);
 

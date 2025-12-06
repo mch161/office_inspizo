@@ -61,7 +61,11 @@ class PekerjaanController extends Controller
                     }
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('pekerjaan.show', $row->kd_pekerjaan) . '" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="View" class="btn btn-info btn-sm viewPekerjaan"><i class="fa fa-eye"></i></a>';
+                    if (url()->previous() == route('pekerjaan.index')) {
+                        $btn = '<a href="' . route('pekerjaan.show', $row->kd_pekerjaan) . '" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="View" class="btn btn-info btn-sm viewPekerjaan"><i class="fa fa-eye"></i></a>';
+                    } elseif (url()->previous() == route('tiket.show', request()->kd_tiket)) {
+                        $btn = '<a href="' . route('tiket.pekerjaan.show', [request()->kd_tiket, $row->kd_pekerjaan]) . '" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="View" class="btn btn-info btn-sm viewPekerjaan"><i class="fa fa-eye"></i></a>';
+                    }
                     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editPekerjaan"><i class="fa fa-edit"></i></a>';
                     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="Delete" class="btn btn-danger btn-sm deletePekerjaan"><i class="fa fa-trash"></i></a>';
                     return $btn;
@@ -120,7 +124,7 @@ class PekerjaanController extends Controller
         return response()->json($pekerjaan);
     }
 
-    public function show($id)
+    public function show(Request $request, $id, $id2 = null)
     {
         if (request()->ajax()) {
             $data = PekerjaanBarang::with('pekerjaan', 'barang')->where('kd_pekerjaan', $id)->get();
@@ -139,17 +143,19 @@ class PekerjaanController extends Controller
                 ->rawColumns(['aksi'])
                 ->make(true);
         }
+
+        if ($request->routeIs('tiket.pekerjaan.show')) {
+            $id = $id2;
+        }
         $pekerjaan = Pekerjaan::with('karyawans')->find($id);
 
-        $Id = $pekerjaan->kd_tiket;
-        $previousUrl = url()->previous();
-
-        $pattern = '/\/tiket\/' . $Id . '\/.+/';
-
-        if (preg_match($pattern, $previousUrl) || $previousUrl == route('login')) {
-            $backUrl = route('pekerjaan.index');
+        $currentUrl = url()->current();
+        if ($currentUrl = "/tiket/pekerjaan/$id") {
+            $backUrl = route('tiket.index');
         } else {
-            $backUrl = $previousUrl;
+            $normalizedUrl = rtrim($currentUrl, '/');
+
+            $backUrl = dirname($normalizedUrl);
         }
 
         return view('karyawan.manajemen-pekerjaan.pekerjaan.show', compact('pekerjaan', 'backUrl'));

@@ -220,16 +220,10 @@ class TiketController extends Controller
         $pesanan = Pesanan::where('kd_tiket', $tiket->kd_tiket)->first();
         // $surat_perintah = SuratPerintahKerja::where('kd_pesanan', $pesanan->kd_pesanan)->get();
 
-        $previousUrl = URL::previous();
-        $pesananId = $pesanan->kd_pesanan;
+        $currentUrl = url()->current();
+        $normalizedUrl = rtrim($currentUrl, '/');
 
-        $pattern = '/\/tiket\/' . $pesananId . '\/.+/';
-
-        if (preg_match($pattern, $previousUrl) || $previousUrl == route('login')) {
-            $backUrl = route('tiket.index');
-        } else {
-            $backUrl = $previousUrl;
-        }
+        $backUrl = dirname($normalizedUrl);
 
         if ($pesanan->jenis == 'Quotation') {
             $billing = Quotation::where('kd_tiket', $pesanan->kd_tiket)->first();

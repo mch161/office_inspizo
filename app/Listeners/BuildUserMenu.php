@@ -85,7 +85,7 @@ class BuildUserMenu
                     'label_color' => $pesananYangBelumDisetujui > 0 ? 'danger' : '',
                     'can' => 'access-karyawan',
                     'active' => [
-                        'pesanan/*/*',
+                        'tiket/*',
                     ],
                 ],
                 [
