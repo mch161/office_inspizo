@@ -6,7 +6,6 @@ use App\Models\Pesanan;
 use App\Models\Pekerjaan;
 use App\Models\Signature;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class SignatureController extends Controller
