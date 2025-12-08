@@ -3,7 +3,7 @@
 @section('title', 'Barang')
 
 @section('content_header')
-    <h1>Barang</h1>
+<h1>Barang</h1>
 @stop
 
 @section('plugins.Sweetalert2', true)
@@ -191,7 +191,7 @@
                 <div class="form-group col-md-6">
                     @php
                         $config = [
-                            $kategoris = App\Models\Barang::select('kategori')->whereNotNull('kategori')->distinct()->pluck('kategori'),
+                            $kategoris = App\Models\Barang::select('kategori')->whereNotNull('kategori')->orderBy('kategori')->distinct()->pluck('kategori'),
                             "placeholder" => "Cari atau ketik kategori baru...",
                             "allowClear" => true,
                             "tags" => true,
@@ -213,7 +213,7 @@
                 <div class="col-md-12">
                     @php
                         $config = [
-                            $kode = App\Models\Barang::select('kode')->whereNotNull('kode')->distinct()->pluck('kode'),
+                            $kodes = App\Models\Barang::select('kode')->whereNotNull('kode')->orderBy('kode')->distinct()->pluck('kode'),
                             "placeholder" => "Cari atau ketik kode barang baru...",
                             "allowClear" => true,
                             "tags" => true,
@@ -222,7 +222,7 @@
                     @endphp
                     <x-adminlte-select2 name="kode" label="Kode" :config="$config" id="kode">
                         <option value="" disabled selected>Pilih Kode Barang</option>
-                        @foreach ($kode as $data)
+                        @foreach ($kodes as $data)
                             <option value="{{ $data }}">{{ $data }}</option>
                         @endforeach
                     </x-adminlte-select2>
@@ -259,7 +259,7 @@
             </x-slot>
         </form>
     </x-adminlte-modal>
-    
+
     <x-adminlte-modal id="modalEdit" title="Edit Barang" theme="warning" icon="fas fa-edit" size='lg'>
         <form method="POST" id="editBarangForm" enctype="multipart/form-data">
             @csrf
@@ -299,7 +299,6 @@
                 <div class="form-group col-md-6">
                     @php
                         $config = [
-                            $kategoris = App\Models\Barang::select('kategori')->whereNotNull('kategori')->distinct()->pluck('kategori'),
                             "placeholder" => "Cari atau ketik kategori baru...",
                             "allowClear" => true,
                             "tags" => true,
@@ -321,7 +320,6 @@
                 <div class="col-md-12">
                     @php
                         $config2 = [
-                            $kodes = App\Models\Barang::select('kode')->whereNotNull('kode')->distinct()->pluck('kode'),
                             "placeholder" => "Cari atau ketik kode barang baru...",
                             "allowClear" => true,
                             "tags" => true,
@@ -459,9 +457,6 @@
 
             <div class="form-group col-md-2">
                 <label for="kategori" class="m-auto">Kategori: </label>
-                @php
-                    $kategoris = App\Models\Barang::select('kategori')->whereNotNull('kategori')->distinct()->pluck('kategori');
-                @endphp
                 <x-adminlte-select2 name="kategori" id="kategori-filter" class="auto-submit-filter">
                     <option value="">Semua</option>
                     @foreach ($kategoris as $kategori)
@@ -474,9 +469,6 @@
 
             <div class="form-group col-md-2">
                 <label for="kode" class="m-auto">Kode: </label>
-                @php
-                    $kodes = App\Models\Barang::select('kode')->whereNotNull('kode')->distinct()->pluck('kode');
-                @endphp
                 <x-adminlte-select2 name="kode" id="kode-filter" class="auto-submit-filter">
                     <option value="">Semua</option>
                     @foreach ($kodes as $kode)
@@ -779,22 +771,22 @@
                 text: '{{ session('success') }}',
             })
         @endif
-        @if (session()->has('error'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('error') }}',
-            })
-        @endif
+            @if (session()->has('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+                Toast.fire({
+                    icon: 'error',
+                    text: '{{ session('error') }}',
+                })
+            @endif
     </script>
 @endsection
