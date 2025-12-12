@@ -67,7 +67,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $data->nama }}</td>
                         <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
-                        <td>{{ $data->jam_masuk }}</td>
+                        <td>{{ $data->jam_masuk ?? '--:--:--' }}</td>
                         <td>{{ $data->jam_keluar ?? '--:--:--' }}</td>
                         <td>
                             @if ($data->terlambat != "Tidak")

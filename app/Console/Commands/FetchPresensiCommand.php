@@ -15,10 +15,22 @@ class FetchPresensiCommand extends Command
     protected $signature = 'presensi:fetch {--dari=} {--sampai=} {--all}';
     protected $description = 'Sinkronisasi log mentah, lalu proses dan simpan rekap harian';
 
-public function handle()
+    public function handle()
     {
-        if (!$this->syncronizeRawLogs()) {
+        // 1. Capture the status of the sync
+        // Returns: 1 (New data found), 0 (No new data), false (Connection error)
+        $syncStatus = $this->syncronizeRawLogs();
+
+        // If connection failed
+        if ($syncStatus === false) {
             return 1;
+        }
+
+        // 2. LOGIC FIX: If sync returned 0 (Meaning no NEW entries were created in DB)
+        // AND the user is not forcing a specific date range, STOP here.
+        if ($syncStatus === 0 && !$this->option('dari') && !$this->option('sampai') && !$this->option('all')) {
+            $this->info('Proses dihentikan karena tidak ada data baru yang masuk ke database.');
+            return 0;
         }
 
         $period = $this->getDateRange();
@@ -47,26 +59,56 @@ public function handle()
         try {
             $response = Http::withBody($soapRequest, 'text/xml')->post("http://{$deviceIp}/iWsService");
             if (!$response->successful()) {
-                $this->error('Gagal terhubung ke mesin.'); return false;
+                $this->error('Gagal terhubung ke mesin.'); 
+                return false;
             }
 
             preg_match_all('/<Row>(.*?)<\\/Row>/s', $response->body(), $matches);
+            
             if (empty($matches[1])) {
-                $this->info('Tidak ada log baru.'); return true;
+                $this->info('Mesin tidak mengirimkan data log.'); 
+                return 0; 
             }
+
+            // CHECK 1: Get the latest timestamp currently in the database
+            $lastDbTimestamp = Fingerprint::max('timestamp');
+            $lastDbTime = $lastDbTimestamp ? Carbon::parse($lastDbTimestamp) : null;
+
+            $newLogsCount = 0;
 
             foreach ($matches[1] as $rowXml) {
                 $pin = $this->parseTag($rowXml, 'PIN');
                 $dateTime = $this->parseTag($rowXml, 'DateTime');
+                
                 if (!$pin || !$dateTime) continue;
 
-                Fingerprint::updateOrCreate(
-                    ['user_id' => $pin, 'timestamp' => Carbon::parse($dateTime)],
-                    ['verified' => (bool)$this->parseTag($rowXml, 'Verified'), 'status' => (int)$this->parseTag($rowXml, 'Status')]
-                );
+                $xmlLogTime = Carbon::parse($dateTime);
+
+                // CHECK 2: Compare XML DateTime with Database Timestamp
+                // If the XML log is older or equal to the last DB log, skip it immediately.
+                if ($lastDbTime && $xmlLogTime->lte($lastDbTime)) {
+                    continue; 
+                }
+
+                // If we are here, it is a NEW log. Create it.
+                Fingerprint::create([
+                    'user_id' => $pin,
+                    'timestamp' => $xmlLogTime,
+                    'verified' => (bool)$this->parseTag($rowXml, 'Verified'),
+                    'status' => (int)$this->parseTag($rowXml, 'Status')
+                ]);
+
+                $newLogsCount++;
             }
-            $this->info('Sinkronisasi log mentah berhasil!');
-            return true;
+
+            if ($newLogsCount > 0) {
+                $this->info("Sinkronisasi berhasil! Ditemukan {$newLogsCount} log baru.");
+                return 1; // Return 1 because we found new data
+            } else {
+                $this->info('Sinkronisasi selesai. Tidak ada log baru (semua log dari mesin sudah ada di database).');
+                return 0; // Return 0 to tell handle() to stop
+            }
+
         } catch (\Exception $e) {
             $this->error('Error sinkronisasi: ' . $e->getMessage());
             return false;
@@ -90,24 +132,32 @@ public function handle()
         foreach ($logsByUser as $fingerId => $logs) {
             $karyawan = $karyawanList[$fingerId] ?? null;
             
-            $jamMasuk = Carbon::parse($logs->where('status', 0)->min('timestamp'));
-            $jamKeluar = $logs->where('status', 1)->max('timestamp') ? Carbon::parse($logs->where('status', 1)->max('timestamp')) : null;
+            $rawMasuk = $logs->where('status', 0)->min('timestamp');
+            $jamMasuk = $rawMasuk ? Carbon::parse($rawMasuk) : null;
 
-            if ($jamKeluar && $jamKeluar->isBefore($jamMasuk)) {
-                $jamKeluar = null;
-            }
+            $rawKeluar = $logs->where('status', 1)->max('timestamp');
+            $jamKeluar = $rawKeluar ? Carbon::parse($rawKeluar) : null;
 
             $jamMasukStandar = $date->copy()->setTimeFromTimeString($karyawan->jam_masuk ?? '08:00:00');
             $jamKeluarStandar = $date->copy()->setTime($date->isSaturday() ? 16 : 17, 0);
 
-            $terlambat = $jamMasuk->isAfter($jamMasukStandar) ? $jamMasukStandar->diff($jamMasuk)->format('%H jam %i mnt') : 'Tidak';
-            $pulangCepat = $jamKeluar && $jamKeluar->isBefore($jamKeluarStandar) ? $jamKeluar->diff($jamKeluarStandar)->format('%H jam %i mnt') : 'Tidak';
+            if ($jamKeluar && $jamKeluar->isBefore($jamMasukStandar)) {
+                $jamKeluar = null;
+            }
+
+            $terlambat = ($jamMasuk && $jamMasuk->isAfter($jamMasukStandar)) 
+                ? $jamMasukStandar->diff($jamMasuk)->format('%H jam %i mnt') 
+                : 'Tidak';
+            
+            $pulangCepat = ($jamKeluar && $jamKeluar->isBefore($jamKeluarStandar)) 
+                ? $jamKeluar->diff($jamKeluarStandar)->format('%H jam %i mnt') 
+                : 'Tidak';
             
             $rekapToInsert[] = [
                 'kd_karyawan'  => $karyawan->kd_karyawan ?? null,
                 'nama'         => $karyawan->nama ?? 'Karyawan Tidak Ditemukan ID: ' . $fingerId,
                 'tanggal'      => $date->format('Y-m-d'),
-                'jam_masuk'    => $jamMasuk->format('H:i:s'),
+                'jam_masuk'    => $jamMasuk ? $jamMasuk->format('H:i:s') : null,
                 'jam_keluar'   => $jamKeluar ? $jamKeluar->format('H:i:s') : null,
                 'terlambat'    => $terlambat,
                 'pulang_cepat' => $pulangCepat,
@@ -146,4 +196,3 @@ public function handle()
         return null;
     }
 }
-
