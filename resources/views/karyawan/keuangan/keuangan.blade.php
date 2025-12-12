@@ -172,7 +172,7 @@
                         <td>{{ number_format($keuangan->masuk) }}</td>
                         <td>{{ number_format($keuangan->keluar) }}</td>
                         <td>{{ $keuangan->kotak->nama }}</td>
-                        <td>{{ $keuangan->kategori->nama }}</td>
+                        <td>{{ $keuangan->kategori->nama ?? '-' }}</td>
                         <td>{{ $keuangan->keterangan }}</td>
                         <td>{{ $keuangan->tanggal }}</td>
                         <td>{{ $keuangan->status }}</td>
