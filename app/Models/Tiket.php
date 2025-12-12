@@ -16,6 +16,8 @@ class Tiket extends Model
         'deskripsi',
         'kd_pelanggan',
         'via',
+        'tanggal',
+        'dibuat_oleh'
     ];
 
     public function pelanggan()

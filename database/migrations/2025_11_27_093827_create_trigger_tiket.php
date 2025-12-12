@@ -38,8 +38,8 @@ return new class extends Migration {
             AFTER INSERT ON tiket
             FOR EACH ROW
             BEGIN
-                INSERT INTO pesanan (kd_pelanggan, deskripsi_pesanan, progress, jenis, kd_tiket, dibuat_oleh)
-                VALUES (NEW.kd_pelanggan, NEW.deskripsi, '1', 'Quotation', NEW.kd_tiket, CONCAT(NEW.dibuat_oleh, ' (', NOW(), ')'));
+                INSERT INTO pesanan (kd_pelanggan, progres, jenis, kd_tiket, dibuat_oleh)
+                VALUES (NEW.kd_pelanggan, '2', 'Quotation', NEW.kd_tiket, CONCAT(NEW.dibuat_oleh, ' (', NOW(), ')'));
 
                 INSERT INTO quotation (kd_tiket, dibuat_oleh)
                 VALUES (NEW.kd_tiket, CONCAT(NEW.dibuat_oleh, ' (', NOW(), ')'));

@@ -194,12 +194,15 @@ class TiketController extends Controller
 
         if ($request->kd_pesanan) {
             $pesanan = Pesanan::find($request->kd_pesanan);
-            $pesanan->update($request->all());
+            $pesanan->update([
+                'kd_pelanggan' => $request->kd_pelanggan
+            ]);
             Tiket::where('kd_tiket', $pesanan->kd_tiket)->update([
                 'prioritas' => $request->prioritas,
                 'jenis' => $request->jenis,
                 'deskripsi' => $request->deskripsi_pesanan,
-                'via' => $request->via
+                'via' => $request->via,
+                'tanggal' => $request->tanggal
             ]);
         } else {
             $tiket = Tiket::create([
@@ -208,6 +211,8 @@ class TiketController extends Controller
                 'deskripsi' => $request->deskripsi_pesanan,
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'via' => $request->via,
+                'tanggal' => $request->tanggal,
+                'dibuat_oleh' => auth()->user()->nama
             ]);
         }
 
