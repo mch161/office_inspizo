@@ -60,10 +60,7 @@ class TiketController extends Controller
                     return $row->tiket->jenis;
                 })
                 ->addColumn('tanggal', function ($row) {
-                    return $row->tiket->tanggal;
-                })
-                ->orderColumn('tanggal', function ($query, $order) {
-                    $query->orderByRaw("STR_TO_DATE(tanggal, '%d/%m/%Y') $order");
+                    return Carbon::parse($row->tiket->tanggal)->format('d/m/Y');
                 })
                 ->addColumn('via', function ($row) {
                     if ($row->tiket == null) {
@@ -144,7 +141,7 @@ class TiketController extends Controller
                     return $row->tiket->jenis;
                 })
                 ->addColumn('tanggal', function ($row) {
-                    return $row->tiket->tanggal;
+                    return Carbon::parse($row->tiket->tanggal)->format('d-m-Y');
                 })
                 ->addColumn('via', function ($row) {
                     return $row->tiket->via;
@@ -202,7 +199,7 @@ class TiketController extends Controller
                 'jenis' => $request->jenis,
                 'deskripsi' => $request->deskripsi_pesanan,
                 'via' => $request->via,
-                'tanggal' => $request->tanggal
+                'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
             ]);
         } else {
             $tiket = Tiket::create([
@@ -211,7 +208,7 @@ class TiketController extends Controller
                 'deskripsi' => $request->deskripsi_pesanan,
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'via' => $request->via,
-                'tanggal' => $request->tanggal,
+                'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
                 'dibuat_oleh' => auth()->user()->nama
             ]);
         }

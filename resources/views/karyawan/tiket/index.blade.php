@@ -19,7 +19,7 @@
             <thead>
                 <tr>
                     <th width="5%">No</th>
-                    <th width="20%">Nama Pelanggan</th>
+                    <th width="10%">Nama Pelanggan</th>
                     <th>Deskripsi</th>
                     <th>Prioritas</th>
                     <th width=5%">Jenis</th>
@@ -161,7 +161,7 @@
             processing: true,
             serverSide: true,
             scrollX: true,
-            order: [[5, "asc"]],
+            order: [[5, "desc"]],
             ajax: "{{ route('tiket.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
