@@ -446,7 +446,7 @@
                     { data: 'jenis', name: 'jenis' },
                     { data: 'keterangan', name: 'keterangan_pekerjaan' },
                     { data: 'status', name: 'status' },
-                    { data: 'signature_status', name: 'signature_status', orderable: false, searchable: false }, 
+                    { data: 'signature', name: 'signature_status', orderable: false, searchable: false }, 
                     { data: 'action', name: 'action', orderable: false, searchable: false },
                 ]
             });

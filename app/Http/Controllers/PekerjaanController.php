@@ -51,15 +51,9 @@ class PekerjaanController extends Controller
                     $badgeColor = $statusMap[$row->status] ?? 'warning';
                     return '<span class="badge badge-' . $badgeColor . '">' . $row->status . '</span>';
                 })
-                ->addColumn('signature_status', function ($row) {
-                    $url = route('signature.index', ['type' => 'pekerjaan', 'id' => $row->kd_pekerjaan]);
-
-                    if ($row->ttd_pelanggan) {
-                        return '<a href="' . $url . '" class="btn btn-success btn-sm"><i class="fas fa-check"></i> Ada</a>';
-                    } else {
-                        return '<a href="' . $url . '" class="btn btn-warning btn-sm"><i class="fas fa-file-signature"></i> Minta</a>';
-                    }
-                })
+                ->addColumn('signature', function ($row) {
+                    return '<img src="'. $row->ttd_pelanggan .'" alt="Signature" width="400px">';
+                 })
                 ->addColumn('action', function ($row) {
                     if (url()->previous() == route('pekerjaan.index')) {
                         $btn = '<a href="' . route('pekerjaan.show', $row->kd_pekerjaan) . '" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="View" class="btn btn-info btn-sm viewPekerjaan"><i class="fa fa-eye"></i></a>';
@@ -70,7 +64,7 @@ class PekerjaanController extends Controller
                     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->kd_pekerjaan . '" data-original-title="Delete" class="btn btn-danger btn-sm deletePekerjaan"><i class="fa fa-trash"></i></a>';
                     return $btn;
                 })
-                ->rawColumns(['signature_status', 'status', 'action'])
+                ->rawColumns(['signature', 'status', 'action'])
                 ->make(true);
         }
 
