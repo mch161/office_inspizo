@@ -39,9 +39,6 @@ class TiketController extends Controller
                 ->addColumn('deskripsi_pesanan', function ($row) {
                     return $row->tiket->deskripsi;
                 })
-                ->addColumn('tempat', function ($row) {
-                    return $row->tiket->tempat;
-                })
                 ->addColumn('prioritas', function ($row) {
                     if ($row->tiket == null) {
                         return '<span class="badge bg-info">Normal</span>';
@@ -201,7 +198,6 @@ class TiketController extends Controller
                 'prioritas' => $request->prioritas,
                 'jenis' => $request->jenis,
                 'deskripsi' => $request->deskripsi_pesanan,
-                'tempat' => $request->tempat,
                 'via' => $request->via,
                 'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
             ]);
@@ -210,7 +206,6 @@ class TiketController extends Controller
                 'prioritas' => $request->prioritas,
                 'jenis' => $request->jenis,
                 'deskripsi' => $request->deskripsi_pesanan,
-                'tempat' => $request->tempat,
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'via' => $request->via,
                 'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),

@@ -21,7 +21,6 @@
                     <th width="5%">No</th>
                     <th width="10%">Nama Pelanggan</th>
                     <th>Deskripsi</th>
-                    <th>Tempat</th>
                     <th>Prioritas</th>
                     <th width=5%">Jenis</th>
                     <th>Tanggal</th>
@@ -118,17 +117,6 @@
                         </x-slot>
                     </x-adminlte-input-date>
 
-                    @php 
-                    $tempat = App\Models\Tiket::pluck('tempat')->unique();
-                    $configTempat = ['placeholder' => 'Masukan tempat...', 'tags' => true, 'allowClear' => true]; 
-                    @endphp
-                    <x-adminlte-select2 name="tempat" id="tempat" :config="$configTempat" label="Tempat">
-                        <option value="" disabled selected>Pilih tempat...</option>
-                        @foreach ($tempat as $item)
-                            <option value="{{ $item }}">{{ $item }}</option>
-                        @endforeach
-                    </x-adminlte-select2>
-
                     <x-adminlte-select name="prioritas" id="prioritas" label="Prioritas">
                         <option value="1">Normal</option>
                         <option value="2">Segera</option>
@@ -173,13 +161,12 @@
             processing: true,
             serverSide: true,
             scrollX: true,
-            order: [[6, "desc"]],
+            order: [[5, "desc"]],
             ajax: "{{ route('tiket.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'nama_pelanggan', name: 'pelanggan.nama_pelanggan' },
                 { data: 'deskripsi_pesanan', name: 'tiket.deskripsi' },
-                { data: 'tempat', name: 'tiket.tempat' },
                 { data: 'prioritas', name: 'tiket.prioritas' },
                 { data: 'jenis', name: 'pesanan.jenis' },
                 { data: 'tanggal', name: 'tiket.tanggal' },
@@ -223,16 +210,15 @@
                 $('#saveBtn').html('Simpan Perubahan');
                 $('#pesananModal').modal('show');
                 $('#kd_pelanggan').val(data.kd_pelanggan).trigger('change');
-                $('#form_kd_pesanan').val(data.kd_pesanan);
-                
-                data = data.tiket;
-                $('#deskripsi_pesanan').val(data.deskripsi);
-                $('#tempat').val(data.tempat).trigger('change');
+                $('#deskripsi_pesanan').val(data.deskripsi_pesanan);
                 $('#tanggal-agenda').val(data.tanggal);
-                $('#prioritas').val(data.prioritas).trigger('change');
-                $('#jenis').val(data.jenis).trigger('change');
-                $('#via').val(data.via).trigger('change');
+                
+                tiket = data.tiket;
+                $('#prioritas').val(tiket.prioritas).trigger('change');
+                $('#jenis').val(tiket.jenis).trigger('change');
+                $('#via').val(tiket.via).trigger('change');
 
+                $('#form_kd_pesanan').val(data.kd_pesanan);
             })
         });
 
@@ -251,7 +237,6 @@
                     $('#pesananModal').modal('hide');
                     table.ajax.reload(null, false);
                     table_permintaan.ajax.reload(null, false);
-                    saveButton.html('Simpan');
                     Swal.fire('Sukses!', data.success, 'success');
                 },
                 error: function (data) {
