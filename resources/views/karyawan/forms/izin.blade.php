@@ -4,6 +4,7 @@
 
 @section('plugins.Sweetalert2', true)
 @section('plugins.Summernote', true)
+@section('plugins.DateRangePicker', true) 
 
 @section('content_header')
 <h1>Form Pengajuan Izin</h1>
@@ -31,15 +32,22 @@
                         Keluar Kantor</option>
                 </x-adminlte-select>
             </div>
+            
+            {{-- Update Date Input to DateRangePicker --}}
             @php
-                $config = ['format' => 'DD-MM-YYYY'];
+                $config = [
+                    'locale' => ['format' => 'DD-MM-YYYY'],
+                    'autoUpdateInput' => false, // Prevent auto-filling to allow placeholder
+                ];
             @endphp
-            <x-adminlte-input-date name="tanggal" value="{{ old('tanggal', date('d-m-Y')) }}" :config="$config"
-                placeholder="Pilih tanggal..." label="Tanggal Izin" igroup-size="md">
-                <x-slot name="appendSlot">
-                    <div class="input-group-text bg-gray"><i class="fas fa-calendar-day"></i></div>
+            <x-adminlte-date-range name="tanggal" :config="$config" placeholder="Pilih rentang tanggal..." label="Tanggal Izin">
+                <x-slot name="prependSlot">
+                    <div class="input-group-text bg-gray">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
                 </x-slot>
-            </x-adminlte-input-date>
+            </x-adminlte-date-range>
+
             <div id="timeInput">
                 @php
                     $config = ['format' => 'HH:mm'];
@@ -96,6 +104,15 @@
             }
         }
         $(document).ready(function () {
+            // Handle DateRangePicker input display
+            $('input[name="tanggal"]').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
+            });
+
+            $('input[name="tanggal"]').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
+
             $('#timeInput').hide();
             $('#timeInput2').hide();
             $('#jenis').val() === 'Izin Terlambat' ? $('#timeInput2').show() : $('#timeInput2').hide();
