@@ -14,6 +14,7 @@ class Tiket extends Model
         'prioritas',
         'jenis',
         'deskripsi',
+        'tempat',
         'kd_pelanggan',
         'via',
         'tanggal',
