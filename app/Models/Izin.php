@@ -27,6 +27,8 @@ class Izin extends Model
         'kd_karyawan',
         'jenis',
         'tanggal',
+        'tanggal_selesai',
+        'jumlah_hari',
         'jam',
         'foto',
         'keterangan',

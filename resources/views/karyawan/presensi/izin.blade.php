@@ -68,80 +68,87 @@
                     <th class="text-left">Karyawan</th>
                     <th class="text-left">Jenis</th>
                     <th class="text-left">Tanggal</th>
+                    <th class="text-left">Durasi</th>
                     <th class="text-left">Jam</th>
                     <th class="text-left">Keterangan</th>
                     <th class="text-left">Foto</th>
                     <th width="10%" class="text-left">Status</th>
                     @can('superadmin')
-                        <th width="20%" class="text-left">Aksi</th>
+                    <th width="20%" class="text-left">Aksi</th>
                     @endif
 
                 </tr>
             </thead>
             <tbody>
                 @if(isset($izin))
-                    @foreach ($izin as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->dibuat_oleh }}</td>
-                            <td>{{ $item->jenis }}</td>
-                            <td>{{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->translatedFormat('d F Y') }}</td>
-                            <td>{{ $item->jam }}</td>
-                            <td class="keterangan-column">{!! $item->keterangan !!}</td>
-                            <td>
-                                @if($item->foto)
-                                    <a class="image-popup" data-toggle="modal" data-target="#imageModal"
-                                        data-src="{{ asset('storage/images/izin/' . $item->foto) }}">
-                                        <img class="izin-image" src="{{ asset('storage/images/izin/' . $item->foto) }}"
-                                            alt="Foto Izin">
-                                    </a>
-                                @else
-                                    <span class="text-muted">Tidak ada foto</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if ($item->status == '1')
-                                    <span class="badge badge-success">Disetujui</span>
-                                @elseif ($item->status == '2')
-                                    <span class="badge badge-danger">Ditolak</span>
-                                @else
-                                    <span class="badge badge-warning">Menunggu</span>
-                                @endif
-                            </td>
-                            @can('superadmin')
-                                <td>
-                                    <div class="action-buttons">
-                                        @if($item->status == '0')
-                                            <form class="approve-form" action="{{ route('izin.update', $item) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="status" value="1">
-                                                <button type="submit" class="btn btn-sm btn-success">
-                                                    <i class="fas fa-check"></i> Setujui
-                                                </button>
-                                            </form>
-                                            <form class="reject-form" action="{{ route('izin.update', $item) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <input type="hidden" name="status" value="2">
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-times"></i> Tolak
-                                                </button>
-                                            </form>
-                                        @endif
-                                        <form class="delete-form" action="{{ route('izin.destroy', $item) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i> Hapus
-                                            </button>
-                                        </form>
-                                    </div>
-
-                                </td>
+                @foreach ($izin as $item)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->dibuat_oleh }}</td>
+                    <td>{{ $item->jenis }}</td>
+                    <td>
+                        {{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}
+                        @if($item->tanggal_selesai && $item->tanggal_selesai != $item->tanggal)
+                            - {{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d M Y') }}
+                        @endif
+                    </td>
+                    <td><span class="badge badge-info">{{ $item->jumlah_hari }} Hari</span></td>
+                    <td>{{ $item->jam }}</td>
+                    <td class="keterangan-column">{!! $item->keterangan !!}</td>
+                    <td>
+                        @if($item->foto)
+                            <a class="image-popup" data-toggle="modal" data-target="#imageModal"
+                                data-src="{{ asset('storage/images/izin/' . $item->foto) }}">
+                                <img class="izin-image" src="{{ asset('storage/images/izin/' . $item->foto) }}"
+                                    alt="Foto Izin">
+                            </a>
+                        @else
+                            <span class="text-muted">Tidak ada foto</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($item->status == '1')
+                            <span class="badge badge-success">Disetujui</span>
+                        @elseif ($item->status == '2')
+                            <span class="badge badge-danger">Ditolak</span>
+                        @else
+                            <span class="badge badge-warning">Menunggu</span>
+                        @endif
+                    </td>
+                    @can('superadmin')
+                    <td>
+                        <div class="action-buttons">
+                            @if($item->status == '0')
+                                <form class="approve-form" action="{{ route('izin.update', $item) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="status" value="1">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check"></i> Setujui
+                                    </button>
+                                </form>
+                                <form class="reject-form" action="{{ route('izin.update', $item) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="status" value="2">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-times"></i> Tolak
+                                    </button>
+                                </form>
                             @endif
-                        </tr>
-                    @endforeach
+                            <form class="delete-form" action="{{ route('izin.destroy', $item) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+
+                    </td>
+                    @endif
+                </tr>
+                @endforeach
                 @endif
             </tbody>
         </table>

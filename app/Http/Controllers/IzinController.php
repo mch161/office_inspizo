@@ -41,17 +41,11 @@ class IzinController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'jenis' => 'required|string',
-            'tanggal' => 'required|date',
+            'tanggal' => 'required|string',
             'jam' => 'nullable|string',
             'jam2' => 'nullable|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:5048',
             'keterangan' => 'required|string',
-        ], [
-            'jenis.required' => 'Jenis izin harus diisi.',
-            'tanggal.required' => 'Tanggal harus diisi.',
-            'foto.image' => 'File harus berupa gambar.',
-            'foto.max' => 'Ukuran foto maksimal 5MB.',
-            'keterangan.required' => 'Keterangan harus diisi.',
         ]);
 
         if ($request->jenis === 'Izin Terlambat' || $request->jenis === 'Izin Keluar Kantor') {
@@ -64,26 +58,35 @@ class IzinController extends Controller
                 }
             });
         }
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput($validator->validated());
         }
 
         $imageName = null;
-
         if ($request->hasFile('foto')) {
             $imageName = time() . '.' . $request->file('foto')->extension();
             $request->file('foto')->move(public_path('storage/images/izin'), $imageName);
         }
-        
-        $tanggal = Carbon::parse($request->tanggal);
-        $jam_masuk = !is_null(Auth::guard('karyawan')->user()->jam_masuk) ? Carbon::parse(Auth::guard('karyawan')->user()->jam_masuk)->format('H:i') : '08:00';
-        $jam_pulang = $tanggal->isSaturday() ? '16:00' : '17:00';
 
-        if ($request->jenis === 'Izin Terlambat') {
-            $request->jam = $jam_masuk;
+        $dates = explode(' - ', $request->tanggal);
+
+        if (count($dates) == 2) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $dates[0]);
+            $endDate = Carbon::createFromFormat('d-m-Y', $dates[1]);
+        } else {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->tanggal);
+            $endDate = $startDate->copy();
         }
 
-        if ($request->jenis === 'Izin Terlambat' || $request->jenis === 'Izin Keluar Kantor') {
+        $jumlahHari = $startDate->diffInDays($endDate) + 1;
+
+        $jam_masuk = !is_null(Auth::guard('karyawan')->user()->jam_masuk) ? Carbon::parse(Auth::guard('karyawan')->user()->jam_masuk)->format('H:i') : '08:00';
+        $jam_pulang = '17:00';
+
+        if ($request->jenis === 'Izin Terlambat') {
+            $jam = $jam_masuk . ' - ' . $request->jam2;
+        } elseif ($request->jenis === 'Izin Keluar Kantor') {
             $jam = $request->jam . ' - ' . $request->jam2;
         } else {
             $jam = $jam_masuk . ' - ' . $jam_pulang;
@@ -92,14 +95,15 @@ class IzinController extends Controller
         Izin::create([
             'kd_karyawan' => Auth::guard('karyawan')->user()->kd_karyawan,
             'jenis' => $request->jenis,
-            'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
+            'tanggal' => $startDate->format('Y-m-d'),
+            'tanggal_selesai' => $endDate->format('Y-m-d'),
+            'jumlah_hari' => $jumlahHari,
             'jam' => $jam,
             'keterangan' => $request->keterangan,
             'foto' => $imageName,
             'status' => 0,
             'dibuat_oleh' => Auth::guard('karyawan')->user()->nama
         ]);
-
 
         return redirect()->route('izin.index')->with('success', 'Pengajuan izin berhasil dibuat.');
     }
@@ -110,41 +114,19 @@ class IzinController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validate that the status is present and is one of the allowed values
-        // 1 = Disetujui (Approved), 2 = Ditolak (Rejected)
-        $validated = $request->validate([
-            'status' => 'required|in:1,2',
-        ]);
-
         $izin = Izin::findOrFail($id);
-        $izin->status = $validated['status'];
-
-        if ($izin->save()) {
-            return redirect()->route('izin.index')->with('success', 'Status izin berhasil diupdate.');
-        } else {
-            return redirect()->route('izin.index')->with('error', 'Gagal mengupdate status izin.');
-        }
+        $izin->status = $request->status;
+        $izin->save();
+        return redirect()->route('izin.index')->with('success', 'Status berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $izin = Izin::findOrFail($id);
-
-        // Delete the associated image file from storage if it exists
-        if ($izin->foto) {
-            $imagePath = public_path('storage/images/izin/' . $izin->foto);
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
+        if ($izin->foto && file_exists(public_path('storage/images/izin/' . $izin->foto))) {
+            unlink(public_path('storage/images/izin/' . $izin->foto));
         }
-
-        if ($izin->delete()) {
-            return redirect()->route('izin.index')->with('success', 'Data izin berhasil dihapus.');
-        } else {
-            return redirect()->route('izin.index')->with('error', 'Gagal menghapus data izin.');
-        }
+        $izin->delete();
+        return redirect()->route('izin.index')->with('success', 'Data berhasil dihapus.');
     }
 }
