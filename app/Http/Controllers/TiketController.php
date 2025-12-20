@@ -310,7 +310,7 @@ class TiketController extends Controller
         return redirect()->route('tiket.index')->with('success', 'Pesanan terselesaikan.');
     }
 
-    public function edit(string $id)
+public function edit(string $id)
     {
         $pesanan = Pesanan::find($id);
         if (is_null($pesanan->kd_tiket)) {
@@ -322,11 +322,16 @@ class TiketController extends Controller
                 'via' => 'web',
             ]);
             $pesanan->kd_tiket = $tiket->kd_tiket;
-            $pesanan->tiket->tanggal = Carbon::parse($pesanan->tiket->tanggal)->format('d/m/Y');
             $pesanan->save();
         }
 
-        $pesanan->tiket = Tiket::where('kd_tiket', $pesanan->kd_tiket)->first();
+        $tiketData = Tiket::where('kd_tiket', $pesanan->kd_tiket)->first();
+
+        if ($tiketData && $tiketData->tanggal) {
+            $tiketData->tanggal = Carbon::parse($tiketData->tanggal)->format('d/m/Y');
+        }
+
+        $pesanan->tiket = $tiketData;
 
         return response()->json($pesanan);
     }
