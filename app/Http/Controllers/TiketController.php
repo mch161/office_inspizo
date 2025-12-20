@@ -322,6 +322,7 @@ class TiketController extends Controller
                 'via' => 'web',
             ]);
             $pesanan->kd_tiket = $tiket->kd_tiket;
+            $pesanan->tiket->tanggal = Carbon::parse($pesanan->tiket->tanggal)->format('d/m/Y');
             $pesanan->save();
         }
 
