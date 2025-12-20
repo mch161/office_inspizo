@@ -30,4 +30,9 @@ class PresensiBulanan extends Model
         'jumlah_jam_lembur',
         'verifikasi',
     ];
+
+    public function karyawan()
+    {
+        return $this->belongsTo(Karyawan::class, 'kd_karyawan', 'kd_karyawan');
+    }
 }

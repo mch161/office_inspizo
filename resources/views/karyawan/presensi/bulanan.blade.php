@@ -3,7 +3,7 @@
 @section('title', 'Rekap Bulanan')
 
 @section('content_header')
-<h1>Rekap Bulanan</h1>
+    <h1>Rekap Bulanan</h1>
 @stop
 
 @section('css')
@@ -13,465 +13,210 @@
             border: 1px solid #ced4da;
             width: 100px;
         }
-
+        .editable:read-only {
+            background-color: #e9ecef;
+            border: none;
+            width: auto;
+        }
         .editable:focus {
             border-color: #80bdff;
             outline: 0;
+            background-color: #fff;
         }
     </style>
 @endsection
 
 @section('content')
-@can('superadmin')
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('presensi.bulanan.create') }}" method="POST" id="presensiBulananForm">
+    {{-- Superadmin: Form to Generate Data --}}
+    @can('superadmin')
+    <div class="card collapsed-card">
+        <div class="card-header">
+            <h3 class="card-title">Generate Rekap Baru</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="card-body" style="display: none;">
+            <form action="{{ route('presensi.bulanan.store') }}" method="POST" id="generateForm">
                 @csrf
                 <div class="row">
-                    <div class="col-md-6">
-                        <x-adminlte-select name="kd_karyawan" label="Pilih Karyawan" empty-option="Pilih Karyawan..."
-                            required>
-                            <x-adminlte-options :options="$karyawans->pluck('nama', 'kd_karyawan')->toArray()"
-                                empty-option="Pilih Karyawan..." :selected="old('kd_karyawan')" />
+                    <div class="col-md-4">
+                        <x-adminlte-select name="kd_karyawan" label="Karyawan (Opsional)">
+                            <option value="">Semua Karyawan</option>
+                            @foreach($karyawans as $karyawan)
+                                <option value="{{ $karyawan->kd_karyawan }}">{{ $karyawan->nama }}</option>
+                            @endforeach
                         </x-adminlte-select>
                     </div>
                     <div class="col-md-3">
-                        <x-adminlte-select name="bulan" label="Pilih Bulan" required>
-                            <x-adminlte-options :options="[
-                '01' => 'Januari',
-                '02' => 'Februari',
-                '03' => 'Maret',
-                '04' => 'April',
-                '05' => 'Mei',
-                '06' => 'Juni',
-                '07' => 'Juli',
-                '08' => 'Agustus',
-                '09' => 'September',
-                '10' => 'Oktober',
-                '11' => 'November',
-                '12' => 'Desember',
-            ]" empty-option="Pilih Bulan..."
-                                :selected="old('bulan')" />
+                        <x-adminlte-select name="bulan" label="Bulan" required>
+                            @foreach(range(1,12) as $m)
+                                <option value="{{ $m }}" {{ date('n') == $m ? 'selected' : '' }}>
+                                    {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                                </option>
+                            @endforeach
                         </x-adminlte-select>
                     </div>
                     <div class="col-md-3">
-                        <x-adminlte-input name="tahun" label="Tahun" type="number"
-                            value="{{ old('tahun', date('Y')) }}"></x-adminlte-input>
+                        <x-adminlte-input name="tahun" label="Tahun" type="number" value="{{ date('Y') }}" required/>
                     </div>
-                    <button type="submit" class="btn btn-primary" form="presensiBulananForm">Tambahkan Presensi</button>
+                    <div class="col-md-2 d-flex align-items-end mb-3">
+                        <button type="submit" class="btn btn-primary w-100" onclick="this.disabled=true;this.innerHTML='Generating...';this.form.submit();">
+                            <i class="fas fa-sync"></i> Generate
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
-@endcan
+    @endcan
 
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Rekap Bulanan</h3>
-    </div>
-    <div class="card-body">
-        <table id="bulananTable" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th class="text-center">No</th>
-                    <th class="text-center">Tahun</th>
-                    <th class="text-center">Bulan</th>
-                    <th class="text-center">Nama Karyawan</th>
-                    <th class="text-center">Jumlah Tanggal</th>
-                    <th class="text-center">Jumlah Libur</th>
-                    <th class="text-center">Jumlah Cuti</th>
-                    <th class="text-center">Jumlah Hari Kerja</th>
-                    <th class="text-center">Jumlah Hari Minggu</th>
-                    <th class="text-center">Jumlah Hari Sakit</th>
-                    <th class="text-center">Jumlah Hari Izin</th>
-                    <th class="text-center">Jumlah Fingerprint</th>
-                    <th class="text-center">Jumlah Alpha</th>
-                    <th class="text-center">Jumlah Terlambat</th>
-                    <th class="text-center">Jumlah Jam Izin</th>
-                    <th class="text-center">Jumlah Hari Lembur</th>
-                    <th class="text-center">Jumlah Jam Lembur</th>
-                    <th class="text-center">Status</th>
-                    @can('superadmin')
-                        <th class="text-center" width="150px">Aksi</th>
-                    @endcan
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($rekapBulanan as $rekap)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $rekap->tahun }}</td>
-                        <td>{{ \Carbon\Carbon::parse('2022-' . $rekap->bulan . '-01')->locale('id_ID')->translatedFormat('F') }}
-                        </td>
-                        <td>{{ $karyawans->where('kd_karyawan', $rekap->kd_karyawan)->first()->nama }}</td>
-                        <td>{{ $rekap->jumlah_tanggal }}</td>
-                        <td>{{ $rekap->jumlah_libur }}</td>
-                        <td>{{ $rekap->jumlah_hari_cuti }}</td>
-                        <td>{{ $rekap->jumlah_hari_kerja_normal }}</td>
-                        <td>{{ $rekap->jumlah_hari_minggu }}</td>
-                        <td>{{ $rekap->jumlah_hari_sakit }}</td>
-                        <td>{{ $rekap->jumlah_hari_izin }}</td>
-                        <td>{{ $rekap->jumlah_fingerprint }}</td>
-                        <td>{{ $rekap->jumlah_alpha }}</td>
-                        <td>{{ $rekap->jumlah_terlambat }}</td>
-                        <td>{{ $rekap->jumlah_jam_izin }}</td>
-                        <td>{{ $rekap->jumlah_hari_lembur }}</td>
-                        <td>{{ $rekap->jumlah_jam_lembur }}</td>
-                        <td>{{ $rekap->verifikasi }}</td>
-                        @can('superadmin')
-                            <td>
-                                @if ($rekap->verifikasi == '0')
-                                    <form action="{{ route('presensi.bulanan.verify', $rekap) }}" method="POST"
-                                        style="display: inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-success btn-sm">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </form>
-                                @endif
-                                <form action="{{ route('presensi.bulanan') }}" method="GET" style="display: inline">
-                                    <input type="hidden" name="kd_presensi_bulanan" value="{{ $rekap->kd_presensi_bulanan }}">
-                                    <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        @endcan
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
-@if (isset($dataBulanan))
-    <section id="dataBulanan">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Presensi {{ $karyawan->nama }} pada bulan
-                    {{ \Carbon\Carbon::createFromDate($dataBulanan->tahun, $dataBulanan->bulan, 1)->locale('id_ID')->translatedFormat('F Y') }}
-                </h3>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('presensi.bulanan.update', $dataBulanan) }}" method="POST">
-                    <input type="hidden" name="kd_presensi_bulanan" value="{{ $dataBulanan->kd_presensi_bulanan }}">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="kd_presensi_bulanan" value="{{ $dataBulanan->kd_presensi_bulanan }}">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Tanggal">Jumlah Tanggal:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_tanggal"
-                                value="{{ $dataBulanan->jumlah_tanggal }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_tanggal }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Libur">Jumlah Libur:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_libur"
-                                value="{{ $dataBulanan->jumlah_libur }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_libur }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Hari Cuti">Jumlah Hari Cuti:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_hari_cuti"
-                                value="{{ $dataBulanan->jumlah_hari_cuti }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_hari_cuti }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Hari Kerja Normal">Jumlah Hari Kerja Normal:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_hari_kerja_normal"
-                                value="{{ $dataBulanan->jumlah_hari_kerja_normal }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_hari_kerja_normal }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Hari Minggu">Jumlah Hari Minggu:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_hari_minggu"
-                                value="{{ $dataBulanan->jumlah_hari_minggu }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_hari_minggu }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Hari Sakit">Jumlah Hari Sakit:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_hari_sakit"
-                                value="{{ $dataBulanan->jumlah_hari_sakit }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_hari_sakit }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Hari Izin">Jumlah Hari Izin:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_hari_izin"
-                                value="{{ $dataBulanan->jumlah_hari_izin }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_hari_izin }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Fingerprint">Jumlah Fingerprint:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_fingerprint"
-                                value="{{ $dataBulanan->jumlah_fingerprint }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_fingerprint }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Alpha">Jumlah Alpha:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_alpha"
-                                value="{{ $dataBulanan->jumlah_alpha }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_alpha }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Terlambat">Jumlah Terlambat:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_terlambat"
-                                value="{{ $dataBulanan->jumlah_terlambat }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_terlambat }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Jam Izin">Jumlah Jam Izin:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="time" class="editable" name="jumlah_jam_izin"
-                                value="{{ $dataBulanan->jumlah_jam_izin }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_jam_izin }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Hari Lembur">Jumlah Hari Lembur:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="editable" name="jumlah_hari_lembur"
-                                value="{{ $dataBulanan->jumlah_hari_lembur }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_hari_lembur }}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="Jumlah Jam Lembur">Jumlah Jam Lembur:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="time" class="editable" name="jumlah_jam_lembur"
-                                value="{{ $dataBulanan->jumlah_jam_lembur }}">
-                        </div>
-                        <div class="col-md-4">
-                            <span>{{ $dataBulanan->jumlah_jam_lembur }}</span>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </form>
-                <form action="{{ route('presensi.bulanan.sync', $dataBulanan) }}" method="POST" class="mt-1">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="kd_presensi_bulanan" value="{{ $dataBulanan->kd_presensi_bulanan }}">
-                    <input type="hidden" name="kd_karyawan" value="{{ $dataBulanan->kd_karyawan }}">
-                    <input type="hidden" name="bulan" value="{{ $dataBulanan->bulan }}">
-                    <input type="hidden" name="tahun" value="{{ $dataBulanan->tahun }}">
-                    <button type="submit" class="btn btn-info"><i class="fas fa-sync"></i>Auto Sync</button>
-                </form>
-            </div>
-    </section>
+    {{-- Filter / Select Report --}}
     <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Presensi {{ $karyawan->nama }} pada bulan
-                {{ \Carbon\Carbon::createFromDate($dataBulanan->tahun, $dataBulanan->bulan, 1)->locale('id_ID')->translatedFormat('F Y') }}
-            </h3>
+        <div class="card-body">
+            <form action="{{ route('presensi.bulanan') }}" method="GET">
+                <div class="row">
+                    <div class="col-md-10">
+                        <x-adminlte-select name="kd_presensi_bulanan" label="Pilih Laporan Bulanan" onchange="this.form.submit()">
+                            <option value="" selected disabled>-- Pilih Laporan --</option>
+                            @foreach ($rekapBulanan as $item)
+                                <option value="{{ $item->kd_presensi_bulanan }}" 
+                                    {{ request('kd_presensi_bulanan') == $item->kd_presensi_bulanan ? 'selected' : '' }}>
+                                    {{ $item->karyawan->nama ?? '-' }} - {{ date('F', mktime(0, 0, 0, $item->bulan, 1)) }} {{ $item->tahun }}
+                                </option>
+                            @endforeach
+                        </x-adminlte-select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end mb-3">
+                        <a href="{{ route('presensi.bulanan') }}" class="btn btn-secondary w-100">Reset</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Detail Data --}}
+    @if(isset($dataBulanan) && $dataBulanan)
+    <div class="card">
+        <div class="card-header bg-navy">
+            <h3 class="card-title">Detail Rekap: {{ $dataBulanan->karyawan->nama }} ({{ $dataBulanan->bulan }}/{{ $dataBulanan->tahun }})</h3>
         </div>
         <div class="card-body">
-            <table id="rekapTable" class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Karyawan</th>
-                        <th>Tanggal</th>
-                        <th>Jam Masuk</th>
-                        <th>Jam Keluar</th>
-                        <th>Terlambat</th>
-                        <th>Pulang Cepat</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($rekapData as $data)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $data->nama }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
-                            <td>{{ $data->jam_masuk }}</td>
-                            <td>{{ $data->jam_keluar ?? '--:--:--' }}</td>
-                            <td>
-                                @if ($data->terlambat != "Tidak")
-                                    <div class="badge badge-warning">{{ $data->terlambat }}</div>
-                                @else
-                                    {{ $data->terlambat }}
-                                @endif
-                            </td>
-                            <td>{{ $data->pulang_cepat }}</td>
-                        </tr>
+            <form action="{{ route('presensi.bulanan.create') }}" method="POST">
+                @csrf
+                <input type="hidden" name="kd_presensi_bulanan" value="{{ $dataBulanan->kd_presensi_bulanan }}">
+                
+                {{-- Totals Section --}}
+                <div class="row">
+                    @php
+                        $fields = [
+                            'jumlah_tanggal' => 'Hari Kalender',
+                            'jumlah_hari_kerja_normal' => 'Hari Kerja',
+                            'jumlah_libur' => 'Libur Nasional',
+                            'jumlah_hari_minggu' => 'Hari Minggu',
+                            'jumlah_fingerprint' => 'Hadir (Finger)',
+                            'jumlah_hari_sakit' => 'Sakit',
+                            'jumlah_hari_izin' => 'Izin',
+                            'jumlah_hari_cuti' => 'Cuti',
+                            'jumlah_alpha' => 'Alpha',
+                            'jumlah_terlambat' => 'Terlambat',
+                            'jumlah_hari_lembur' => 'Hari Lembur',
+                        ];
+                    @endphp
+
+                    @foreach($fields as $key => $label)
+                    <div class="col-md-2 col-6 mb-2">
+                        <label class="small text-muted">{{ $label }}</label>
+                        <input type="number" name="{{ $key }}" class="form-control editable" value="{{ $dataBulanan->$key }}" readonly>
+                    </div>
                     @endforeach
-                </tbody>
-            </table>
+
+                    <div class="col-md-2 col-6 mb-2">
+                        <label class="small text-muted">Jam Lembur</label>
+                        <input type="text" name="jumlah_jam_lembur" class="form-control editable" value="{{ $dataBulanan->jumlah_jam_lembur }}" readonly>
+                    </div>
+                     <div class="col-md-2 col-6 mb-2">
+                        <label class="small text-muted">Jam Izin</label>
+                        <input type="text" name="jumlah_jam_izin" class="form-control editable" value="{{ $dataBulanan->jumlah_jam_izin }}" readonly>
+                    </div>
+                </div>
+
+                @can('superadmin')
+                <div class="mt-3 text-right">
+                    <button type="button" class="btn btn-warning" id="tombol-edit" onclick="toggleEditable(true)">
+                        <i class="fas fa-edit"></i> Edit Data
+                    </button>
+                    <button type="submit" class="btn btn-success" id="tombol-simpan" style="display: none;">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                    <button type="button" class="btn btn-danger" id="tombol-batal" style="display: none;" onclick="toggleEditable(false)">
+                        Batal
+                    </button>
+                </div>
+                @endcan
+            </form>
+
+            <hr>
+
+            {{-- Daily Attendance Table --}}
+            <h5 class="mt-4 text-secondary">Log Harian</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Jam Masuk</th>
+                            <th>Jam Keluar</th>
+                            <th>Status</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($rekapData as $row)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($row->tanggal)->format('d-m-Y') }}</td>
+                            <td>{{ $row->jam_masuk ?? '-' }}</td>
+                            <td>{{ $row->jam_keluar ?? '-' }}</td>
+                            <td>
+                                <span class="badge badge-{{ $row->status == 'H' ? 'success' : ($row->status == 'A' ? 'danger' : 'warning') }}">
+                                    {{ $row->status }}
+                                </span>
+                            </td>
+                            <td>{{ $row->keterangan }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">Belum ada data presensi harian untuk periode ini.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-@endif
-
+    @else
+        <div class="alert alert-info text-center mt-4">
+            <h5><i class="icon fas fa-info"></i> Pilih Laporan</h5>
+            Silakan pilih laporan bulanan pada dropdown di atas untuk melihat detail.
+        </div>
+    @endif
 @stop
 
 @section('js')
-<script>
-    $(document).ready(function () {
-        $('#bulananTable').DataTable({
-            responsive: true,
-            lengthChange: false,
-            autoWidth: false,
-            pageLength: -1,
-            scrollY: 'max-content',
-            scrollCollapse: true,
-            height: '300px',
-            language: {
-                lengthMenu: "Tampilkan _MENU_ entri",
-                zeroRecords: "Tidak ada data presensi yang ditemukan",
-                emptyTable: "Tidak ada data presensi untuk bulan ini",
-                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                infoEmpty: "Tidak ada data presensi yang tersedia",
-                infoFiltered: "(difilter dari _MAX_ total entri)",
-                search: "Cari:",
-                searchPlaceholder: "Cari data..."
+    <script>
+        function toggleEditable(enable) {
+            const inputs = $('.editable');
+            if (enable) {
+                inputs.removeAttr('readonly');
+                $('#tombol-edit').hide();
+                $('#tombol-simpan, #tombol-batal').show();
+            } else {
+                inputs.attr('readonly', true);
+                $('#tombol-edit').show();
+                $('#tombol-simpan, #tombol-batal').hide();
+                // Optional: Reload page to reset values if cancelled
+                if(event.target.id === 'tombol-batal') window.location.reload();
             }
-        });
-        if ($('#dataBulanan').length) {
-            $('html, body').animate({
-                scrollTop: $('#dataBulanan').offset().top
-            }, 1000);
         }
-        $('#rekapTable').DataTable({
-            responsive: true,
-            lengthChange: false,
-            autoWidth: false,
-            pageLength: -1,
-            scrollX: true,
-            language: {
-                lengthMenu: "Tampilkan _MENU_ entri",
-                zeroRecords: "Tidak ada data presensi yang ditemukan",
-                emptyTable: "Tidak ada data presensi untuk tanggal ini",
-                info: "Menampilkan halaman _PAGE_ dari _PAGES_",
-                infoEmpty: "Tidak ada data presensi yang tersedia",
-                infoFiltered: "(difilter dari _MAX_ total entri)",
-                search: "Cari:",
-                searchPlaceholder: "Cari data..."
-            }
-        });
-    });
-    const formInputs = $('#edit-form input');
-
-    $('#tombol-edit').on('click', function () {
-        toggleEditMode(true);
-    });
-
-    $('#tombol-batal').on('click', function () {
-        toggleEditMode(false);
-    });
-
-    function toggleEditMode(enable) {
-        if (enable) {
-            formInputs.removeAttr('readonly');
-            $('#tombol-edit').hide();
-            $('#tombol-simpan, #tombol-batal').show();
-        } else {
-            formInputs.attr('readonly', true);
-            $('#tombol-edit').show();
-            $('#tombol-simpan, #tombol-batal').hide();
-        }
-    }
-
-    @if (session()->has('success'))
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        });
-        Toast.fire({
-            icon: 'success',
-            text: '{{ session('success') }}',
-        })
-    @endif
-        @if (session()->has('error'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-            Toast.fire({
-                icon: 'error',
-                text: '{{ session('error') }}',
-            })
-        @endif
-</script>
+    </script>
 @stop
