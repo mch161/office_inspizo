@@ -203,7 +203,7 @@ class TiketController extends Controller
                 'deskripsi' => $request->deskripsi_pesanan,
                 'tempat' => $request->tempat,
                 'via' => $request->via,
-                'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
+                'tanggal' => Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d'),
             ]);
         } else {
             $tiket = Tiket::create([
@@ -213,7 +213,7 @@ class TiketController extends Controller
                 'tempat' => $request->tempat,
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'via' => $request->via,
-                'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
+                'tanggal' => Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d'),
                 'dibuat_oleh' => auth()->user()->nama
             ]);
         }
