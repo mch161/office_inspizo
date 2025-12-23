@@ -182,14 +182,25 @@ class TiketController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'deskripsi_pesanan' => 'required',
+            'kd_pelanggan' => 'required',
             'tanggal' => 'required',
+            'tempat' => 'required',
+            'prioritas' => 'required',
+            'jenis' => 'required',
+            'via' => 'required',
+            'deskripsi_pesanan' => 'required',
+        ], [
+            'kd_pelanggan.required' => 'Pelanggan harus diisi.',
+            'tanggal.required' => 'Tanggal harus diisi.',
+            'tempat.required' => 'Tempat harus diisi.',
+            'prioritas.required' => 'Prioritas harus diisi.',
+            'jenis.required' => 'Jenis harus diisi.',
+            'via.required' => 'Via harus diisi.',
+            'deskripsi_pesanan.required' => 'Deskripsi Pesanan harus diisi.',
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', $validator->errors()->first())
-                ->withInput();
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
         if ($request->kd_pesanan) {
@@ -310,7 +321,7 @@ class TiketController extends Controller
         return redirect()->route('tiket.index')->with('success', 'Pesanan terselesaikan.');
     }
 
-public function edit(string $id)
+    public function edit(string $id)
     {
         $pesanan = Pesanan::find($id);
         if (is_null($pesanan->kd_tiket)) {
