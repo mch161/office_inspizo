@@ -50,9 +50,6 @@ class IzinController extends Controller
 
         if ($request->jenis === 'Izin Terlambat' || $request->jenis === 'Izin Keluar Kantor') {
             $validator->after(function ($validator) use ($request) {
-                if (empty($request->jam)) {
-                    $validator->errors()->add('jam', 'Jam harus diisi.');
-                }
                 if (empty($request->jam2)) {
                     $validator->errors()->add('jam2', 'Jam harus diisi.');
                 }

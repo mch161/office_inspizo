@@ -100,7 +100,6 @@ class PresensiBulananController extends Controller
         $tahun = $request->tahun;
         $targetKaryawan = $request->kd_karyawan;
 
-        // 1. Fetch relevant Employees
         $karyawans = Karyawan::query()
             ->when($targetKaryawan, fn($q) => $q->where('kd_karyawan', $targetKaryawan))
             ->get();
@@ -177,7 +176,6 @@ class PresensiBulananController extends Controller
                 $total_menit_izin = $empIzin
                     ->where('jenis', '!=', 'Izin Sakit')
                     ->where('status', '1')
-                    ->get()
                     ->sum(function ($izin) {
                         $times = explode(' - ', $izin->jam);
                         $waktu_mulai = Carbon::createFromFormat('H:i', trim($times[0]));
@@ -189,7 +187,6 @@ class PresensiBulananController extends Controller
                 $menit = $total_menit_izin % 60;
 
                 $jumlah_jam_izin = sprintf('%02d:%02d', $jam, $menit);
-
                 $data = [
                     'kd_karyawan' => $karyawan->kd_karyawan,
                     'bulan' => $bulan,
@@ -215,12 +212,6 @@ class PresensiBulananController extends Controller
                     'jumlah_hari_lembur' => $empLembur->count(),
                     'jumlah_jam_lembur' => $sumTime($empLembur, 'total_jam'),
                 ];
-
-                dd([
-                    'msg' => 'About to save',
-                    'karyawan' => $karyawan->nama,
-                    'data' => $data
-                ]);
 
                 PresensiBulanan::updateOrCreate(
                     [
