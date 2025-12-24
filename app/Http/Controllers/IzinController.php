@@ -105,6 +105,26 @@ class IzinController extends Controller
         return redirect()->route('izin.index')->with('success', 'Pengajuan izin berhasil dibuat.');
     }
 
+    public function upload(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:5048'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput($validator->validated());
+        }
+
+        $izin = Izin::findOrFail($id);
+
+        $imageName = time() . '.' . $request->file('foto')->extension();
+        $request->file('foto')->move(public_path('storage/images/izin'), $imageName);
+
+        $izin->foto = $imageName;
+        $izin->save();
+        return redirect()->route('izin.index')->with('success', 'Gambar berhasil diupload.');
+    }
+
     /**
      * Update the specified resource in storage.
      * This is typically used by an admin to approve or reject a request.

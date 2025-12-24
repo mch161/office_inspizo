@@ -104,6 +104,10 @@
                             </a>
                         @else
                             <span class="text-muted">Tidak ada foto</span>
+                            @if (Auth::guard('karyawan')->user()->kd_karyawan == $item->kd_karyawan)
+                                <a href="" data-toggle="modal" data-target="#uploadModal" data-id="{{ $item->kd_izin }}"
+                                    class="tombol-edit">Upload?</a>
+                            @endif
                         @endif
                     </td>
                     <td>
@@ -155,6 +159,20 @@
     </div>
 </div>
 
+<x-adminlte-modal id="uploadModal" title="Upload" theme="primary" icon="fas fa-upload" size='lg'>
+    <form method="POST" id="form-upload" enctype="multipart/form-data">
+        @csrf 
+        <x-adminlte-input-file name="foto" label="Upload foto" onchange="previewImage(event)" />
+        <div class="mb-3">
+            <img id="preview" src="" alt="Image preview"
+                style="max-width: 200px; max-height: 200px; display: none; border-radius: .5rem; margin-top: 10px;">
+        </div>
+        <x-slot name="footerSlot">
+            <x-adminlte-button theme="primary" label="Upload" type="submit" form="form-upload" />
+            <x-adminlte-button label="Batal" data-dismiss="modal" theme="danger" />
+        </x-slot>
+    </form>
+</x-adminlte-modal>
 
 <!-- Image Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
@@ -171,6 +189,16 @@
 
 @section('js')
 <script>
+    function previewImage(event) {
+        const preview = document.getElementById('preview');
+        if (event.target.files.length > 0) {
+            preview.src = URL.createObjectURL(event.target.files[0]);
+            preview.style.display = 'block';
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    }
     $(document).ready(function () {
         $('#IzinTable').DataTable({
             responsive: true,
@@ -187,6 +215,15 @@
                 search: "Cari:",
                 searchPlaceholder: "Cari data..."
             }
+        });
+
+        $('.tombol-edit').on('click', function () {
+            const id = $(this).data('id');
+
+            let form = $('#form-upload');
+            let updateUrl = "{{ route('izin.upload', ':id') }}";
+            updateUrl = updateUrl.replace(':id', id);
+            form.attr('action', updateUrl);
         });
 
         $('.image-popup').on('click', function (e) {

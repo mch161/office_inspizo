@@ -85,6 +85,7 @@ Route::middleware(['auth:karyawan'])->group(function () {
     Route::get('presensi/bulanan', [App\Http\Controllers\PresensiBulananController::class, 'index'])->name('presensi.bulanan');
     Route::resource('presensi', App\Http\Controllers\PresensiController::class);
     Route::get('izin/form', [App\Http\Controllers\IzinController::class, 'izinForm'])->name('izin.form');
+    Route::post('izin/upload/{id}', [App\Http\Controllers\IzinController::class, 'upload'])->name('izin.upload');
     Route::resource('izin', App\Http\Controllers\IzinController::class);
     Route::resource('lembur', App\Http\Controllers\LemburController::class);
     Route::get('/libur/import', [App\Http\Controllers\LiburController::class, 'importFromApi'])->name('libur.import');
