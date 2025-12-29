@@ -3,7 +3,7 @@
 @section('title', 'Rekap Bulanan')
 
 @section('content_header')
-    <h1>Rekap Bulanan</h1>
+<h1>Rekap Bulanan</h1>
 @stop
 
 @section('css')
@@ -13,11 +13,13 @@
             border: 1px solid #ced4da;
             width: 100px;
         }
+
         .editable:read-only {
             background-color: #e9ecef;
             border: none;
             width: auto;
         }
+
         .editable:focus {
             border-color: #80bdff;
             outline: 0;
@@ -27,8 +29,8 @@
 @endsection
 
 @section('content')
-    {{-- Superadmin: Form to Generate Data --}}
-    @can('superadmin')
+{{-- Superadmin: Form to Generate Data --}}
+@can('superadmin')
     <div class="card collapsed-card">
         <div class="card-header">
             <h3 class="card-title">Generate Rekap Baru</h3>
@@ -50,7 +52,7 @@
                     </div>
                     <div class="col-md-3">
                         <x-adminlte-select name="bulan" label="Bulan" required>
-                            @foreach(range(1,12) as $m)
+                            @foreach(range(1, 12) as $m)
                                 <option value="{{ $m }}" {{ date('n') == $m ? 'selected' : '' }}>
                                     {{ date('F', mktime(0, 0, 0, $m, 1)) }}
                                 </option>
@@ -58,10 +60,11 @@
                         </x-adminlte-select>
                     </div>
                     <div class="col-md-3">
-                        <x-adminlte-input name="tahun" label="Tahun" type="number" value="{{ date('Y') }}" required/>
+                        <x-adminlte-input name="tahun" label="Tahun" type="number" value="{{ date('Y') }}" required />
                     </div>
                     <div class="col-md-2 d-flex align-items-end mb-3">
-                        <button type="submit" class="btn btn-primary w-100" onclick="this.disabled=true;this.innerHTML='Generating...';this.form.submit();">
+                        <button type="submit" class="btn btn-primary w-100"
+                            onclick="this.disabled=true;this.innerHTML='Generating...';this.form.submit();">
                             <i class="fas fa-sync"></i> Generate
                         </button>
                     </div>
@@ -69,43 +72,45 @@
             </form>
         </div>
     </div>
-    @endcan
+@endcan
 
-    {{-- Filter / Select Report --}}
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('presensi.bulanan') }}" method="GET">
-                <div class="row">
-                    <div class="col-md-10">
-                        <x-adminlte-select name="kd_presensi_bulanan" label="Pilih Laporan Bulanan" onchange="this.form.submit()">
-                            <option value="" selected disabled>-- Pilih Laporan --</option>
-                            @foreach ($rekapBulanan as $item)
-                                <option value="{{ $item->kd_presensi_bulanan }}" 
-                                    {{ request('kd_presensi_bulanan') == $item->kd_presensi_bulanan ? 'selected' : '' }}>
-                                    {{ $item->karyawan->nama ?? '-' }} - {{ date('F', mktime(0, 0, 0, $item->bulan, 1)) }} {{ $item->tahun }}
-                                </option>
-                            @endforeach
-                        </x-adminlte-select>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end mb-3">
-                        <a href="{{ route('presensi.bulanan') }}" class="btn btn-secondary w-100">Reset</a>
-                    </div>
+{{-- Filter / Select Report --}}
+<div class="card">
+    <div class="card-body">
+        <form action="{{ route('presensi.bulanan') }}" method="GET">
+            <div class="row">
+                <div class="col-md-10">
+                    <x-adminlte-select name="kd_presensi_bulanan" label="Pilih Laporan Bulanan"
+                        onchange="this.form.submit()">
+                        <option value="" selected disabled>-- Pilih Laporan --</option>
+                        @foreach ($rekapBulanan as $item)
+                            <option value="{{ $item->kd_presensi_bulanan }}" {{ request('kd_presensi_bulanan') == $item->kd_presensi_bulanan ? 'selected' : '' }}>
+                                {{ $item->karyawan->nama ?? '-' }} - {{ date('F', mktime(0, 0, 0, $item->bulan, 1)) }}
+                                {{ $item->tahun }}
+                            </option>
+                        @endforeach
+                    </x-adminlte-select>
                 </div>
-            </form>
-        </div>
+                <div class="col-md-2 d-flex align-items-end mb-3">
+                    <a href="{{ route('presensi.bulanan') }}" class="btn btn-secondary w-100">Reset</a>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 
-    {{-- Detail Data --}}
-    @if(isset($dataBulanan) && $dataBulanan)
+{{-- Detail Data --}}
+@if(isset($dataBulanan) && $dataBulanan)
     <div class="card">
         <div class="card-header bg-navy">
-            <h3 class="card-title">Detail Rekap: {{ $dataBulanan->karyawan->nama }} ({{ $dataBulanan->bulan }}/{{ $dataBulanan->tahun }})</h3>
+            <h3 class="card-title">Detail Rekap: {{ $dataBulanan->karyawan->nama }}
+                ({{ $dataBulanan->bulan }}/{{ $dataBulanan->tahun }})</h3>
         </div>
         <div class="card-body">
             <form action="{{ route('presensi.bulanan.create') }}" method="POST">
                 @csrf
                 <input type="hidden" name="kd_presensi_bulanan" value="{{ $dataBulanan->kd_presensi_bulanan }}">
-                
+
                 {{-- Totals Section --}}
                 <div class="row">
                     @php
@@ -125,34 +130,38 @@
                     @endphp
 
                     @foreach($fields as $key => $label)
-                    <div class="col-md-2 col-6 mb-2">
-                        <label class="small text-muted">{{ $label }}</label>
-                        <input type="number" name="{{ $key }}" class="form-control editable" value="{{ $dataBulanan->$key }}" readonly>
-                    </div>
+                        <div class="col-md-2 col-6 mb-2">
+                            <label class="small text-muted">{{ $label }}</label>
+                            <input type="number" name="{{ $key }}" class="form-control editable"
+                                value="{{ $dataBulanan->$key }}" readonly>
+                        </div>
                     @endforeach
 
                     <div class="col-md-2 col-6 mb-2">
                         <label class="small text-muted">Jam Lembur</label>
-                        <input type="text" name="jumlah_jam_lembur" class="form-control editable" value="{{ $dataBulanan->jumlah_jam_lembur }}" readonly>
+                        <input type="text" name="jumlah_jam_lembur" class="form-control editable"
+                            value="{{ $dataBulanan->jumlah_jam_lembur }}" readonly>
                     </div>
-                     <div class="col-md-2 col-6 mb-2">
+                    <div class="col-md-2 col-6 mb-2">
                         <label class="small text-muted">Jam Izin</label>
-                        <input type="text" name="jumlah_jam_izin" class="form-control editable" value="{{ $dataBulanan->jumlah_jam_izin }}" readonly>
+                        <input type="text" name="jumlah_jam_izin" class="form-control editable"
+                            value="{{ $dataBulanan->jumlah_jam_izin }}" readonly>
                     </div>
                 </div>
 
                 @can('superadmin')
-                <div class="mt-3 text-right">
-                    <button type="button" class="btn btn-warning" id="tombol-edit" onclick="toggleEditable(true)">
-                        <i class="fas fa-edit"></i> Edit Data
-                    </button>
-                    <button type="submit" class="btn btn-success" id="tombol-simpan" style="display: none;">
-                        <i class="fas fa-save"></i> Simpan
-                    </button>
-                    <button type="button" class="btn btn-danger" id="tombol-batal" style="display: none;" onclick="toggleEditable(false)">
-                        Batal
-                    </button>
-                </div>
+                    <div class="mt-3 text-right">
+                        <button type="button" class="btn btn-warning" id="tombol-edit" onclick="toggleEditable(true)">
+                            <i class="fas fa-edit"></i> Edit Data
+                        </button>
+                        <button type="submit" class="btn btn-success" id="tombol-simpan" style="display: none;">
+                            <i class="fas fa-save"></i> Simpan
+                        </button>
+                        <button type="button" class="btn btn-danger" id="tombol-batal" style="display: none;"
+                            onclick="toggleEditable(false)">
+                            Batal
+                        </button>
+                    </div>
                 @endcan
             </form>
 
@@ -173,50 +182,60 @@
                     </thead>
                     <tbody>
                         @forelse($rekapData as $row)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($row->tanggal)->format('d-m-Y') }}</td>
-                            <td>{{ $row->jam_masuk ?? '-' }}</td>
-                            <td>{{ $row->jam_keluar ?? '-' }}</td>
-                            <td>
-                                <span class="badge badge-{{ $row->status == 'H' ? 'success' : ($row->status == 'A' ? 'danger' : 'warning') }}">
-                                    {{ $row->status }}
-                                </span>
-                            </td>
-                            <td>{{ $row->keterangan }}</td>
-                        </tr>
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($row->tanggal)->format('d-m-Y') }}</td>
+                                <td>{{ $row->jam_masuk }}</td>
+                                <td>{{ $row->jam_keluar }}</td>
+                                <td>
+                                    @if($row->status == 'I')
+                                        <span class="badge badge-info">Izin: {{ $row->jenis }}</span>
+                                    @elseif($row->status == 'H')
+                                        <span class="badge badge-success">Hadir</span>
+                                    @elseif($row->status == 'L')
+                                        <span class="badge badge-info">Libur</span>
+                                    @elseif($row->status == 'M')
+                                        <span class="badge badge-secondary">Minggu</span>
+                                    @elseif($row->status == 'A')
+                                        <span class="badge badge-danger">Alpha</span>
+                                    @endif
+                                </td>
+                                <td>{{ $row->keterangan }}</td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">Belum ada data presensi harian untuk periode ini.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    Belum ada data periode ini.
+                                </td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-    @else
-        <div class="alert alert-info text-center mt-4">
-            <h5><i class="icon fas fa-info"></i> Pilih Laporan</h5>
-            Silakan pilih laporan bulanan pada dropdown di atas untuk melihat detail.
-        </div>
-    @endif
+@else
+    <div class="alert alert-info text-center mt-4">
+        <h5><i class="icon fas fa-info"></i> Pilih Laporan</h5>
+        Silakan pilih laporan bulanan pada dropdown di atas untuk melihat detail.
+    </div>
+@endif
 @stop
 
 @section('js')
-    <script>
-        function toggleEditable(enable) {
-            const inputs = $('.editable');
-            if (enable) {
-                inputs.removeAttr('readonly');
-                $('#tombol-edit').hide();
-                $('#tombol-simpan, #tombol-batal').show();
-            } else {
-                inputs.attr('readonly', true);
-                $('#tombol-edit').show();
-                $('#tombol-simpan, #tombol-batal').hide();
-                // Optional: Reload page to reset values if cancelled
-                if(event.target.id === 'tombol-batal') window.location.reload();
-            }
+<script>
+    function toggleEditable(enable) {
+        const inputs = $('.editable');
+        if (enable) {
+            inputs.removeAttr('readonly');
+            $('#tombol-edit').hide();
+            $('#tombol-simpan, #tombol-batal').show();
+        } else {
+            inputs.attr('readonly', true);
+            $('#tombol-edit').show();
+            $('#tombol-simpan, #tombol-batal').hide();
+            // Optional: Reload page to reset values if cancelled
+            if (event.target.id === 'tombol-batal') window.location.reload();
         }
-    </script>
+    }
+</script>
 @stop
