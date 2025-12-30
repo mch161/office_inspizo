@@ -49,39 +49,72 @@
         </div>
     </div>
     <div class="card-body">
-        <table id="rekapTable" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama Karyawan</th>
-                    <th>Tanggal</th>
-                    <th>Jam Masuk</th>
-                    <th>Jam Keluar</th>
-                    <th>Terlambat</th>
-                    <th>Pulang Cepat</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($rekapData as $data)
+        {{-- Daily Attendance Table --}}
+        <h5 class="mt-4 text-secondary">Log Harian</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped table-sm">
+                <thead class="thead-light">
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $data->nama }}</td>
-                        <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d-m-Y') }}</td>
-                        <td>{{ $data->jam_masuk ?? '--:--:--' }}</td>
-                        <td>{{ $data->jam_keluar ?? '--:--:--' }}</td>
-                        <td>
-                            @if ($data->terlambat != "Tidak")
-                                <div class="badge badge-warning">{{ $data->terlambat }}</div>
-                                @else
-                                {{ $data->terlambat }}
-                            @endif
-                        </td>
-
-                        <td>{{ $data->pulang_cepat }}</td>
+                        @if (!isset($bulan) && !isset($kd_karyawan))
+                            <th>Nama Karyawan</th>
+                        @endif
+                        <th>Tanggal</th>
+                        <th>Jam Masuk</th>
+                        <th>Jam Keluar</th>
+                        @if (!isset($bulan) && !isset($kd_karyawan))
+                            <th>Terlambat</th>
+                            <th>Pulang Cepat</th>
+                        @else
+                            <th>Status</th>
+                            <th>Keterangan</th>
+                        @endif
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse($rekapData as $row)
+                        <tr>
+                            @if (!isset($bulan) && !isset($kd_karyawan))
+                                <td>{{ $row->nama }}</td>
+                            @endif
+                            <td>{{ \Carbon\Carbon::parse($row->tanggal)->format('d-m-Y') }}</td>
+                            <td>{{ $row->jam_masuk ?? '--:--:--'}}</td>
+                            <td>{{ $row->jam_keluar ?? '--:--:--'}}</td>
+                            @if (!isset($bulan) && !isset($kd_karyawan))
+                                <td>
+                                    @if ($row->terlambat != "Tidak")
+                                        <div class="badge badge-warning">{{ $row->terlambat }}</div>
+                                    @else
+                                        {{ $row->terlambat }}
+                                    @endif
+                                </td>
+                                <td>{{ $row->pulang_cepat }}</td>
+                            @else
+                                <td>
+                                    @if($row->status == 'I')
+                                        <span class="badge badge-info">Izin: {{ $row->jenis }}</span>
+                                    @elseif($row->status == 'H')
+                                        <span class="badge badge-success">Hadir</span>
+                                    @elseif($row->status == 'L')
+                                        <span class="badge badge-info">Libur</span>
+                                    @elseif($row->status == 'M')
+                                        <span class="badge badge-secondary">Minggu</span>
+                                    @elseif($row->status == 'A')
+                                        <span class="badge badge-danger">Alpha</span>
+                                    @endif
+                                </td>
+                                <td>{{ $row->keterangan }}</td>
+                            @endif
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                Belum ada data periode ini.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

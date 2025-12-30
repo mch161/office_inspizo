@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Izin;
 use App\Models\Karyawan;
+use App\Models\PresensiBulanan;
+use App\Models\PresensiLibur;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use App\Models\Presensi;
 use Carbon\Carbon;
@@ -15,9 +19,9 @@ class PresensiController extends Controller
         $tanggal = ($request->input('tanggal') ?? Carbon::now()->format('Y-m-d'));
 
         $rekapData = Presensi::whereDate('tanggal', $tanggal)
-                            ->orderBy('nama', 'asc')
-                            ->get();
-                            
+            ->orderBy('nama', 'asc')
+            ->get();
+
         $karyawans = Karyawan::all();
 
         return view('karyawan.presensi.presensi', [
@@ -46,11 +50,77 @@ class PresensiController extends Controller
         $kd_karyawan = $request->input('kd_karyawan');
         $karyawan = Karyawan::where('kd_karyawan', $kd_karyawan)->first();
         $karyawans = Karyawan::all();
-        $rekapData = Presensi::whereYear('tanggal', $tahun)
-                            ->whereMonth('tanggal', $bulan)
-                            ->where('kd_karyawan', $kd_karyawan)
-                            ->orderBy('tanggal', 'asc')
-                            ->get();
+
+        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1);
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+        $period = CarbonPeriod::create($startOfMonth, $endOfMonth);
+
+        $presensi = Presensi::where('kd_karyawan', $kd_karyawan)
+            ->whereYear('tanggal', $tahun)
+            ->whereMonth('tanggal', $bulan)
+            ->get()
+            ->keyBy(function ($item) {
+                return Carbon::parse($item->tanggal)->format('Y-m-d');
+            });
+
+        $izin = Izin::where('kd_karyawan', $kd_karyawan)
+            ->whereYear('tanggal', $tahun)
+            ->whereMonth('tanggal', $bulan)
+            ->where('status', '1')
+            ->get()
+            ->keyBy(function ($item) {
+                return Carbon::parse($item->tanggal)->format('Y-m-d');
+            });
+
+        $hariLibur = PresensiLibur::get()
+            ->keyBy(function ($item) {
+                return Carbon::parse($item->tanggal)->format('Y-m-d');
+            });
+
+        $finalLog = collect();
+
+        foreach ($period as $date) {    
+            $dateStr = $date->format('Y-m-d');
+            $isSunday = $date->isSunday();
+
+            $status = 'A';
+            $jam_masuk = '--:--:--';
+            $jam_keluar = '--:--:--';
+            $keterangan = 'Tidak Hadir';
+            $jenis_izin = null;
+
+            if ($izin->has($dateStr)) {
+                $data = $izin[$dateStr];
+                $status = 'I';
+                $keterangan = $data->keterangan ?? $data->jenis;
+                $jenis_izin = $data->jenis;
+            } elseif ($presensi->has($dateStr)) {
+                $data = $presensi[$dateStr];
+                $status = 'H';
+                $jam_masuk = $data->jam_masuk;
+                $jam_keluar = $data->jam_keluar;
+                $keterangan = 'Hadir';
+            } elseif ($hariLibur->has($dateStr)) {
+                $data = $hariLibur[$dateStr];
+                $status = 'L';
+                $keterangan = $data->keterangan ?? 'Libur';
+            } elseif ($isSunday) {
+                $status = 'M';
+                $keterangan = 'Libur Minggu';
+            }
+
+            $finalLog->push((object) [
+                'tanggal' => $dateStr,
+                'jam_masuk' => $jam_masuk,
+                'jam_keluar' => $jam_keluar,
+                'status' => $status,
+                'keterangan' => $keterangan,
+                'jenis' => $jenis_izin
+            ]);
+        }
+
+        $rekapData = $finalLog;
+
         return view('karyawan.presensi.presensi', [
             'rekapData' => $rekapData,
             'bulan' => $bulan,
