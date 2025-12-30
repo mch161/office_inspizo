@@ -48,14 +48,24 @@ class PresensiBulananController extends Controller
                         return Carbon::parse($item->tanggal)->format('Y-m-d');
                     });
 
-                $izin = Izin::where('kd_karyawan', $dataBulanan->kd_karyawan)
+                $rawIzin = Izin::where('kd_karyawan', $dataBulanan->kd_karyawan)
                     ->whereYear('tanggal', $dataBulanan->tahun)
                     ->whereMonth('tanggal', $dataBulanan->bulan)
                     ->where('status', '1')
-                    ->get()
-                    ->keyBy(function ($item) {
-                        return Carbon::parse($item->tanggal)->format('Y-m-d');
-                    });
+                    ->get();
+
+                $izin = collect();
+
+                foreach ($rawIzin as $item) {
+                    $start = Carbon::parse($item->tanggal);
+                    $end = $item->tanggal_selesai ? Carbon::parse($item->tanggal_selesai) : $start->copy();
+
+                    $izinPeriod = CarbonPeriod::create($start, $end);
+
+                    foreach ($izinPeriod as $date) {
+                        $izin->put($date->format('Y-m-d'), $item);
+                    }
+                }
 
                 $hariLibur = PresensiLibur::get()
                     ->keyBy(function ($item) {
