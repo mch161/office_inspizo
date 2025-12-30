@@ -108,7 +108,7 @@
                     @empty
                         <tr>
                             <td colspan="6" class="text-center text-muted">
-                                Belum ada data periode ini.
+                                Belum ada data untuk tanggal ini.
                             </td>
                         </tr>
                     @endforelse
