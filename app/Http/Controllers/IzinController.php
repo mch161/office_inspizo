@@ -76,7 +76,13 @@ class IzinController extends Controller
             $endDate = $startDate->copy();
         }
 
-        $jumlahHari = $startDate->diffInDays($endDate) + 1;
+        $jumlahHari = 0;
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            if ($date->isSunday()) {
+                continue;
+            }
+            $jumlahHari++;
+        }
 
         $jam_masuk = !is_null(Auth::guard('karyawan')->user()->jam_masuk) ? Carbon::parse(Auth::guard('karyawan')->user()->jam_masuk)->format('H:i') : '08:00';
         $jam_pulang = '17:00';
