@@ -101,7 +101,7 @@ class PresensiBulananController extends Controller
                         $keterangan = $data->keterangan ?? 'Libur';
                     } elseif ($isSunday) {
                         $status = 'M';
-                        $keterangan = 'Libur Minggu';
+                        $keterangan = 'Hari Minggu';
                     }
 
                     $finalLog->push((object) [

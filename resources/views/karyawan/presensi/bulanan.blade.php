@@ -182,24 +182,34 @@
                     </thead>
                     <tbody>
                         @forelse($rekapData as $row)
-                            <tr>
+                            <tr class="{{ $row->status == 'M' || $row->status == 'L' ? 'table-secondary' : '' }}">
                                 <td>{{ \Carbon\Carbon::parse($row->tanggal)->format('d-m-Y') }}</td>
                                 <td>{{ $row->jam_masuk }}</td>
                                 <td>{{ $row->jam_keluar }}</td>
                                 <td>
                                     @if($row->status == 'I')
-                                        <span class="badge badge-info">Izin: {{ $row->jenis }}</span>
+                                        <span class="badge badge-info"><i class="fas fa-file-alt"></i> Izin:
+                                            {{ $row->jenis }}</span>
+
                                     @elseif($row->status == 'H')
-                                        <span class="badge badge-success">Hadir</span>
+                                        <span class="badge badge-success"><i class="fas fa-check-circle"></i> Hadir</span>
+
                                     @elseif($row->status == 'L')
-                                        <span class="badge badge-info">Libur</span>
+                                        <span class="badge badge-danger">
+                                            <i class="fas fa-umbrella-beach"></i> Libur
+                                        </span>
+
                                     @elseif($row->status == 'M')
-                                        <span class="badge badge-secondary">Minggu</span>
+                                        {{-- Hari Minggu --}}
+                                        <span class="badge badge-secondary">
+                                            <i class="fas fa-coffee"></i> Minggu
+                                        </span>
+
                                     @elseif($row->status == 'A')
-                                        <span class="badge badge-danger">Alpha</span>
+                                        <span class="badge badge-danger"><i class="fas fa-times-circle"></i> Alpha</span>
                                     @endif
                                 </td>
-                                <td>{{ $row->keterangan }}</td>
+                                <td>{{ $row->jenis }}: {{ $row->keterangan }}</td>
                             </tr>
                         @empty
                             <tr>
