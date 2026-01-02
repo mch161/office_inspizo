@@ -113,7 +113,7 @@
                                         <span class="badge badge-danger"><i class="fas fa-times-circle"></i> Alpha</span>
                                     @endif
                                 </td>
-                                <td>{{ $row->jenis }}: {{ $row->keterangan }}</td>
+                                <td>{{ $row->keterangan }}</td>
                             @endif
                         </tr>
                     @empty

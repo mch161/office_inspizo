@@ -64,8 +64,14 @@ class PresensiController extends Controller
             });
 
         $rawIzin = Izin::where('kd_karyawan', $kd_karyawan)
-            ->whereYear('tanggal', $tahun)
-            ->whereMonth('tanggal', $bulan)
+            ->where(function ($query) use ($bulan, $tahun) {
+                $query->whereYear('tanggal', $tahun)
+                    ->whereMonth('tanggal', $bulan)
+                    ->orWhere(function ($query) use ($bulan, $tahun) {
+                        $query->whereYear('tanggal_selesai', $tahun)
+                            ->whereMonth('tanggal_selesai', $bulan);
+                    });
+            })
             ->where('status', '1')
             ->get();
 
@@ -98,22 +104,21 @@ class PresensiController extends Controller
             $jam_keluar = '--:--:--';
             $keterangan = 'Tidak Hadir';
             $jenis_izin = null;
-
-            if ($izin->has($dateStr)) {
-                $data = $izin[$dateStr];
-                $status = 'I';
-                $keterangan = $data->keterangan ?? $data->jenis;
-                $jenis_izin = $data->jenis;
+            if ($hariLibur->has($dateStr)) {
+                $data = $hariLibur[$dateStr];
+                $status = 'L';
+                $keterangan = $data->keterangan ?? 'Libur';
             } elseif ($presensi->has($dateStr)) {
                 $data = $presensi[$dateStr];
                 $status = 'H';
                 $jam_masuk = $data->jam_masuk;
                 $jam_keluar = $data->jam_keluar;
                 $keterangan = 'Hadir';
-            } elseif ($hariLibur->has($dateStr)) {
-                $data = $hariLibur[$dateStr];
-                $status = 'L';
-                $keterangan = $data->keterangan ?? 'Libur';
+            } elseif ($izin->has($dateStr)) {
+                $data = $izin[$dateStr];
+                $status = 'I';
+                $keterangan = $data->keterangan ?? $data->jenis;
+                $jenis_izin = $data->jenis;
             } elseif ($isSunday) {
                 $status = 'M';
                 $keterangan = 'Hari Minggu';

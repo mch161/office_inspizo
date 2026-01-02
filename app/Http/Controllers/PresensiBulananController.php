@@ -49,8 +49,14 @@ class PresensiBulananController extends Controller
                     });
 
                 $rawIzin = Izin::where('kd_karyawan', $dataBulanan->kd_karyawan)
-                    ->whereYear('tanggal', $dataBulanan->tahun)
-                    ->whereMonth('tanggal', $dataBulanan->bulan)
+                    ->where(function ($query) use ($dataBulanan) {
+                        $query->whereYear('tanggal', $dataBulanan->tahun)
+                            ->whereMonth('tanggal', $dataBulanan->bulan)
+                            ->orWhere(function ($query) use ($dataBulanan) {
+                                $query->whereYear('tanggal_selesai', $dataBulanan->tahun)
+                                    ->whereMonth('tanggal_selesai', $dataBulanan->bulan);
+                            });
+                    })
                     ->where('status', '1')
                     ->get();
 
@@ -83,22 +89,21 @@ class PresensiBulananController extends Controller
                     $jam_keluar = '--:--:--';
                     $keterangan = 'Tidak Hadir';
                     $jenis_izin = null;
-
-                    if ($izin->has($dateStr)) {
-                        $data = $izin[$dateStr];
-                        $status = 'I';
-                        $keterangan = $data->keterangan ?? $data->jenis;
-                        $jenis_izin = $data->jenis;
+                    if ($hariLibur->has($dateStr)) {
+                        $data = $hariLibur[$dateStr];
+                        $status = 'L';
+                        $keterangan = $data->keterangan ?? 'Libur';
                     } elseif ($presensi->has($dateStr)) {
                         $data = $presensi[$dateStr];
                         $status = 'H';
                         $jam_masuk = $data->jam_masuk;
                         $jam_keluar = $data->jam_keluar;
                         $keterangan = 'Hadir';
-                    } elseif ($hariLibur->has($dateStr)) {
-                        $data = $hariLibur[$dateStr];
-                        $status = 'L';
-                        $keterangan = $data->keterangan ?? 'Libur';
+                    } elseif ($izin->has($dateStr)) {
+                        $data = $izin[$dateStr];
+                        $status = 'I';
+                        $keterangan = $data->keterangan ?? $data->jenis;
+                        $jenis_izin = $data->jenis;
                     } elseif ($isSunday) {
                         $status = 'M';
                         $keterangan = 'Hari Minggu';
