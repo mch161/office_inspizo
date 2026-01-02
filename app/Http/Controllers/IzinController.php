@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Izin;
+use App\Models\PresensiLibur;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -76,9 +77,16 @@ class IzinController extends Controller
             $endDate = $startDate->copy();
         }
 
+        $hariLibur = PresensiLibur::whereBetween('tanggal', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+            ->pluck('tanggal')
+            ->toArray();
+
         $jumlahHari = 0;
-        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             if ($date->isSunday()) {
+                continue;
+            }
+            if (in_array($date->format('Y-m-d'), $hariLibur)) {
                 continue;
             }
             $jumlahHari++;
