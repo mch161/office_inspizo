@@ -64,7 +64,7 @@
                     </div>
                     <div class="col-md-2 d-flex align-items-end mb-3">
                         <button type="submit" class="btn btn-primary w-100"
-                            onclick="this.disabled=true;this.innerHTML='Generating...';this.form.submit();">
+                            onclick="this.disabled=true;this.innerHTML='<i class=\'fas fa-spinner fa-spin\'></i> Processing...';this.form.submit();">
                             <i class="fas fa-sync"></i> Generate
                         </button>
                     </div>
