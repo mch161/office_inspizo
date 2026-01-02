@@ -31,14 +31,14 @@
 @section('content')
 {{-- Superadmin: Form to Generate Data --}}
 @can('superadmin')
-    <div class="card collapsed-card">
+    <div class="card">
         <div class="card-header">
             <h3 class="card-title">Generate Rekap Baru</h3>
             <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
             </div>
         </div>
-        <div class="card-body" style="display: none;">
+        <div class="card-body">
             <form action="{{ route('presensi.bulanan.store') }}" method="POST" id="generateForm">
                 @csrf
                 <div class="row">
