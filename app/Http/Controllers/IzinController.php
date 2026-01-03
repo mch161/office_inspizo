@@ -77,18 +77,22 @@ class IzinController extends Controller
             $endDate = $startDate->copy();
         }
 
-        $hariLibur = PresensiLibur::whereBetween('tanggal', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
-            ->pluck('tanggal')
-            ->toArray();
+        $hariLibur = PresensiLibur::whereBetween('tanggal', [
+            $startDate->format('Y-m-d'),
+            $endDate->format('Y-m-d')
+        ])->pluck('tanggal')->toArray();
 
         $jumlahHari = 0;
+
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             if ($date->isSunday()) {
                 continue;
             }
+
             if (in_array($date->format('Y-m-d'), $hariLibur)) {
                 continue;
             }
+
             $jumlahHari++;
         }
 
