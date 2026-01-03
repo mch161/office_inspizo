@@ -213,8 +213,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">
-                                    Belum ada data periode ini.
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="fas fa-calendar-times fa-3x mb-3"></i><br>
+                                    Tidak ada data presensi untuk periode ini.
                                 </td>
                             </tr>
                         @endforelse
