@@ -93,20 +93,20 @@ class PresensiBulananController extends Controller
                         $data = $hariLibur[$dateStr];
                         $status = 'L';
                         $keterangan = $data->keterangan ?? 'Libur';
+                    } elseif ($isSunday) {
+                        $status = 'M';
+                        $keterangan = 'Hari Minggu';
+                    } elseif ($izin->has($dateStr)) {
+                        $data = $izin[$dateStr];
+                        $status = 'I';
+                        $keterangan = $data->keterangan ?? $data->jenis;
+                        $jenis_izin = $data->jenis;
                     } elseif ($presensi->has($dateStr)) {
                         $data = $presensi[$dateStr];
                         $status = 'H';
                         $jam_masuk = $data->jam_masuk;
                         $jam_keluar = $data->jam_keluar;
                         $keterangan = 'Hadir';
-                    } elseif ($izin->has($dateStr)) {
-                        $data = $izin[$dateStr];
-                        $status = 'I';
-                        $keterangan = $data->keterangan ?? $data->jenis;
-                        $jenis_izin = $data->jenis;
-                    } elseif ($isSunday) {
-                        $status = 'M';
-                        $keterangan = 'Hari Minggu';
                     }
 
                     $finalLog->push((object) [
