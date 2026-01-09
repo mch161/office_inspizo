@@ -120,7 +120,7 @@
 
                     @php 
                     $tempat = App\Models\Tiket::pluck('tempat')->unique();
-                    $configTempat = ['placeholder' => 'Masukan tempat...', 'tags' => true, 'allowClear' => true]; 
+                    $configTempat = ['dropdownParent' => '#pesananModal', 'placeholder' => 'Masukan tempat...', 'tags' => true, 'allowClear' => true]; 
                     @endphp
                     <x-adminlte-select2 name="tempat" id="tempat" :config="$configTempat" label="Tempat">
                         <option value="" disabled selected>Pilih tempat...</option>
