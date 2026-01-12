@@ -184,7 +184,6 @@ class TiketController extends Controller
         $validator = Validator::make($request->all(), [
             'kd_pelanggan' => 'required',
             'tanggal' => 'required',
-            'tempat' => 'required',
             'prioritas' => 'required',
             'jenis' => 'required',
             'via' => 'required',
@@ -192,7 +191,6 @@ class TiketController extends Controller
         ], [
             'kd_pelanggan.required' => 'Pelanggan harus diisi.',
             'tanggal.required' => 'Tanggal harus diisi.',
-            'tempat.required' => 'Tempat harus diisi.',
             'prioritas.required' => 'Prioritas harus diisi.',
             'jenis.required' => 'Jenis harus diisi.',
             'via.required' => 'Via harus diisi.',
