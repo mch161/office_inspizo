@@ -139,7 +139,7 @@ class FetchPresensiCommand extends Command
             $jamKeluar = $rawKeluar ? Carbon::parse($rawKeluar) : null;
 
             $jamMasukStandar = $date->copy()->setTimeFromTimeString($karyawan->jam_masuk ?? '08:00:00');
-            $jamKeluarStandar = $date->copy()->setTime($date->isSaturday() ? 16 : 17, 0);
+            $jamKeluarStandar = $jamMasukStandar->copy()->addHours($date->isSaturday() ? 8 : 9);
 
             if ($jamKeluar && $jamKeluar->isBefore($jamMasukStandar)) {
                 $jamKeluar = null;
