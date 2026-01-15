@@ -378,7 +378,7 @@
                         <div class="form-group">
                             <label for="jenis" class="col-sm-4 control-label">Jenis</label>
                             <div class="col-sm-12">
-                                <x-adminlte-select2 name="jenis" id="jenis" :config="['placeholder' => 'Masukan jenis...', 'tags' => true, 'allowClear' => true]" required>
+                                <x-adminlte-select2 name="jenis" id="jenis" :config="['dropdownParent' => '#ajaxModel','placeholder' => 'Masukan jenis...', 'tags' => true, 'allowClear' => true]" required>
                                     <option value="Kunjungan">Kunjungan</option>
                                     <option value="Cek di kantor">Cek di kantor</option>
                                     <option value="Perbaikan di kantor">Perbaikan di kantor</option>
@@ -675,7 +675,7 @@
             });
         });
         $(document).on('select2:open', () => {
-            document.querySelector('.select2-search__field').focus();
+            document.querySelector('.select2-container--open .select2-search__field').focus();
         });
         @if (session()->has('success'))
             const Toast = Swal.mixin({
